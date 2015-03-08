@@ -1,0 +1,21 @@
+{
+    "name": "dan-powell/portfolio",
+    "description": "Portfolio management system for Laravel 5",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Dan Powell",
+            "email": "dan@autumnrain.co.uk"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+		"classmap": [
+			"database"
+		],
+		"psr-4": {
+			"DanPowell\\Portfolio\\": "/src"
+		}
+	},
+}
