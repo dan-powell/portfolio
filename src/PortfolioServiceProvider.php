@@ -1,5 +1,8 @@
 <?php namespace DanPowell\Portfolio;
 
+use DanPowell\Portfolio\App\Console\Commands\Seed;
+use DanPowell\Portfolio\App\Console\Commands\Migrate;
+
 class PortfolioServiceProvider extends \Illuminate\Support\ServiceProvider
 {
 
@@ -18,6 +21,11 @@ class PortfolioServiceProvider extends \Illuminate\Support\ServiceProvider
         // Tell Laravel where to load the views from
         $this->loadViewsFrom(__DIR__.'/resources/views', 'portfolio');
 
+
+        $this->app->bindShared('command.portfolio.seed', function ($app) {
+            return new Seed();
+        });
+
     }
 
     /**
@@ -27,6 +35,8 @@ class PortfolioServiceProvider extends \Illuminate\Support\ServiceProvider
      */
     public function boot()
     {
+
+        $this->commands('command.portfolio.seed');
 
         // Publish Views
         $this->publishes([
@@ -44,5 +54,7 @@ class PortfolioServiceProvider extends \Illuminate\Support\ServiceProvider
         ], 'migrations');
 
     }
+
+
 
 }

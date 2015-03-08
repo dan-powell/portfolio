@@ -1,15 +1,19 @@
 {
     "name": "dan-powell/portfolio",
-    "description": "Portfolio management system for Laravel 5",
+    "description": "Portfolio-centric content management system for Laravel 5",
+    "keywords": ["portfolio", "cms", "laravel"],
     "license": "MIT",
     "authors": [
         {
             "name": "Dan Powell",
-            "email": "dan@autumnrain.co.uk"
+            "email": "dan@dan-powell.uk"
         }
     ],
     "minimum-stability": "dev",
-    "require": {},
+    "require": {
+        "laravel/framework": "5.0.*",
+        "fzaninotto/faker": "~1"
+    },
     "autoload": {
 		"psr-4": {
 			"DanPowell\\Portfolio\\": "/src"
