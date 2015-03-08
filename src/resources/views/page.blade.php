@@ -1,35 +1,56 @@
-@extends('base')
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Portfolio || {{ $page->seo_title }}</title>
+        <meta name="description" content="{{ $project->seo_description }}">
 
-@section('class')Projects _show -page @stop
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
 
-@section('meta')
-<title>{{ $page->seo_title }}</title>
-<meta name="description" content="{{ $page->seo_description }}">
-@stop
+        <!-- Optional theme -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
 
-@section('sidebar-buttons')
-    <a href="{{ route('projects.show', $project->slug) }}" class="navButton -back">
-        <span class="sr-only">Back</span>
-    </a>
-@stop
+        <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+          <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+          <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+        <![endif]-->
 
-@section('main')
-    <article>
+        @yield('styles')
 
-        @foreach($page->sections as $section)
+    </head>
+    <body>
+        <div class="container">
+            <h1>{{ $page->title }}</h1>
 
-            @include('partials.section')
+            <div class="row">
+            <article class="col-sm-8">
 
-        @endforeach
+        		@if (count($page->sections) > 0)
+        	        @foreach($page->sections as $section)
+        	            @include('portfolio::partials.section')
+        	        @endforeach
+                @else
+                    {{ $page->markup }}
+        		@endif
 
-    </article>
-@stop
+            </article>
 
-@section('sidebar')
-    @include('partials.list')
-@stop
+            <hr/>
 
-@section('scripts')
-    @parent
-    <script src="{{ url() }}/js/projects.js" type="text/javascript"></script>
-@stop
+            <a href="{{ route('projects.show', $project->slug) }}" class="btn btn-primary">Back</a>
+
+        </div>
+
+        <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+        <!-- Latest compiled and minified JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+
+        @yield('scripts')
+    </body>
+</html>

@@ -1,49 +1,79 @@
-@extends('base')
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Portfolio || {{ $project->seo_title }}</title>
+        <meta name="description" content="{{ $project->seo_description }}">
 
-@section('meta')
-<title>{{ $project->seo_title }}</title>
-<meta name="description" content="{{ $project->seo_description }}">
-@stop
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
 
-@section('class')Projects _show @stop
+        <!-- Optional theme -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
 
-@section('sidebar-buttons')
-    <a href="{{ route('projects.index') }}" class="navButton -back">
-        <span class="sr-only">Back</span>
-    </a>
-@stop
+        <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+          <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+          <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+        <![endif]-->
 
-@section('main')
-    <article>
+        @yield('styles')
 
-		@if (count($project->sections) > 0)
-	        @foreach($project->sections as $section)
+    </head>
+    <body>
+        <div class="container">
+            <h1>{{ $project->title }}</h1>
 
-	            @include('portfolio::partials.section')
+            <div class="row">
+                <article class="col-sm-8">
 
-	        @endforeach
-        @else
+            		@if (count($project->sections) > 0)
+            	        @foreach($project->sections as $section)
+            	            @include('portfolio::partials.section')
+            	        @endforeach
+                    @else
+                        {{ $project->markup }}
+            		@endif
 
-            <section class="Section -primary">
-		        <div class="_container">
-		        	<div class="Content">
-		                {!! Markdown::parse($project->markup) !!}
-		        	</div>
-		     	</div>
-		    </section>
+                </article>
+                <aside class="col-sm-4">
 
-		@endif
+                    @if (count($project->tags) > 0)
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3>Tags</h3>
+                            </div>
+                            <div class="panel-body">
+                                <ul class="list-group">
+                                    @foreach($project->tags as $tag)
+                                        <li class="list-group-item">{{ $tag->title }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        </div>
+                    @endif
 
-    </article>
-@stop
+                </aside>
+            </div>
 
-@section('sidebar')
-    @include('portfolio::partials.list')
-@stop
+            <hr/>
 
-@section('scripts')
-    @parent
-    @if (isset($project->scripts) && $project->scripts != '')
-            {!! $project->scripts !!}
-    @endif
-@stop
+            <a href="{{ route('projects.index') }}" class="btn btn-primary">Back</a>
+
+            <hr/>
+
+            @include('portfolio::partials.list')
+
+        </div>
+
+        <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+        <!-- Latest compiled and minified JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+
+        @yield('scripts')
+    </body>
+</html>

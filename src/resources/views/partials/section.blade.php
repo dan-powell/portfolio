@@ -8,13 +8,7 @@
 @stop
 
 @if(isset($section->markup) && $section->markup != '')
-    <section class="Section{{(isset($section->section_classes)) ? ' ' . $section->section_classes : ''}}">
-        <div class="{{(isset($section->container_classes)) ? '_container ' . $section->container_classes : ''}}">
-        	<div class="Content">
-                {!! Markdown::parse($section->markup) !!}
-        	</div>
-     	</div>
-    </section>
+    {{ $section->markup }}
 @endif
 
 @section('scripts')

@@ -1,116 +1,54 @@
-@extends('base')
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Portfolio</title>
 
-@section('meta')
-<title>My Portfolio | Dan Powell</title>
-<meta name="description" content="Here's a selection of my best work.">
-@stop
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
 
-@section('class')Projects _index @stop
+        <!-- Optional theme -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
 
-@section('main')
+        <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+          <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+          <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+        <![endif]-->
+    </head>
+    <body>
+        <div class="container">
+            <h1>Portfolio Index</h1>
 
-    <section class="Section -lightGrad -md">
-        <div class="_container">
-            <h1 class="pageHeading">
-                My Portfolio
-            </h1>
-        </div>
-    </section>
-
-    <section class="Section -primary -md">
-	    <div class="_container -center">
-    	    <p>Here are some projects and other things that I've done.</p>
-            <!-- <p>View the   most recent        examples of my    illustration        work</p> -->
-
-            <button class="btn" data-filter=".project" onclick="iso.arrange({filter: '*'})">All</button>
-
-            @if(isset($tags) && count($tags) > 0)
-                @foreach($tags as $tag)
-                    <button class="btn" data-filter=".project" onclick="iso.arrange({filter: '.-{{ str_slug($tag->title) }}'})">{{{ $tag->title }}}</button>
-                @endforeach
-            @endif
-
-	    </div>
-    </section>
-
-    <section class="Section">
-        <div class="_container -center -md">
+            @include('portfolio::partials.list')
 
             @if(isset($projects) && count($projects) > 0)
-                <div class="ProjectList" id="isotope">
-                	@foreach($projects as $project)
-                	    <div class="_column {{ $project->allTags }}" data-order-type="{{{ $project->allTags }}}" data-order-created="{{{ $project->created_at }}}">
-                            @include('portfolio::partials.thumb', ['project' => $project])
-                	    </div>
-                	@endforeach
-
-                	@if(isset($tags) && count($tags) > 0)
-                        @foreach($tags as $tag)
-                            <div class="_column -{{ str_slug($tag->title) }} -type" data-order-type="-{{ str_slug($tag->title) }}" data-order-created="0000">
-                                <a class="Project -divider" data-filter=".project" onclick="iso.arrange({filter: '.-{{ str_slug($tag->title) }}'})">
-                                    <img src="{{ url() }}/img/logo_symbol.svg" onerror="this.onerror=null; this.src='{{ url() }}/img/logo_symbol.png'" alt="{{{ $project->title }}}"/>
-                                    <div class="_titleWrapper">
-                    	                <h3 class="_title">{{{ $tag->title }}}&nbsp;</h3>
-                    	            </div>
-                                </a>
+                <div class="well">
+                    <h2>All Projects</h2>
+                    <div class="row">
+                	    @foreach($projects as $key => $project)
+                            <div class="col-md-4">
+                                @include('portfolio::partials.thumb', ['project' => $project])
                             </div>
+
+                            @if($key % 3 == 2)
+                                <div class="clearfix visible-md-block visible-lg-block"></div>
+                            @endif
+
                         @endforeach
-                    @endif
+                    </div>
                 </div>
             @else
-            	<p>&hellip;or not. There arn&lsquo;t any projects to show at the moment, probably because I&lsquo;m fiddling around with something on this site.</p>
-            	<p>Sorry, please check back later and there might be something to see.</p>
+            	<p>No Projects found</p>
             @endif
-
         </div>
-    </section>
-@stop
 
-@section('sidebar')
-@stop
-
-@section('scripts')
-    <script src="{{ url() }}/js/projects.js" type="text/javascript"></script>
-
-    <script type="text/javascript">
-        // or with vanilla JS
-		var container = document.querySelector('#isotope');
-		var iso;
-		// initialize Isotope after all images have loaded
-		imagesLoaded( container, function() {
-		  iso = new Isotope( container, {
-		    // options
-		    itemSelector: '._column',
-            //layoutMode: 'packery'
-            //filter: '.image'
-
-            getSortData: {
-                type: '[data-order-type]',
-                created: '[data-order-created]' // value of attribute
-            },
-
-            sortBy: [ 'type', 'created' ],
-            sortAscending: {
-                type: true,
-                created: false
-            }
-
-		  });
-
-		  //iso.options.filter = '.image';
-
-		  iso.arrange({
-			  // item element provided as argument
-			  //filter: '.project'
-		   });
-
-
-
-
-
-		  console.log(iso);
-		  //.isotope();
-		});
-    </script>
-
-@stop
+        <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+        <!-- Latest compiled and minified JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+    </body>
+</html>
