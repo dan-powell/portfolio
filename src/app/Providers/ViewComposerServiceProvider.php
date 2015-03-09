@@ -1,4 +1,4 @@
-<?php namespace DanPowell\Portfolio\App\Providers;
+<?php namespace DanPowell\Portfolio\Providers;
 
 use View;
 use Illuminate\Support\ServiceProvider;
@@ -12,7 +12,7 @@ class ViewComposerServiceProvider extends ServiceProvider {
      */
     public function register()
     {
-        $this->app->view->composer('portfolio::partials.list','DanPowell\Portfolio\App\Http\ViewComposers\ProjectListComposer');
+        $this->app->view->composer('portfolio::partials.list','DanPowell\Portfolio\Http\ViewComposers\ProjectListComposer');
     }
 
 }

@@ -1,7 +1,7 @@
 <?php namespace DanPowell\Portfolio;
 
-use DanPowell\Portfolio\App\Console\Commands\Seed;
-use DanPowell\Portfolio\App\Console\Commands\Migrate;
+use DanPowell\Portfolio\Console\Commands\Seed;
+use DanPowell\Portfolio\Console\Commands\Migrate;
 
 class PortfolioServiceProvider extends \Illuminate\Support\ServiceProvider
 {
@@ -13,13 +13,13 @@ class PortfolioServiceProvider extends \Illuminate\Support\ServiceProvider
      */
     public function register()
     {
-        $this->app->register('DanPowell\Portfolio\App\Providers\ViewComposerServiceProvider');
+        $this->app->register('DanPowell\Portfolio\Providers\ViewComposerServiceProvider');
 
         // Include package routes
-        include __DIR__.'/app/Http/routes.php';
+        include __DIR__.'/Http/routes.php';
 
         // Tell Laravel where to load the views from
-        $this->loadViewsFrom(__DIR__.'/resources/views', 'portfolio');
+        $this->loadViewsFrom(__DIR__.'/../resources/views', 'portfolio');
 
 
         $this->app->bindShared('command.portfolio.seed', function ($app) {
@@ -40,17 +40,17 @@ class PortfolioServiceProvider extends \Illuminate\Support\ServiceProvider
 
         // Publish Views
         $this->publishes([
-            __DIR__.'/resources/views' => base_path('resources/views/vendor/portfolio'),
+            __DIR__.'/../resources/views' => base_path('resources/views/vendor/portfolio'),
         ], 'views');
 
         // Publish Config
         $this->publishes([
-            __DIR__.'/config/portfolio.php' => config_path('portfolio.php'),
+            __DIR__.'/../config/portfolio.php' => config_path('portfolio.php'),
         ], 'config');
 
         // Publish Migrations
         $this->publishes([
-            __DIR__.'/database/migrations' => $this->app->databasePath().'/migrations',
+            __DIR__.'/../database/migrations' => $this->app->databasePath().'/migrations',
         ], 'migrations');
 
     }

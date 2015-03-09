@@ -1,4 +1,4 @@
-<?php namespace DanPowell\Portfolio\App\Models;
+<?php namespace DanPowell\Portfolio\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -11,7 +11,7 @@ class Page extends Model {
 
     public function sections()
     {
-        return $this->morphMany('DanPowell\Portfolio\App\Models\Section', 'attachment')->orderBy('rank', 'ASC');
+        return $this->morphMany('DanPowell\Portfolio\Models\Section', 'attachment')->orderBy('rank', 'ASC');
     }
 
 }

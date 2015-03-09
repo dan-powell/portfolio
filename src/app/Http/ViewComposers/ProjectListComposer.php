@@ -1,7 +1,7 @@
-<?php namespace DanPowell\Portfolio\App\Http\ViewComposers;
+<?php namespace DanPowell\Portfolio\Http\ViewComposers;
 
 use Illuminate\Contracts\View\View;
-use DanPowell\Portfolio\App\Models\Project;
+use DanPowell\Portfolio\Models\Project;
 
 class ProjectListComposer {
 

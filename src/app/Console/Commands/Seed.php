@@ -1,11 +1,11 @@
-<?php namespace DanPowell\Portfolio\App\Console\Commands;
+<?php namespace DanPowell\Portfolio\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
-use DanPowell\Portfolio\App\Models\Project;
-use DanPowell\Portfolio\App\Models\Section;
-use DanPowell\Portfolio\App\Models\Tag;
+use DanPowell\Portfolio\Models\Project;
+use DanPowell\Portfolio\Models\Section;
+use DanPowell\Portfolio\Models\Tag;
 
 class Seed extends Command {
 	/**
@@ -66,7 +66,7 @@ class Seed extends Command {
 		  Section::create(array(
 		    'markup' => $faker->paragraph(rand(3, 8)),
 		    'attachment_id' => $faker->numberBetween(1, 20),
-		    'attachment_type' => 'DanPowell\Portfolio\App\Models\Project'
+		    'attachment_type' => 'DanPowell\Portfolio\Models\Project'
 		  ));
 		}
 
@@ -76,7 +76,7 @@ class Seed extends Command {
 		  DB::table('taggables')->insert(array(
 		    'tag_id' => $faker->numberBetween(1, 10),
 		    'taggable_id' => $faker->numberBetween(1, 20),
-            'taggable_type' => 'DanPowell\Portfolio\App\Models\Project'
+            'taggable_type' => 'DanPowell\Portfolio\Models\Project'
 		  ));
 		}
 

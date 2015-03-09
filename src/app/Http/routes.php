@@ -11,10 +11,10 @@
 |
 */
 
-Route::get('/portfolio', array('as' => 'projects.index', 'uses' => 'DanPowell\Portfolio\App\Http\Controllers\ProjectsController@index'));
+Route::get('/portfolio', array('as' => 'projects.index', 'uses' => 'DanPowell\Portfolio\Http\Controllers\ProjectsController@index'));
 
-Route::get('/portfolio/{slug}', ['as' => 'projects.show', 'uses' => 'DanPowell\Portfolio\App\Http\Controllers\ProjectsController@show']);
+Route::get('/portfolio/{slug}', ['as' => 'projects.show', 'uses' => 'DanPowell\Portfolio\Http\Controllers\ProjectsController@show']);
 
-Route::get('/portfolio/{slug}/{pageSlug}', ['as' => 'projects.page', 'uses' => 'DanPowell\Portfolio\App\Http\Controllers\ProjectsController@page']);
+Route::get('/portfolio/{slug}/{pageSlug}', ['as' => 'projects.page', 'uses' => 'DanPowell\Portfolio\Http\Controllers\ProjectsController@page']);
 
 

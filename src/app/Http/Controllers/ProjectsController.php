@@ -1,12 +1,12 @@
-<?php namespace DanPowell\Portfolio\App\Http\Controllers;
+<?php namespace DanPowell\Portfolio\Http\Controllers;
 
 
 use Illuminate\Routing\Controller;
 
 // Load up the models
-use DanPowell\Portfolio\App\Models\Project;
-use DanPowell\Portfolio\App\Models\Page;
-use DanPowell\Portfolio\App\Models\Tag;
+use DanPowell\Portfolio\Models\Project;
+use DanPowell\Portfolio\Models\Page;
+use DanPowell\Portfolio\Models\Tag;
 
 
 class ProjectsController extends Controller {
