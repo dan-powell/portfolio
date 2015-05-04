@@ -1,7 +1,7 @@
 <?php namespace DanPowell\Portfolio;
 
 use DanPowell\Portfolio\Console\Commands\Seed;
-use DanPowell\Portfolio\Console\Commands\Migrate;
+use DanPowell\Portfolio\Console\Commands\AddUser;
 
 class PortfolioServiceProvider extends \Illuminate\Support\ServiceProvider
 {
@@ -21,9 +21,12 @@ class PortfolioServiceProvider extends \Illuminate\Support\ServiceProvider
         // Tell Laravel where to load the views from
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'portfolio');
 
-
+        // Create new instances of each command when called
         $this->app->bindShared('command.portfolio.seed', function ($app) {
             return new Seed();
+        });
+        $this->app->bindShared('command.portfolio.adduser', function ($app) {
+            return new AddUser();
         });
 
     }
@@ -36,7 +39,9 @@ class PortfolioServiceProvider extends \Illuminate\Support\ServiceProvider
     public function boot()
     {
 
+        // Setup some commands
         $this->commands('command.portfolio.seed');
+        $this->commands('command.portfolio.adduser');
 
         // Publish Views
         $this->publishes([
