@@ -1,0 +1,30 @@
+{
+    "title" : "Portfolio",
+    "proxy" : "portfolio.dev",
+    "js": [
+        {
+            "input": [
+                "./src/resources/assets/js/app.js",
+                "./src/resources/assets/js/controllers/project.js",
+                "./src/resources/assets/js/main.js"
+            ],
+            "output": "./src/public/admin/js/main.js"
+        },
+        {
+            "input": [
+                "./bower_components/angular/angular.min.js",
+                "./bower_components/angular-route/angular-route.min.js",
+                "./bower_components/ng-table/dist/ng-table.min.js"
+            ],
+            "output": "./src/public/admin/js/plugins.js"
+        }
+    ],
+    "less": [
+        {
+            "input": [
+                "./src/resources/assets/less/main.less"
+            ],
+            "output": "./src/public/admin/css/main.css"
+        }
+    ]
+}

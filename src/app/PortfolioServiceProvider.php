@@ -43,6 +43,11 @@ class PortfolioServiceProvider extends \Illuminate\Support\ServiceProvider
         $this->commands('command.portfolio.seed');
         $this->commands('command.portfolio.adduser');
 
+        // Publish Frontend Assets
+        $this->publishes([
+            __DIR__.'/../public' => public_path('vendor/portfolio'),
+        ], 'public');
+
         // Publish Views
         $this->publishes([
             __DIR__.'/../resources/views' => base_path('resources/views/vendor/portfolio'),

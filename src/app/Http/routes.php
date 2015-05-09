@@ -18,3 +18,19 @@ Route::get('/portfolio/{slug}', ['as' => 'projects.show', 'uses' => 'DanPowell\P
 Route::get('/portfolio/{slug}/{pageSlug}', ['as' => 'projects.page', 'uses' => 'DanPowell\Portfolio\Http\Controllers\ProjectsController@page']);
 
 
+// Admin area
+Route::group(['prefix' => 'admin', 'middleware' => ['auth']], function()
+{
+
+    Route::get('/', ['as' => 'admin.dashboard', 'uses' => 'DanPowell\Portfolio\Http\Controllers\Admin\AdminController@index']);
+
+    // RESTful API
+    Route::group(['prefix' => 'api'], function()
+    {
+
+        // Admin project items
+        Route::resource('project', 'DanPowell\Portfolio\Http\Controllers\Api\ProjectController', ['except' => ['show', 'create']]);
+
+    });
+
+});

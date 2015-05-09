@@ -4,6 +4,23 @@ use Illuminate\Database\Eloquent\Model;
 
 class Project extends Model {
 
+    protected $fillable = [
+        'title',
+        'slug',
+        'seo_title',
+        'seo_description',
+        'markup',
+        'scripts',
+        'url',
+        'featured',
+        'template'
+    ];
+
+    public static $rules = [
+        'title' => 'required',
+    ];
+
+
 	public function tags()
     {
         return $this->morphToMany('DanPowell\Portfolio\Models\Tag', 'taggable');

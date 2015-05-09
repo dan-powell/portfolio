@@ -1,0 +1,37 @@
+<a href="#project/create" class="btn btn-primary pull-right">Create new project</a>
+
+<h2>Projects</h2>
+
+
+<table class="table" ng-table="tableParams" show-filter="true" >
+    <tr ng-repeat="project in $data">
+        <td data-title="'ID'" sortable="'id'" filter="{ 'id': 'text' }">
+            {{project.id}}
+        </td>
+        <td data-title="'Title'" sortable="'title'" filter="{ 'title': 'text' }">
+            <a href="#project/{{ project.id }}/edit">
+                {{project.title}}
+            </a>
+        </td>
+        <td data-title="'Created'" sortable="'created_at'">
+            {{project.created_at}}
+        </td>
+        <td>
+            <a href="#project/{{ project.id }}/edit" class="btn btn-primary">Edit</a>
+            <a ng-click="delete(project.id)" class="btn btn-danger">Delete</a>
+        </td>
+    </tr>
+</table>
+
+
+
+
+
+<div class="list-group">
+
+    <a class="list-group-item" ng-repeat="project in data" href="#project/{{ project.id }}/edit">{{ project.title }}</a>
+
+</div>
+
+
+

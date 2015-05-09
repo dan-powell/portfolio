@@ -1,0 +1,27 @@
+{
+  "name": "portfolio",
+  "version": "0.1.0",
+  "authors": [
+    "Dan Powell <dan@autumnrain.co.uk>"
+  ],
+  "description": "Frontend Assets",
+  "homepage": "https://github.com/dan-powell/portfolio",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.3.*",
+    "jquery-legacy": "jquery#^1",
+    "jquery": "~2.1.*",
+    "fontawesome": "~4.2.*",
+    "isotope": "~2.1.*",
+    "angular": "~1.3.15",
+    "angular-route": "~1.3.15",
+    "ng-table": "~0.5.4"
+  }
+}

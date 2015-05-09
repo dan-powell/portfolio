@@ -1,0 +1,43 @@
+<div class="alert alert-danger" ng-repeat="error in errors">
+    <ul>
+        <li ng-repeat="desc in error">{{ desc }}</li>
+    </ul>
+</div>
+
+<h2>Project: {{ data.title }}</h2>
+
+
+<form>
+
+    <p><strong>ID:</strong> {{ data.id }}</p>
+
+    <p><strong>Last Updated:</strong> {{ data.updated_at }}</p>
+
+    <div class="form-group">
+        <label for="title">Title</label>
+        <input type="text" id="title" class="form-control" ng-model="data.title" placeholder="Enter project name"/>
+
+        <div ng-show="errors.title" style="color: #f33;">
+            <p ng-repeat="error in errors.title" class="help-block">{{ error }}</p>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="markup">Body text</label>
+        <textarea id="markup" class="form-control" ng-model="data.markup" placeholder="Enter project content" rows="5"></textarea>
+
+        <div ng-show="errors.markup" style="color: #f33;">
+            <p ng-repeat="error in errors.markup" class="help-block">{{ error }}</p>
+        </div>
+    </div>
+
+    <div class="checkbox">
+        <label>
+            <input type="checkbox" id="featured" ng-model="data.featured" ng-true-value="'1'" ng-false-value="'0'"/>
+            Featured
+        </label>
+    </div>
+
+    <button ng-click="save()" class="btn btn-default">Save</button>
+
+</form>
