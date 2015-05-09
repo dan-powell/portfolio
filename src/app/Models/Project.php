@@ -18,6 +18,9 @@ class Project extends Model {
 
     public static $rules = [
         'title' => 'required',
+        'slug' => 'required',
+        'featured' => 'integer',
+        'url' => 'url'
     ];
 
 

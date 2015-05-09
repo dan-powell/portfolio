@@ -16,6 +16,7 @@
         <ul class="nav nav-pills">
             <li><a href="#dashboard">Dashboard</a></li>
             <li><a href="#project">Projects</a></li>
+            <li class="pull-right"><a href="/portfolio" target="_blank">View Portfolio</a></li>
         </ul>
 
         <div ng-view class="well">

@@ -3,6 +3,8 @@
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+
 
 // Load up the models
 use DanPowell\Portfolio\Models\Project;
@@ -42,8 +44,13 @@ class ProjectController extends Controller {
 
         $project = new Project();
 
+
         // Update the item with request data
         $project->fill($request->all());
+
+        // Slugify the slug
+        $project->slug = Str::slug($request->get('slug'));
+
 
         // Check if the data saved OK
         if (!$project->save()) {
@@ -107,6 +114,9 @@ class ProjectController extends Controller {
             // Update the item with request data
             $project->fill($request->all());
 
+            // Slugify the slug
+            $project->slug = Str::slug($request->get('slug'));
+
             // Check if the data saved OK
             if (!$project->save()) {
 
@@ -139,20 +149,17 @@ class ProjectController extends Controller {
             return response()->json(['errors' => ['Item not found, perhaps it was deleted?']], 422);
         } else {
 
-            // Success - Return project as JSON object
-    	    return response()->json($project);
+            if (!$project->delete()) {
+
+                // Fail - Return error as JSON
+                return response()->json(['errors' => ['Error removing DB entry']], 422);
+            } else {
+
+                // Success - Return item ID as JSON
+                return response()->json(['id' => $project->id], 200);
+            }
+
     	}
-
-
-        if (!$project->delete()) {
-
-            // Fail - Return error as JSON
-            return response()->json(['errors' => ['Error removing DB entry']], 422);
-        } else {
-
-            // Success - Return item ID as JSON
-            return response()->json(['id' => $project->id], 200);
-        }
 
 	}
 
