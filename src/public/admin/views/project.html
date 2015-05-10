@@ -1,7 +1,13 @@
+<div class="alert alert-danger" ng-show="errors">
+    <ul ng-repeat="error in errors">
+        <li ng-repeat="desc in error">{{ desc }}</li>
+    </ul>
+</div>
+
+
 <a href="#project/create" class="btn btn-primary pull-right">Create new project</a>
 
 <h2>Projects</h2>
-
 
 <table class="table" ng-table="tableParams" show-filter="true" >
     <tr ng-repeat="project in $data">

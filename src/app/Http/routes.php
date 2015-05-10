@@ -25,7 +25,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth']], function()
     Route::get('/', ['as' => 'admin.dashboard', 'uses' => 'DanPowell\Portfolio\Http\Controllers\Admin\AdminController@index']);
 
     // RESTful API
-    Route::group(['prefix' => 'api'], function()
+    Route::group(['prefix' => 'api', 'middleware' => ['auth']], function()
     {
 
         // Admin project items

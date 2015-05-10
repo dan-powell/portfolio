@@ -41,7 +41,13 @@ app.controller('ProjectController', function($scope, $filter, ngTableParams, $ht
 
         }).
         error(function(data, status, headers, config) {
-            $scope.errors = data;
+            console.log(status);
+            if (status == 401) {
+                $scope.errors = [{"Logged out" : "You have been logged out. Refresh the page to log back in again"}];
+            } else {
+                $scope.errors = data;
+            }
+
         });
 
     };
@@ -73,12 +79,16 @@ app.controller('ProjectCreateController', function($scope, $http, $route, $route
     $scope.save = function() {
 
         $http.post('/admin/api/project', $scope.data).
-          success(function(data, status, headers, config) {
+            success(function(data, status, headers, config) {
                 $location.path( "/project" );
-          }).
-          error(function(data, status, headers, config) {
-                $scope.errors = data;
-          });
+            }).
+            error(function(data, status, headers, config) {
+                if (status == 401) {
+                    $scope.errors = [{"Logged out" : "You have been logged out. Refresh the page to log back in again"}];
+                } else {
+                    $scope.errors = data;
+                }
+            });
     }
 
 });
@@ -89,23 +99,31 @@ app.controller('ProjectEditController', function($scope, $http, $route, $routePa
     $scope.data = {};
 
     $http.get('/admin/api/project/' + $routeParams.id + '/edit').
-          success(function(data, status, headers, config) {
-                $scope.data = data;
-          }).
-          error(function(data, status, headers, config) {
+        success(function(data, status, headers, config) {
+            $scope.data = data;
+        }).
+        error(function(data, status, headers, config) {
+            if (status == 401) {
+                $scope.errors = [{"Logged out" : "You have been logged out. Refresh the page to log back in again"}];
+            } else {
                 $scope.errors = data;
-          });
+            }
+        });
 
 
     $scope.save = function() {
 
         $http.put('/admin/api/project/' + $routeParams.id, $scope.data).
-          success(function(data, status, headers, config) {
+            success(function(data, status, headers, config) {
                 $location.path( "/project" );
-          }).
-          error(function(data, status, headers, config) {
-                $scope.errors = data;
-          });
+            }).
+            error(function(data, status, headers, config) {
+                if (status == 401) {
+                    $scope.errors = [{"Logged out" : "You have been logged out. Refresh the page to log back in again"}];
+                } else {
+                    $scope.errors = data;
+                }
+            });
     }
 
 });
