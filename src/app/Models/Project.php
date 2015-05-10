@@ -40,4 +40,16 @@ class Project extends Model {
     }
 
 
+    protected static function boot() {
+        parent::boot();
+
+        // When deleting a project we should also clean up any relationships
+        static::deleting(function($project) {
+             $project->sections()->delete();
+             $project->pages()->delete();
+             $project->tags()->detach();
+        });
+    }
+
+
 }
