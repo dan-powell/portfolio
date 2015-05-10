@@ -34,8 +34,7 @@ class AddUser extends Command {
         $user  = array(
 	        'email' => $this->argument('username'),
             'name' => $this->argument('username'),
-	        'password' => Hash::make($this->argument('password')),
-            'role' => $this->argument('role'),
+	        'password' => Hash::make($this->argument('password'))
         );
 
         if ($this->argument('overwrite') == false) {
@@ -60,7 +59,6 @@ class AddUser extends Command {
         return [
             ['username', InputArgument::REQUIRED, 'New user’s Username/Email'],
             ['password', InputArgument::REQUIRED, 'New user’s Password'],
-            ['role', InputArgument::OPTIONAL, 'Role (Integer). 0 is normal user.', 0],
             ['overwrite', InputArgument::OPTIONAL, 'Overwrite corresponding user ID', false],
         ];
     }
