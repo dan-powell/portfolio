@@ -9,7 +9,7 @@ use DanPowell\Portfolio\Models\Page;
 use DanPowell\Portfolio\Models\Tag;
 
 
-class ProjectsController extends Controller {
+class ProjectController extends Controller {
 
     /**
     *   Return a view listing all of the projects
