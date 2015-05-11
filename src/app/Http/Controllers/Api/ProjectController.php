@@ -4,10 +4,11 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-
+use Validator;
 
 // Load up the models
 use DanPowell\Portfolio\Models\Project;
+use DanPowell\Portfolio\Models\Section;
 use DanPowell\Portfolio\Models\Page;
 use DanPowell\Portfolio\Models\Tag;
 
@@ -76,7 +77,7 @@ class ProjectController extends Controller {
     public function edit($id)
 	{
     	// Find the item by ID
-        $project = Project::find($id);
+        $project = Project::with(['sections', 'tags', 'pages'])->find($id);
 
         if (!$project) {
 
@@ -123,6 +124,46 @@ class ProjectController extends Controller {
                 // Fail - Return error as JSON
                 return response()->json(['errors' => ['Error updating DB entry']], 422);
             } else {
+
+                if ($request->get('sections')) {
+
+                    $errors = [];
+
+                    foreach($request->get('sections') as $sectionData) {
+
+                        $v = Validator::make($sectionData, Section::$rules);
+
+                        if ($v->fails()) {
+
+                            //array_push($errors, $v->errors());
+                            return response()->json($v->errors(), 422);
+                        }
+
+                    }
+
+
+                    Section::where('attachment_id', '=', $project->id)
+                        ->where('attachment_type', '=', get_class($project))
+                        ->delete();
+
+
+                    foreach($request->get('sections') as $sectionData) {
+
+
+
+
+
+
+                        $section = new Section($sectionData);
+
+                        $project->sections()->save($section);
+
+                    }
+
+
+                }
+
+
 
                 // Success - Return item ID as JSON
                 return response()->json(['id' => $project->id], 200);

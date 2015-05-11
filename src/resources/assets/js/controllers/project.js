@@ -111,6 +111,19 @@ app.controller('ProjectEditController', function($scope, $http, $route, $routePa
         });
 
 
+    $scope.addSection = function() {
+
+        $scope.data.sections.push({});
+
+    };
+
+    $scope.deleteSection = function(index) {
+
+        $scope.data.sections.splice(index, 1);
+
+    };
+
+
     $scope.save = function() {
 
         $http.put('/admin/api/project/' + $routeParams.id, $scope.data).

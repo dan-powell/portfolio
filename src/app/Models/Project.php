@@ -10,6 +10,7 @@ class Project extends Model {
         'seo_title',
         'seo_description',
         'markup',
+        'styles',
         'scripts',
         'url',
         'featured',

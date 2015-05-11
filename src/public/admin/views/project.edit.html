@@ -6,7 +6,9 @@
 
 <h2>Project: {{ data.title }}</h2>
 
-<form>
+<form class="row">
+
+    <div class="col-sm-6">
 
     <p><strong>ID:</strong> {{ data.id }}</p>
 
@@ -78,6 +80,48 @@
         <p ng-repeat="error in errors.template" class="help-block">{{ error }}</p>
     </div>
 
-    <button ng-click="save()" class="btn btn-default">Save</button>
+    </div>
+    <div class="col-sm-6">
+
+    <h3>Sections</h3>
+
+    <button ng-click="addSection()" class="btn btn-success">Add Section</button>
+
+    <div class="well" ng-repeat="section in data.sections">
+
+        <p><strong>Section ID:</strong> {{ section.id }}</p>
+
+        <button ng-click="deleteSection($index)" class="btn btn-danger">Delete Section</button>
+
+        <div class="form-group" ng-class="{'has-error':errors.markup}">
+            <label for="section-markup" class="control-label">Body text</label>
+            <textarea id="section-markup" class="form-control" ng-model="section.markup" placeholder="Enter project content" rows="5"></textarea>
+            <p ng-repeat="error in errors.markup" class="help-block">{{ error }}</p>
+        </div>
+
+        <div class="form-group" ng-class="{'has-error':errors.styles}">
+            <label for="section-styles" class="control-label">Styles</label>
+            <textarea id="section-styles" class="form-control" ng-model="section.styles" placeholder="Enter CSS" rows="5"></textarea>
+            <p ng-repeat="error in errors.styles" class="help-block">{{ error }}</p>
+        </div>
+
+        <div class="form-group" ng-class="{'has-error':errors.scripts}">
+            <label for="scripts" class="control-label">Scripts</label>
+            <textarea id="scripts" class="form-control" ng-model="section.scripts" placeholder="Enter Javascript" rows="5"></textarea>
+            <p ng-repeat="error in errors.scripts" class="help-block">{{ error }}</p>
+        </div>
+
+        <div class="form-group" ng-class="{'has-error':errors.url}">
+            <label for="section-rank" class="control-label">Rank</label>
+            <input type="text" id="section-rank" class="form-control" ng-model="section.rank" placeholder="Rank (Integer)"/>
+        <p ng-repeat="error in errors.rank" class="help-block">{{ error }}</p>
+    </div>
+
+    </div>
+    </div>
+
+
+
+    <button ng-click="save()" class="btn btn-primary">Save</button>
 
 </form>
