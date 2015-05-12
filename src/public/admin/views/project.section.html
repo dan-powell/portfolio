@@ -7,16 +7,16 @@
 
 <a href="#project/create" class="btn btn-primary pull-right">Create new project</a>
 
-<h2>Projects</h2>
+<h2>Project Sections</h2>
 
 <table class="table" ng-table="tableParams" show-filter="true" >
-    <tr ng-repeat="project in $data">
+    <tr ng-repeat="section in $data">
         <td data-title="'ID'" sortable="'id'" filter="{ 'id': 'text' }">
-            {{project.id}}
+            {{section.id}}
         </td>
         <td data-title="'Title'" sortable="'title'" filter="{ 'title': 'text' }">
             <a href="#project/{{ project.id }}/edit">
-                {{project.title}}
+                {{section.rank}}
             </a>
         </td>
         <td data-title="'Created'" sortable="'created_at'">
@@ -24,7 +24,6 @@
         </td>
         <td>
             <a href="#project/{{ project.id }}/edit" class="btn btn-primary">Edit</a>
-            <a href="#project/{{ project.id }}/section" class="btn btn-info">Sections</a>
             <a ng-click="delete(project.id)" class="btn btn-danger">Delete</a>
         </td>
     </tr>

@@ -29,6 +29,11 @@ app.config(['$routeProvider',
                 templateUrl: 'vendor/portfolio/admin/views/project.edit.html',
                 controller: 'ProjectEditController'
             }).
+
+            when('/project/:project_id/section', {
+                templateUrl: 'vendor/portfolio/admin/views/project.section.html',
+                controller: 'ProjectSectionController'
+            }).
             otherwise({
                 redirectTo: '/admin'
             });

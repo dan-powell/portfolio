@@ -6,6 +6,7 @@
             "input": [
                 "./src/resources/assets/js/app.js",
                 "./src/resources/assets/js/controllers/project.js",
+                "./src/resources/assets/js/controllers/section.js",
                 "./src/resources/assets/js/main.js"
             ],
             "output": "./src/public/admin/js/main.js"
