@@ -29,10 +29,14 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth']], function()
     {
 
         // Admin project items
-        Route::resource('project', 'DanPowell\Portfolio\Http\Controllers\Api\ProjectController', ['except' => ['show', 'create']]);
+        Route::resource('project', 'DanPowell\Portfolio\Http\Controllers\Api\ProjectController', ['except' => ['create', 'edit']]);
 
         // Admin project section items
-        Route::resource('project.section', 'DanPowell\Portfolio\Http\Controllers\Api\ProjectSectionController', ['except' => ['edit', 'create']]);
+        Route::resource('project.section', 'DanPowell\Portfolio\Http\Controllers\Api\ProjectSectionController', ['except' => ['create', 'edit']]);
+
+        // Admin project section items
+        Route::resource('section', 'DanPowell\Portfolio\Http\Controllers\Api\SectionController', ['except' => ['create', 'edit']]);
+
 
     });
 

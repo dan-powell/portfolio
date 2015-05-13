@@ -6,10 +6,10 @@ use Illuminate\Http\Request;
 use DanPowell\Portfolio\Repositories\RestfulRepository;
 
 // Load up the models
-use DanPowell\Portfolio\Models\Project;
+use DanPowell\Portfolio\Models\Section;
 
 
-class ProjectController extends Controller {
+class SectionController extends Controller {
 
 
     /**
@@ -35,7 +35,7 @@ class ProjectController extends Controller {
      */
 	public function index()
 	{
-        $project = new Project;
+        $project = new Section;
     	return $this->restfulRepository->index($project);
 	}
 
@@ -49,7 +49,7 @@ class ProjectController extends Controller {
      */
     public function show($id)
 	{
-        $project = new Project;
+        $project = new Section;
         return $this->restfulRepository->show($project, $id);
 	}
 
@@ -63,7 +63,7 @@ class ProjectController extends Controller {
      */
     public function store(Request $request)
 	{
-        $project = new Project;
+        $project = new Section;
         return $this->restfulRepository->store($project, $request);
 	}
 
@@ -75,7 +75,7 @@ class ProjectController extends Controller {
      */
     public function update($id, Request $request)
 	{
-        $project = new Project;
+        $project = new Section;
         return $this->restfulRepository->update($project, $id, $request);
 	}
 
