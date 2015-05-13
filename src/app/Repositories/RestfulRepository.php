@@ -106,6 +106,8 @@ class RestfulRepository
      */
     public function store($class, $request)
     {
+        // Modify some of the input data
+        $this->modifyRequestData($request);
 
         // Return errors as JSON if request does not validate against model rules
         $v = Validator::make($request->all(), $class::$rules);
@@ -114,7 +116,6 @@ class RestfulRepository
         {
             return response()->json($v->errors(), 422);
         }
-
 
         // Update the item with request data
         $class->fill($request->all());
@@ -140,7 +141,7 @@ class RestfulRepository
 
 
     /**
-     * Updated existing record of model
+     * Update existing record of model
      *
      * @param $class Class of model to save data as (Eloquent Model)
      * @param $id ID of record to update
@@ -150,6 +151,9 @@ class RestfulRepository
      */
     public function update($class, $id, $request)
     {
+        // Modify some of the input data
+        $this->modifyRequestData($request);
+
         // Return errors as JSON if request does not validate against model rules
         $v = Validator::make($request->all(), $class::$rules);
 
@@ -170,8 +174,6 @@ class RestfulRepository
 
             // Update the item with request data
             $collection->fill($request->all());
-
-            $this->modifyRequestData($collection, $request);
 
             // Check if the data saved OK
             if (!$collection->save()) {
@@ -194,24 +196,20 @@ class RestfulRepository
 
 
     /**
-     * Performs a few common checks & transform data from reequest
+     * Perform a few common checks & transforms data from reequest
      *
-     * @param $collection data colection to modify (Eloquent Collection)
-     * @param $request data to save (Illuminate Request)
+     * @param $request data to modify (Illuminate Request)
      *
-     * @return data collection of newly updated record as JSON response (Http Response)
+     * @return Illuminate Request
      */
-    private function modifyRequestData($collection, $request)
+    private function modifyRequestData($request)
     {
-
-        // Do a few basic adjustments to specific data-types before saving
-
         // Slugify the slug
         if ($request->get('slug')) {
-            $collection->slug = Str::slug($request->get('slug'));
+            $request->merge(['slug' => Str::slug($request->get('slug'))]);
         }
 
-        return $collection;
+        return $request;
     }
 
 }
