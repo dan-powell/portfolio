@@ -1,4 +1,4 @@
-app.controller('ProjectController', function($scope, $filter, ngTableParams, $http, RestfulApi) {
+app.controller('ProjectController', function($scope, $filter, ngTableParams, $http, RestfulApi, notificationService) {
 
     // Initialise an empty array to hold data
     $scope.data = [];
@@ -34,13 +34,9 @@ app.controller('ProjectController', function($scope, $filter, ngTableParams, $ht
 
         $http.get(RestfulApi.getRoute('project', 'index')).
         success(function(data, status, headers, config) {
-
             RestfulApi.success(data, status, headers, config);
-
             $scope.data = data;
-
             $scope.tableParams.reload();
-
         }).
         error(function(data, status, headers, config) {
             RestfulApi.error(data, status, headers, config);
@@ -49,26 +45,35 @@ app.controller('ProjectController', function($scope, $filter, ngTableParams, $ht
     };
 
 
-    $scope.delete = function(id) {
+    $scope.delete = function(id, title) {
 
-        $http.delete('/admin/api/project/' + id).
-          success(function(data, status, headers, config) {
-                $scope.init();
-          }).
-          error(function(data, status, headers, config) {
-                $scope.errors = data;
-          });
+
+
+
+
+        var r = confirm('Are you sure you wish to delete ' + title + '?');
+        if (r == true) {
+
+            $http.delete('/admin/api/project/' + id).
+                success(function(data, status, headers, config) {
+                    notificationService.add("Project '" + data.title + "' deleted successfully", 'info');
+                    $scope.init();
+                }).
+                error(function(data, status, headers, config) {
+                    RestfulApi.error(data, status, headers, config);
+                    $scope.errors = data;
+                });
+        }
     }
 
     $scope.init();
+
 
 });
 
 
 
-
-
-app.controller('ProjectCreateController', function($scope, $http, $stateParams, $location, RestfulApi) {
+app.controller('ProjectCreateController', function($scope, $http, $stateParams, $state, RestfulApi, notificationService) {
 
     $scope.data = {};
 
@@ -76,33 +81,38 @@ app.controller('ProjectCreateController', function($scope, $http, $stateParams, 
 
         $http.post(RestfulApi.getRoute('project', 'create'), $scope.data).
             success(function(data, status, headers, config) {
-                $location.path( "/project" );
+                RestfulApi.success(data, status, headers, config);
+                notificationService.add("Project '" + data.title + "' updated successfully", 'success');
+                if (!apply) {
+                    $state.go( "project.index" );
+                }
             }).
             error(function(data, status, headers, config) {
                 RestfulApi.error(data, status, headers, config);
+                $scope.errors = data;
             });
     }
 
 });
 
 
-app.controller('ProjectEditController', function($scope, $http, $stateParams, $location, RestfulApi) {
+app.controller('ProjectEditController', function($scope, $http, $stateParams, $state, RestfulApi, notificationService) {
 
     $scope.data = {};
 
     $http.get(RestfulApi.getRoute('project', 'show', $stateParams.id)).
         success(function(data, status, headers, config) {
+            RestfulApi.success(data, status, headers, config);
             $scope.data = data;
+            $scope.slug = $scope.data.slug;
         }).
         error(function(data, status, headers, config) {
-            if (status == 401) {
-                $scope.errors = [{"Logged out" : "You have been logged out. Refresh the page to log back in again"}];
-            } else {
-                $scope.errors = data;
-            }
+            RestfulApi.error(data, status, headers, config);
+            $scope.errors = data;
         });
 
 
+/*
     $scope.addSection = function() {
 
         $scope.data.sections.push({});
@@ -114,17 +124,48 @@ app.controller('ProjectEditController', function($scope, $http, $stateParams, $l
         $scope.data.sections.splice(index, 1);
 
     };
+*/
 
 
-    $scope.save = function() {
+    $scope.slugWarning = function() {
+        notificationService.removeByType('warning');
+        if ($scope.slug != $scope.data.slug) {
+            notificationService.add("You have modified the project slug. Please be aware that this may break hyperlinks to this project.", 'warning');
+        }
+    }
 
-        $http.put(RestfulApi.getRoute('project', 'update', $stateParams.id), $scope.data).
+
+    $scope.save = function(apply) {
+        apply = typeof apply !== 'undefined' ? apply : false;
+
+        if ($scope.slug != $scope.data.slug) {
+            if (confirm('Are you sure you wish to change the slug?')) {
+                $scope.put(apply);
+            } else {
+                $scope.data.slug = $scope.slug;
+                notificationService.removeByType('warning');
+                notificationService.add("Slug reset", 'info');
+            }
+        } else {
+            $scope.put(apply);
+        }
+
+    }
+
+    $scope.put = function(apply) {
+            $http.put(RestfulApi.getRoute('project', 'update', $stateParams.id), $scope.data).
             success(function(data, status, headers, config) {
-                $location.path( "/project/index" );
+                RestfulApi.success(data, status, headers, config);
+                notificationService.add("Project '" + data.title + "' updated successfully", 'success');
+                if (!apply) {
+                    $state.go( "project.index" );
+                }
             }).
             error(function(data, status, headers, config) {
-                $scope.errors = RestfulApi.error(data, status, headers, config);
+                RestfulApi.error(data, status, headers, config);
+                $scope.errors = data;
             });
     }
+
 
 });

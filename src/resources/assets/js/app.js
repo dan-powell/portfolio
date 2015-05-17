@@ -63,22 +63,33 @@ app.config(function($stateProvider, $urlRouterProvider) {
 
 
 // Some helpful functions for AJAX requests
-app.factory('RestfulApi', function ($http, messageBag) {
+app.factory('RestfulApi', function ($http, notificationService) {
 
     // Wot to do incase API fails to respond with 200
     var checkResponseCode = function(data, status) {
         switch(status) {
-            // Unauthenticated
+            // Failed validation
             case 422:
-                console.log("Model validation error");
-                console.log(data);
+
+                // Clear all existing notifications
+                notificationService.clear();
+
+                // Concatenate all the validation error messages
+                var msg = [];
+                angular.forEach(data, function(value, key) {
+                    msg = msg.concat(value);
+                });
+
+                // Add the notification
+                notificationService.add("Validation failed, please correct the following issues:", 'danger', msg);
                 break;
+
             // Unauthenticated
             case 401:
-                console.log("You have been logged out. Refresh the page to log back in again");
+                notificationService.add('You have been logged out', 'warning');
                 break;
             case 500:
-                console.log("API Error");
+                notificationService.add('API error', 'danger');
                 break;
             default:
                 console.log("Some other problem!");
@@ -117,7 +128,8 @@ app.factory('RestfulApi', function ($http, messageBag) {
 
         // Do some stuff upon a successful Ajax request
         success: function(data, status, headers, config) {
-            console.log("API Request successful");
+            notificationService.removeByType('danger');
+            return data;
         },
         // Do some stuff upon an unsuccessful Ajax request
         error: function(data, status, headers, config) {
@@ -128,28 +140,64 @@ app.factory('RestfulApi', function ($http, messageBag) {
 });
 
 
-app.factory('messageBag', function ($http) {
+app.service('notificationService', function ($timeout) {
 
-    // Wot to do incase API fails to respond correctly
-    var ApiError = function() {
+    var notifications = [];
 
+    // Retrieve all messages
+    this.get = function() {
+        return notifications;
+    };
+
+    // Remove new notification
+    this.add = function(message, type, messages) {
+
+        // Only allow one success message at a time
+        if (type == 'success') {
+            this.removeByType('success');
+        }
+
+        var notification = {
+            type : type,
+            message : message,
+            messages : messages,
+            //action : action
+        };
+
+        notifications.push(notification);
+
+        console.log('added ' + type + ' message');
+
+        if (type != 'danger') {
+            // Set the alert to be removed after a delay
+            $timeout(function(){
+                notifications.splice(notifications.indexOf(notification), 1);
+                //$scope.alerts.splice($scope.alerts.indexOf(alert), 1);
+            }, 6000); // maybe '}, 3000, false);' to avoid calling apply
+        }
+
+    };
+
+    // Remove notification by array index
+    this.removeByIndex = function(index) {
+        console.log('removing one message: ' + index);
+        notifications.splice(index, 1);
     }
 
-    return {
-
-        /* -- Lists -- */
-        /* ------------------------------ */
-
-        success: function(data, status, headers, config) {
-
-            console.log(data);
-
-            if (status == 401) {
-                $scope.errors = [{"Logged out" : "You have been logged out. Refresh the page to log back in again"}];
-            } else {
-                $scope.errors = data;
+    // Remove all notifications of type
+    this.removeByType = function(type) {
+        console.log('clearing ' + type + ' messages');
+        for (i=0; i < notifications.length; i++) {
+            if (notifications[i].type == type) {
+                notifications.splice(i, 1);
             }
-
         }
     }
+
+    // Clear all notifications
+    this.clear = function() {
+        console.log('clearing all messages');
+        notifications = [];
+    }
+
 });

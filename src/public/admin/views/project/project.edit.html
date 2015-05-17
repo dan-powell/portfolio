@@ -1,9 +1,3 @@
-<div class="alert alert-danger" ng-show="errors">
-    <ul ng-repeat="error in errors">
-        <li ng-repeat="desc in error">{{ desc }}</li>
-    </ul>
-</div>
-
 <h3>{{ data.title }}</h3>
 
 <p><strong>ID:</strong> {{ data.id }}</p>
@@ -40,7 +34,7 @@
 
         <div class="form-group" ng-class="{'has-error':errors.slug}">
             <label for="title" class="control-label">Slug</label>
-            <input type="text" id="slug" class="form-control" ng-model="data.slug" placeholder="Enter project URL"/>
+            <input type="text" id="slug" class="form-control" ng-model="data.slug" placeholder="Enter project URL" ng-change="slugWarning()"/>
             <p ng-repeat="error in errors.slug" class="help-block">{{ error }}</p>
         </div>
 
@@ -112,4 +106,4 @@
 
 <br/>
 
-<button ng-click="save()" class="btn btn-primary">Save</button>
+<button ng-click="save()" class="btn btn-primary">Save</button> <button ng-click="save(true)" class="btn btn-info">Apply</button>

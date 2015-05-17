@@ -1,5 +1,21 @@
 <h3>Projects</h3>
 
+<div ng-controller="NotificationController">
+
+
+    <alert ng-repeat="notification in notifications" type="{{notification.type}}" close="closeNotification($index)">
+
+        {{notification.message}}
+
+        <ul ng-show="notification.messages">
+            <li ng-repeat="message in notification.messages track by $index">{{ message }}</li>
+        </ul>
+
+    </alert>
+
+</div>
+
+
 <div ui-view>
 
 </div>

@@ -5,6 +5,7 @@
         {
             "input": [
                 "./src/resources/assets/js/app.js",
+                "./src/resources/assets/js/controllers/notification.js",
                 "./src/resources/assets/js/controllers/dashboard.js",
                 "./src/resources/assets/js/controllers/project.js",
                 "./src/resources/assets/js/controllers/section.js",
