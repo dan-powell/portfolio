@@ -155,8 +155,12 @@ class RestfulRepository
         // Modify some of the input data
         $this->modifyRequestData($request);
 
+        // Add unique validation for slugs
+        // We have to do this here because we need the ID of the item to be updated so it does'nt try to validate a unique slug against itself.
+        $rules = array_merge($class::$rules, ['slug' => 'sometimes|required|unique:projects,slug,' . $id]);
+
         // Return errors as JSON if request does not validate against model rules
-        $v = Validator::make($request->all(), $class::$rules);
+        $v = Validator::make($request->all(), $rules);
 
         if ($v->fails())
         {

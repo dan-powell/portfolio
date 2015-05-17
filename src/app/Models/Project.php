@@ -19,10 +19,28 @@ class Project extends Model {
 
     public static $rules = [
         'title' => 'required',
-        'slug' => 'required',
+        'slug' => 'required|unique:projects',
         'featured' => 'integer',
         'url' => 'url'
     ];
+
+    protected $casts = [
+        'id' => 'integer',
+        'featured' => 'integer',
+    ];
+
+    protected $appends = ['created_at_human', 'updated_at_human'];
+
+    public function getUpdatedAtHumanAttribute()
+    {
+        return $this->updated_at->toFormattedDateString();
+    }
+
+    public function getCreatedAtHumanAttribute()
+    {
+        return $this->created_at->toFormattedDateString();
+    }
+
 
 
 	public function tags()
@@ -39,6 +57,7 @@ class Project extends Model {
     {
         return $this->morphMany('DanPowell\Portfolio\Models\Page', 'attachment');
     }
+
 
 
     protected static function boot() {
