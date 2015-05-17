@@ -98,7 +98,7 @@ app.controller('SectionEditController', function($scope, $http, $route, $routePa
 
     $scope.data = {};
 
-    $http.get('/admin/api/project/' + $routeParams.id + '/edit').
+    $http.get('/admin/api/section/' + $routeParams.id).
         success(function(data, status, headers, config) {
             $scope.data = data;
         }).
@@ -126,9 +126,11 @@ app.controller('SectionEditController', function($scope, $http, $route, $routePa
 
     $scope.save = function() {
 
-        $http.put('/admin/api/project/' + $routeParams.id, $scope.data).
+        $http.put('/admin/api/section/' + $routeParams.id, $scope.data).
             success(function(data, status, headers, config) {
-                $location.path( "/project" );
+
+
+                $location.path( "/project/" + data.attachment_id + "/section");
             }).
             error(function(data, status, headers, config) {
                 if (status == 401) {

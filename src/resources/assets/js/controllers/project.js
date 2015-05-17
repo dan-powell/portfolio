@@ -1,5 +1,6 @@
-app.controller('ProjectController', function($scope, $filter, ngTableParams, $http, $route, $routeParams, $location) {
+app.controller('ProjectController', function($scope, $filter, ngTableParams, $http, RestfulApi) {
 
+    // Initialise an empty array to hold data
     $scope.data = [];
 
     // Initialise the data table
@@ -7,7 +8,7 @@ app.controller('ProjectController', function($scope, $filter, ngTableParams, $ht
         page: 1,            // show first page
         count: 10,          // count per page
         sorting: {
-            created_at: 'desc'     // initial sorting
+            updated_at: 'desc'     // initial sorting
         },
     }, {
         filterDelay: 10,
@@ -26,28 +27,23 @@ app.controller('ProjectController', function($scope, $filter, ngTableParams, $ht
         }
     });
 
+    // Initialise (load) data
     $scope.init = function() {
 
-        $http.get('/admin/api/project').
-        success(function(data, status, headers, config) {
-            $scope.data = data;
+        //console.log(RestfulApi.getRoute('project', 'update', 4));
 
-            // Parse ID from text to integer
-            angular.forEach(data, function (data) {
-                data.id  = parseFloat(data.id);
-            });
+        $http.get(RestfulApi.getRoute('project', 'index')).
+        success(function(data, status, headers, config) {
+
+            RestfulApi.success(data, status, headers, config);
+
+            $scope.data = data;
 
             $scope.tableParams.reload();
 
         }).
         error(function(data, status, headers, config) {
-            console.log(status);
-            if (status == 401) {
-                $scope.errors = [{"Logged out" : "You have been logged out. Refresh the page to log back in again"}];
-            } else {
-                $scope.errors = data;
-            }
-
+            RestfulApi.error(data, status, headers, config);
         });
 
     };
@@ -72,33 +68,29 @@ app.controller('ProjectController', function($scope, $filter, ngTableParams, $ht
 
 
 
-app.controller('ProjectCreateController', function($scope, $http, $route, $routeParams, $location) {
+app.controller('ProjectCreateController', function($scope, $http, $stateParams, $location, RestfulApi) {
 
     $scope.data = {};
 
     $scope.save = function() {
 
-        $http.post('/admin/api/project', $scope.data).
+        $http.post(RestfulApi.getRoute('project', 'create'), $scope.data).
             success(function(data, status, headers, config) {
                 $location.path( "/project" );
             }).
             error(function(data, status, headers, config) {
-                if (status == 401) {
-                    $scope.errors = [{"Logged out" : "You have been logged out. Refresh the page to log back in again"}];
-                } else {
-                    $scope.errors = data;
-                }
+                RestfulApi.error(data, status, headers, config);
             });
     }
 
 });
 
 
-app.controller('ProjectEditController', function($scope, $http, $route, $routeParams, $location) {
+app.controller('ProjectEditController', function($scope, $http, $stateParams, $location, RestfulApi) {
 
     $scope.data = {};
 
-    $http.get('/admin/api/project/' + $routeParams.id + '/edit').
+    $http.get(RestfulApi.getRoute('project', 'show', $stateParams.id)).
         success(function(data, status, headers, config) {
             $scope.data = data;
         }).
@@ -126,16 +118,12 @@ app.controller('ProjectEditController', function($scope, $http, $route, $routePa
 
     $scope.save = function() {
 
-        $http.put('/admin/api/project/' + $routeParams.id, $scope.data).
+        $http.put(RestfulApi.getRoute('project', 'update', $stateParams.id), $scope.data).
             success(function(data, status, headers, config) {
-                $location.path( "/project" );
+                $location.path( "/project/index" );
             }).
             error(function(data, status, headers, config) {
-                if (status == 401) {
-                    $scope.errors = [{"Logged out" : "You have been logged out. Refresh the page to log back in again"}];
-                } else {
-                    $scope.errors = data;
-                }
+                $scope.errors = RestfulApi.error(data, status, headers, config);
             });
     }
 

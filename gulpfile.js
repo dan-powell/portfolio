@@ -44,7 +44,7 @@ gulp.task('less', function () {
         }))
 
 	    // Write source maps to file
-	    .pipe(sourcemaps.write('.'))
+	    .pipe(sourcemaps.write())
 
 	    // Write processed data to file
 	    .pipe(gulp.dest('.'))
@@ -53,7 +53,7 @@ gulp.task('less', function () {
 	    .pipe(filter('**/*.css'))
 
 	    .pipe(shell([
-            'cd /Users/dan/Codebase/portfolio && php artisan vendor:publish --force'
+            'cd ../../.. && php artisan vendor:publish --tag=public --force'
         ]))
 
 	    .pipe(notify("Less Gulped!"))
@@ -92,13 +92,13 @@ gulp.task('js', function() {
         }))
 
         // Write source maps to file
-        .pipe(sourcemaps.write('.'))
+        .pipe(sourcemaps.write())
 
         // Write processed data to file
         .pipe(gulp.dest('.'))
 
         .pipe(shell([
-            'cd /Users/dan/Codebase/portfolio && php artisan vendor:publish --force'
+            'cd ../../.. && php artisan vendor:publish --tag=public --force'
         ]))
 
         // Notify upon successful completion & reload page via Browser-sync
@@ -119,7 +119,7 @@ gulp.task('copy', function() {
 gulp.task('publish', function () {
     return gulp.src('')
         .pipe(shell([
-            'cd /Users/dan/Codebase/portfolio && php artisan vendor:publish --force'
+            'cd ../../.. && php artisan vendor:publish --tag=public --force'
         ]))
         .pipe(browserSync.reload({stream:true}));
 });
@@ -142,10 +142,10 @@ gulp.task('bs-reload', function () {
 
 // Watch files, doing different things with each type.
 gulp.task('default', ['browser-sync'], function () {
-    gulp.watch("./src/resources/assets/less/**/*.less", ['less']);
-    gulp.watch("./src/resources/assets/js/**/*.js", ['js']);
-    gulp.watch("./src/resources/views/**/*.php", ['publish']);
-    gulp.watch("./src/public/admin/views/**/*.html", ['publish']);
+    gulp.watch("./src/resources/assets/less/**/*.less", {debounceDelay: 2000}, ['less']);
+    gulp.watch("./src/resources/assets/js/**/*.js", {debounceDelay: 2000}, ['js']);
+    gulp.watch("./src/resources/views/**/*.php", {debounceDelay: 2000}, ['publish']);
+    gulp.watch("./src/public/admin/views/**/*.html", {debounceDelay: 2000}, ['publish']);
 });
 
 

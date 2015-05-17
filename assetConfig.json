@@ -5,6 +5,7 @@
         {
             "input": [
                 "./src/resources/assets/js/app.js",
+                "./src/resources/assets/js/controllers/dashboard.js",
                 "./src/resources/assets/js/controllers/project.js",
                 "./src/resources/assets/js/controllers/section.js",
                 "./src/resources/assets/js/main.js"
@@ -14,7 +15,9 @@
         {
             "input": [
                 "./bower_components/angular/angular.min.js",
-                "./bower_components/angular-route/angular-route.min.js",
+                "./bower_components/angular-ui-router/release/angular-ui-router.min.js",
+                "./bower_components/angular-bootstrap/ui-bootstrap.min.js",
+                "./bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js",
                 "./bower_components/ng-table/dist/ng-table.min.js"
             ],
             "output": "./src/public/admin/js/plugins.js"
