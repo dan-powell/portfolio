@@ -20,6 +20,7 @@ class RestfulRepository
     private $messages = [
         'not_found' => 'Item not found, perhaps it has been deleted?',
         'error_updating' => 'Error updating database entry',
+        'error_deleting' => 'Error deleting database entry',
     ];
 
 
@@ -188,11 +189,43 @@ class RestfulRepository
         }
     }
 
+    /**
+     * Delete particular record of model
+     *
+     * @param $class Class of model to save data as (Eloquent Model)
+     * @param $id ID of record to update
+     * @param $request data to save to model (Illuminate Request)
+     *
+     * @return data collection of newly updated record as JSON response (Http Response)
+     */
+    public function destroy($class, $id)
+    {
+        // Find the item by ID
+        $collection = $class::find($id);
+
+        // Check if record was found
+        if (!$collection) {
+
+            // Fail - Return an error if not
+            return response()->json(['errors' => [$this->messages['not_found']]], 422);
+        } else {
+
+            // Delete record
+            if (!$collection->delete()) {
+
+                // Fail - Return an error if not
+                return response()->json(['errors' => [$this->messages['error_deleting']]], 422);
+            } else {
+
+                // Success - Return project as JSON object
+                return response()->json($collection);
+            }
+    	}
+    }
 
 
     /*  Non-RESTful helper functions
     /*  ----------------------------------
-
 
 
     /**

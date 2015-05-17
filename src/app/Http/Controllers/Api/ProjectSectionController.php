@@ -30,11 +30,7 @@ class ProjectSectionController extends Controller {
 
     public function index($project_id)
     {
-
-        $project = new Project;
-        $section = new Section;
-    	return $this->restfulRepository->indexRelated($section, $project_id, $project);
-
+    	return $this->restfulRepository->indexRelated(new Section, $project_id, new Project);
     }
 
 }

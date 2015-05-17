@@ -35,8 +35,7 @@ class SectionController extends Controller {
      */
 	public function index()
 	{
-        $project = new Section;
-    	return $this->restfulRepository->index($project);
+    	return $this->restfulRepository->index(new Section);
 	}
 
 
@@ -49,8 +48,7 @@ class SectionController extends Controller {
      */
     public function show($id)
 	{
-        $project = new Section;
-        return $this->restfulRepository->show($project, $id);
+        return $this->restfulRepository->show(new Section, $id);
 	}
 
 
@@ -63,8 +61,7 @@ class SectionController extends Controller {
      */
     public function store(Request $request)
 	{
-        $project = new Section;
-        return $this->restfulRepository->store($project, $request);
+        return $this->restfulRepository->store(new Section, $request);
 	}
 
 
@@ -75,8 +72,7 @@ class SectionController extends Controller {
      */
     public function update($id, Request $request)
 	{
-        $project = new Section;
-        return $this->restfulRepository->update($project, $id, $request);
+        return $this->restfulRepository->update(new Section, $id, $request);
 	}
 
 
@@ -87,28 +83,7 @@ class SectionController extends Controller {
      */
     public function destroy($id)
 	{
-
-        // Find the item by ID
-        $project = Project::find($id);
-
-        if (!$project) {
-
-            // Fail - Return an error if not
-            return response()->json(['errors' => ['Item not found, perhaps it was deleted?']], 422);
-        } else {
-
-            if (!$project->delete()) {
-
-                // Fail - Return error as JSON
-                return response()->json(['errors' => ['Error removing DB entry']], 422);
-            } else {
-
-                // Success - Return item ID as JSON
-                return response()->json(['id' => $project->id], 200);
-            }
-
-    	}
-
+        return $this->restfulRepository->destroy(new Project, $id);
 	}
 
 

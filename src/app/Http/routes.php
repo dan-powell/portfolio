@@ -22,7 +22,10 @@ Route::get('/portfolio/{slug}/{pageSlug}', ['as' => 'projects.page', 'uses' => '
 Route::group(['prefix' => 'admin', 'middleware' => ['auth']], function()
 {
 
-    Route::get('/', ['as' => 'admin.dashboard', 'uses' => 'DanPowell\Portfolio\Http\Controllers\Admin\AdminController@index']);
+    Route::get('/', ['as' => 'admin', function() {
+        return view('portfolio::admin.base');
+    }]);
+
 
     // RESTful API
     Route::group(['prefix' => 'api', 'middleware' => ['auth']], function()
