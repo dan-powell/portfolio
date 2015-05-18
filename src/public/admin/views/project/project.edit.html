@@ -102,8 +102,77 @@
         </div>
     </tab>
 
+    <tab>
+
+        <tab-heading>Sections
+            <span ng-show="" class="text-danger glyphicon glyphicon-exclamation-sign"> </span>
+        </tab-heading>
+
+
+        <table class="table" ng-table="tableParams" show-filter="true" >
+            <tr ng-repeat="section in $data">
+                <td data-title="'ID'" sortable="'id'" filter="{ 'id': 'text' }">
+                    {{section.id}}
+                </td>
+                <td data-title="'Title'" sortable="'title'" filter="{ 'title': 'text' }">
+                    <a href="#section/{{ section.id }}/edit">
+                        {{section.markup|limitTo : 50}}
+                    </a>
+                </td>
+                <td data-title="'Created'" sortable="'created_at'">
+                    {{project.created_at}}
+                </td>
+                <td>
+                    <a ng-click="editSection($index)" class="btn btn-primary">Edit</a>
+                    <a ng-click="deleteSection(section.id)" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        </table>
+
+    </tab>
+
+
 </tabset>
 
 <br/>
 
 <button ng-click="save()" class="btn btn-primary">Save</button> <button ng-click="save(true)" class="btn btn-info">Apply</button>
+
+
+
+
+
+<script type="text/ng-template" id="sectionEdit.html">
+        <div class="modal-header">
+            <h3 class="modal-title">Section: {{section.id}}</h3>
+        </div>
+        <div class="modal-body">
+            <div class="form-group" ng-class="{'has-error':errors.markup}">
+                <label for="section-markup" class="control-label">Body text</label>
+                <textarea id="section-markup" class="form-control" ng-model="section.markup" placeholder="Enter project content" rows="5"></textarea>
+                <p ng-repeat="error in errors.markup" class="help-block">{{ error }}</p>
+            </div>
+
+            <div class="form-group" ng-class="{'has-error':errors.styles}">
+                <label for="section-styles" class="control-label">Styles</label>
+                <textarea id="section-styles" class="form-control" ng-model="section.styles" placeholder="Enter CSS" rows="5"></textarea>
+                <p ng-repeat="error in errors.styles" class="help-block">{{ error }}</p>
+            </div>
+
+            <div class="form-group" ng-class="{'has-error':errors.scripts}">
+                <label for="scripts" class="control-label">Scripts</label>
+                <textarea id="scripts" class="form-control" ng-model="section.scripts" placeholder="Enter Javascript" rows="5"></textarea>
+                <p ng-repeat="error in errors.scripts" class="help-block">{{ error }}</p>
+            </div>
+
+            <div class="form-group" ng-class="{'has-error':errors.url}">
+                <label for="section-rank" class="control-label">Rank</label>
+                <input type="text" id="section-rank" class="form-control" ng-model="section.rank" placeholder="Rank (Integer)"/>
+            <p ng-repeat="error in errors.rank" class="help-block">{{ error }}</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" ng-click="save()">Save</button>
+            <button class="btn btn-info" ng-click="save(true)">Apply</button>
+            <button class="btn btn-default" ng-click="cancel()">Cancel</button>
+        </div>
+    </script>

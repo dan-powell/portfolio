@@ -28,18 +28,19 @@ class RestfulRepository
      * List all records of model
      *
      * @param $class Class of model to return records from (Eloquent Model)
+     * @param $with Array of related models to retrieve
      *
      * @return data collection as JSON response (Http Response)
      */
-    public function index($class)
+    public function index($class, $with)
     {
 
         // Does the model use timestamps?
         if ($class->timestamps){
             // If yes, order by last updated
-            $collection = $class::orderBy('updated_at', 'DESC')->get();
+            $collection = $class::orderBy('updated_at', 'DESC')->with($with)->get();
         } else {
-            $collection = $class::get();
+            $collection = $class::with($with)->get();
         }
 
     	return response()->json($collection);
@@ -52,18 +53,19 @@ class RestfulRepository
      * @param $class Class of model to return records from (Eloquent Model)
      * @param $id ID of related record
      * @param $related Class of model of related record (Eloquent Model)
+     * @param $with Array of related models to retrieve
      *
      * @return data collection as JSON response (Http Response)
      */
-    public function indexRelated($class, $id, $related)
+    public function indexRelated($class, $id, $related, $with = [])
     {
 
         // Does the model use timestamps?
         if ($class->timestamps){
             // If yes, order by last updated
-            $collection = $class::where('attachment_id', '=', $id)->where('attachment_type', '=', get_class($related))->orderBy('updated_at', 'DESC')->get();
+            $collection = $class::where('attachment_id', '=', $id)->where('attachment_type', '=', get_class($related))->orderBy('updated_at', 'DESC')->with($with)->get();
         } else {
-            $collection = $class::where('attachment_id', '=', $id)->where('attachment_type', '=', get_class($related))->get();
+            $collection = $class::where('attachment_id', '=', $id)->where('attachment_type', '=', get_class($related))->with([])->get();
         }
 
     	return response()->json($collection);
@@ -75,14 +77,15 @@ class RestfulRepository
      *
      * @param $class Class of model to return records from (Eloquent Model)
      * @param $id ID of record
+     * @param $with Array of related models to retrieve
      *
      * @return data collection as JSON response (Http Response)
      */
-    public function show($class, $id)
+    public function show($class, $id, $with = [])
     {
 
     	// Find the item by ID
-        $collection = $class::find($id);
+        $collection = $class::with($with)->find($id);
 
         if (!$collection) {
 
@@ -157,7 +160,7 @@ class RestfulRepository
 
         // Return errors as JSON if request does not validate against model rules
         $v = Validator::make($request->all(), $class->rules($id));
-        
+
         if ($v->fails())
         {
             return response()->json($v->errors(), 422);

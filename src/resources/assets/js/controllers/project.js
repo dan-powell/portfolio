@@ -94,15 +94,45 @@ app.controller('ProjectCreateController', function($scope, $http, $stateParams, 
 });
 
 
-app.controller('ProjectEditController', function($scope, $http, $stateParams, $state, RestfulApi, notificationService) {
+app.controller('ProjectEditController', function($scope, $http, $stateParams, $state, RestfulApi, notificationService, ngTableParams, $filter, $modal) {
 
-    $scope.data = {};
+    $scope.data = {
+        sections : []
+    };
+
+
+    $scope.tableParams = new ngTableParams({
+        page: 1,            // show first page
+        count: 10,          // count per page
+        sorting: {
+            updated_at: 'desc'     // initial sorting
+        },
+    }, {
+        filterDelay: 10,
+        total: $scope.data.sections.length, // length of data
+        getData: function($defer, params) {
+            // use build-in angular filter
+            var filteredData = params.filter() ?
+                    $filter('filter')($scope.data.sections, params.filter()) :
+                    $scope.data.sections;
+            var orderedData = params.sorting() ?
+                    $filter('orderBy')(filteredData, params.orderBy()) :
+                    $scope.data.sections;
+
+            params.total(orderedData.length); // set total for recalc pagination
+            $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
+        }
+    });
+
+
+
 
     $http.get(RestfulApi.getRoute('project', 'show', $stateParams.id)).
         success(function(data, status, headers, config) {
             RestfulApi.success(data, status, headers, config);
             $scope.data = data;
             $scope.slug = $scope.data.slug;
+            $scope.tableParams.reload();
         }).
         error(function(data, status, headers, config) {
             RestfulApi.error(data, status, headers, config);
@@ -123,6 +153,36 @@ app.controller('ProjectEditController', function($scope, $http, $stateParams, $s
 
     };
 */
+
+
+$scope.editSection = function (sectionIndex) {
+
+    var modalInstance = $modal.open({
+      animation: $scope.animationsEnabled,
+      templateUrl: 'sectionEdit.html',
+      controller: 'editSectionController',
+      size: 'md',
+      resolve: {
+        section: function () {
+          return $scope.data.sections[sectionIndex];
+        }
+      }
+    });
+
+/*
+    modalInstance.result.then(function () {
+      $scope.selected = selectedItem;
+    }, function () {
+      //$log.info('Modal dismissed at: ' + new Date());
+    });
+*/
+  };
+
+  $scope.toggleAnimation = function () {
+    $scope.animationsEnabled = !$scope.animationsEnabled;
+  };
+
+
 
 
     $scope.slugWarning = function() {
@@ -167,4 +227,35 @@ app.controller('ProjectEditController', function($scope, $http, $stateParams, $s
     }
 
 
+});
+
+
+
+
+
+app.controller('editSectionController', function ($scope, $http, $modalInstance, RestfulApi, notificationService, section) {
+
+    $scope.section = section;
+
+    $scope.save = function(apply) {
+
+        $http.put(RestfulApi.getRoute('section', 'update', $scope.section.id), $scope.section)
+            .success(function(data, status, headers, config) {
+                RestfulApi.success(data, status, headers, config);
+                notificationService.add("Section '" + data.title + "' updated successfully", 'success');
+                $scope.errors = [];
+                if (!apply) {
+                    $modalInstance.close();
+                }
+            })
+            .error(function(data, status, headers, config) {
+                RestfulApi.error(data, status, headers, config);
+                $scope.errors = data;
+            });
+
+    };
+
+    $scope.cancel = function () {
+        $modalInstance.dismiss('cancel');
+    };
 });

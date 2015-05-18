@@ -48,7 +48,7 @@ class ProjectController extends Controller {
      */
     public function show($id)
 	{
-        return $this->restfulRepository->show(new Project, $id);
+        return $this->restfulRepository->show(new Project, $id, ['sections']);
 	}
 
 

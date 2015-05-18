@@ -13,9 +13,16 @@ class Section extends Model {
         'rank'
     ];
 
-    public static $rules = [
-        'rank' => 'integer',
-        'scripts' => 'required',
+    public function rules()
+	{
+	    return [
+	        'rank' => 'integer'
+	    ];
+	}
+
+    protected $casts = [
+        'id' => 'integer',
+        'featured' => 'integer',
     ];
 
 	public $timestamps = false;
