@@ -12,8 +12,7 @@
     "minimum-stability": "dev",
     "require": {
         "laravel/framework": "5.0.*",
-        "fzaninotto/faker": "~1",
-        "nesbot/carbon": "~1.19"
+        "fzaninotto/faker": "~1"
     },
     "autoload": {
 		"psr-4": {
