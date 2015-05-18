@@ -17,12 +17,16 @@ class Project extends Model {
         'template'
     ];
 
-    public static $rules = [
-        'title' => 'required',
-        'slug' => 'required|unique:projects',
-        'featured' => 'integer',
-        'url' => 'url'
-    ];
+	public function rules($id = null)
+	{
+	    return [
+	        'title' => 'required',
+	        'slug' => 'required|unique:projects,slug,' . $id,
+	        'featured' => 'integer',
+	        'url' => 'url'
+	    ];
+	}
+
 
     protected $casts = [
         'id' => 'integer',

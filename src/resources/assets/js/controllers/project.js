@@ -47,12 +47,7 @@ app.controller('ProjectController', function($scope, $filter, ngTableParams, $ht
 
     $scope.delete = function(id, title) {
 
-
-
-
-
-        var r = confirm('Are you sure you wish to delete ' + title + '?');
-        if (r == true) {
+        if (confirm('Are you sure you wish to delete ' + title + '?')) {
 
             $http.delete('/admin/api/project/' + id).
                 success(function(data, status, headers, config) {
@@ -77,14 +72,17 @@ app.controller('ProjectCreateController', function($scope, $http, $stateParams, 
 
     $scope.data = {};
 
-    $scope.save = function() {
+    $scope.save = function(apply) {
 
-        $http.post(RestfulApi.getRoute('project', 'create'), $scope.data).
+        $http.post(RestfulApi.getRoute('project', 'store'), $scope.data).
             success(function(data, status, headers, config) {
                 RestfulApi.success(data, status, headers, config);
-                notificationService.add("Project '" + data.title + "' updated successfully", 'success');
+                notificationService.add("Project '" + data.title + "' added successfully", 'success');
+                $scope.errors = [];
                 if (!apply) {
                     $state.go( "project.index" );
+                } else {
+	                $state.go( "project.edit", {id: data.id});
                 }
             }).
             error(function(data, status, headers, config) {
@@ -157,6 +155,7 @@ app.controller('ProjectEditController', function($scope, $http, $stateParams, $s
             success(function(data, status, headers, config) {
                 RestfulApi.success(data, status, headers, config);
                 notificationService.add("Project '" + data.title + "' updated successfully", 'success');
+                $scope.errors = [];
                 if (!apply) {
                     $state.go( "project.index" );
                 }
