@@ -18,10 +18,23 @@
             <p ng-repeat="error in errors.title" class="help-block">{{ error }}</p>
         </div>
 
+
         <div class="form-group" ng-class="{'has-error':errors.markup}">
             <label for="markup" class="control-label">Body text</label>
-            <textarea id="markup" class="form-control" ng-model="data.markup" placeholder="Enter project content" rows="5"></textarea>
-            <p ng-repeat="error in errors.markup" class="help-block">{{ error }}</p>
+
+            <div class="row">
+
+                <div class="col-sm-6">
+                    <textarea id="markup" class="form-control" ng-model="data.markup" placeholder="Enter project content" rows="5"></textarea>
+                </div>
+
+                <div class="col-sm-6">
+                    <div class="well" marked="data.markup"></div>
+                </div>
+
+                <p ng-repeat="error in errors.markup" class="help-block">{{ error }}</p>
+
+            </div>
         </div>
 
     </tab>

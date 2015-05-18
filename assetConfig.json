@@ -19,7 +19,9 @@
                 "./bower_components/angular-ui-router/release/angular-ui-router.min.js",
                 "./bower_components/angular-bootstrap/ui-bootstrap.min.js",
                 "./bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js",
-                "./bower_components/ng-table/dist/ng-table.min.js"
+                "./bower_components/ng-table/dist/ng-table.min.js",
+                "./bower_components/marked/lib/marked.js",
+                "./bower_components/angular-marked/angular-marked.min.js"
             ],
             "output": "./src/public/admin/js/plugins.js"
         }

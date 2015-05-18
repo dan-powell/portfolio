@@ -1,5 +1,5 @@
 // Fire up the app
-var app = angular.module('ng-portfolio', ['ui.router', 'ui.bootstrap', 'ngTable']);
+var app = angular.module('ng-portfolio', ['ui.router', 'ui.bootstrap', 'ngTable', 'hc.marked']);
 
 // Configure Angular
 
@@ -60,6 +60,14 @@ app.config(function($stateProvider, $urlRouterProvider) {
       controller: "SectionEditController"
     });
 });
+
+
+app.config(['markedProvider', function(markedProvider) {
+    markedProvider.setOptions({
+        gfm: true,
+        tables: true
+    });
+}]);
 
 
 // Some helpful functions for AJAX requests
