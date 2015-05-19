@@ -160,11 +160,25 @@
             <h3 class="modal-title">Section: {{section.id}}</h3>
         </div>
         <div class="modal-body">
+
+            
             <div class="form-group" ng-class="{'has-error':errors.markup}">
-                <label for="section-markup" class="control-label">Body text</label>
-                <textarea id="section-markup" class="form-control" ng-model="section.markup" placeholder="Enter project content" rows="5"></textarea>
-                <p ng-repeat="error in errors.markup" class="help-block">{{ error }}</p>
-            </div>
+	            <label for="markup" class="control-label">Body text</label>
+	
+	            <div class="row">
+	
+	                <div class="col-sm-6">
+	                    <textarea id="markup" class="form-control" ng-model="section.markup" placeholder="Enter section content" rows="5"></textarea>
+	                </div>
+	
+	                <div class="col-sm-6">
+	                    <div class="well" marked="section.markup"></div>
+	                </div>
+	
+	                <p ng-repeat="error in errors.markup" class="help-block">{{ error }}</p>
+	
+	            </div>
+	        </div>
 
             <div class="form-group" ng-class="{'has-error':errors.styles}">
                 <label for="section-styles" class="control-label">Styles</label>

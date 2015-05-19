@@ -161,7 +161,7 @@ $scope.editSection = function (sectionIndex) {
       animation: $scope.animationsEnabled,
       templateUrl: 'sectionEdit.html',
       controller: 'editSectionController',
-      size: 'md',
+      size: 'lg',
       resolve: {
         section: function () {
           return $scope.data.sections[sectionIndex];

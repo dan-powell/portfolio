@@ -32,7 +32,7 @@ class RestfulRepository
      *
      * @return data collection as JSON response (Http Response)
      */
-    public function index($class, $with)
+    public function index($class, $with = [])
     {
 
         // Does the model use timestamps?
