@@ -72,6 +72,8 @@ app.controller('ProjectCreateController', function($scope, $http, $stateParams, 
 
     $scope.data = {};
 
+    $scope.create = true;
+
     $scope.save = function(apply) {
 
         $http.post(RestfulApi.getRoute('project', 'store'), $scope.data).
@@ -125,8 +127,6 @@ app.controller('ProjectEditController', function($scope, $http, $stateParams, $s
     });
 
 
-
-
     $http.get(RestfulApi.getRoute('project', 'show', $stateParams.id)).
         success(function(data, status, headers, config) {
             RestfulApi.success(data, status, headers, config);
@@ -140,49 +140,49 @@ app.controller('ProjectEditController', function($scope, $http, $stateParams, $s
         });
 
 
-/*
-    $scope.addSection = function() {
 
-        $scope.data.sections.push({});
+    $scope.editSection = function (create, sectionId) {
+        sectionId = typeof sectionId !== 'undefined' ? sectionId : false;
+
+        modalData = {
+            'create' : create,
+            'projectId' : $scope.data.id,
+            'sectionId' : sectionId
+        };
+
+        console.log(modalData);
+
+        var modalInstance = $modal.open({
+            animation: true,
+            templateUrl: 'sectionEdit.html',
+            controller: 'editSectionController',
+            size: 'lg',
+            resolve: {
+                modalData: function() {
+                    return modalData;
+                }
+            }
+        });
+
+        modalInstance.result.then(function (section, create) {
+            if (create) {
+                $scope.data.sections.push(section);
+            } else {
+
+                angular.forEach($scope.data.sections, function(value, key) {
+                    if (value.id == sectionId) {
+                        $scope.data.sections[value.id] = section
+                    }
+                });
+
+            }
+
+            $scope.tableParams.reload();
+        }, function () {
+            //$log.info('Modal dismissed at: ' + new Date());
+        });
 
     };
-
-    $scope.deleteSection = function(index) {
-
-        $scope.data.sections.splice(index, 1);
-
-    };
-*/
-
-
-$scope.editSection = function (sectionIndex) {
-
-    var modalInstance = $modal.open({
-      animation: $scope.animationsEnabled,
-      templateUrl: 'sectionEdit.html',
-      controller: 'editSectionController',
-      size: 'lg',
-      resolve: {
-        section: function () {
-          return $scope.data.sections[sectionIndex];
-        }
-      }
-    });
-
-/*
-    modalInstance.result.then(function () {
-      $scope.selected = selectedItem;
-    }, function () {
-      //$log.info('Modal dismissed at: ' + new Date());
-    });
-*/
-  };
-
-  $scope.toggleAnimation = function () {
-    $scope.animationsEnabled = !$scope.animationsEnabled;
-  };
-
-
 
 
     $scope.slugWarning = function() {
@@ -211,19 +211,19 @@ $scope.editSection = function (sectionIndex) {
     }
 
     $scope.put = function(apply) {
-            $http.put(RestfulApi.getRoute('project', 'update', $stateParams.id), $scope.data).
-            success(function(data, status, headers, config) {
-                RestfulApi.success(data, status, headers, config);
-                notificationService.add("Project '" + data.title + "' updated successfully", 'success');
-                $scope.errors = [];
-                if (!apply) {
-                    $state.go( "project.index" );
-                }
-            }).
-            error(function(data, status, headers, config) {
-                RestfulApi.error(data, status, headers, config);
-                $scope.errors = data;
-            });
+        $http.put(RestfulApi.getRoute('project', 'update', $stateParams.id), $scope.data).
+        success(function(data, status, headers, config) {
+            RestfulApi.success(data, status, headers, config);
+            notificationService.add("Project '" + data.title + "' updated successfully", 'success');
+            $scope.errors = [];
+            if (!apply) {
+                $state.go( "project.index" );
+            }
+        }).
+        error(function(data, status, headers, config) {
+            RestfulApi.error(data, status, headers, config);
+            $scope.errors = data;
+        });
     }
 
 
@@ -233,25 +233,56 @@ $scope.editSection = function (sectionIndex) {
 
 
 
-app.controller('editSectionController', function ($scope, $http, $modalInstance, RestfulApi, notificationService, section) {
+app.controller('editSectionController', function ($scope, $http, $modalInstance, RestfulApi, notificationService, modalData) {
 
-    $scope.section = section;
+    if (!modalData.create) {
 
-    $scope.save = function(apply) {
-
-        $http.put(RestfulApi.getRoute('section', 'update', $scope.section.id), $scope.section)
-            .success(function(data, status, headers, config) {
+        $http.get(RestfulApi.getRoute('section', 'show', modalData.sectionId)).
+            success(function(data, status, headers, config) {
                 RestfulApi.success(data, status, headers, config);
-                notificationService.add("Section '" + data.title + "' updated successfully", 'success');
-                $scope.errors = [];
-                if (!apply) {
-                    $modalInstance.close();
-                }
-            })
-            .error(function(data, status, headers, config) {
+                $scope.section = data;
+            }).
+            error(function(data, status, headers, config) {
                 RestfulApi.error(data, status, headers, config);
                 $scope.errors = data;
             });
+
+    }
+
+
+    $scope.save = function() {
+
+        console.log(modalData.projectId);
+
+        if (modalData.create){
+
+            $http.post(RestfulApi.getRoute('projectSection', 'store', modalData.projectId), $scope.section)
+                .success(function(data, status, headers, config) {
+                    RestfulApi.success(data, status, headers, config);
+                    notificationService.add("Section '" + data.title + "' created successfully", 'success');
+                    $scope.errors = [];
+                    $modalInstance.close(data, true);
+                })
+                .error(function(data, status, headers, config) {
+                    RestfulApi.error(data, status, headers, config);
+                    $scope.errors = data;
+                });
+
+        } else {
+
+            $http.put(RestfulApi.getRoute('section', 'update', $scope.section.id), $scope.section)
+                .success(function(data, status, headers, config) {
+                    RestfulApi.success(data, status, headers, config);
+                    notificationService.add("Section '" + data.title + "' updated successfully", 'success');
+                    $scope.errors = [];
+                    $modalInstance.close(data, false);
+                })
+                .error(function(data, status, headers, config) {
+                    RestfulApi.error(data, status, headers, config);
+                    $scope.errors = data;
+                });
+
+        }
 
     };
 

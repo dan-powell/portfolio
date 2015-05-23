@@ -3,7 +3,7 @@
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-use DanPowell\Portfolio\Repositories\RestfulRepository;
+use DanPowell\Portfolio\Repositories\ProjectRepository;
 
 // Load up the models
 use DanPowell\Portfolio\Models\Project;
@@ -22,9 +22,9 @@ class ProjectController extends Controller {
      * Inject the repos
      * @param RestfulRepository $restfulRepository
      */
-    public function __construct(RestfulRepository $restfulRepository)
+    public function __construct(ProjectRepository $projectRepository)
     {
-        $this->restfulRepository = $restfulRepository;
+        $this->projectRepository = $projectRepository;
     }
 
 
@@ -35,7 +35,7 @@ class ProjectController extends Controller {
      */
 	public function index()
 	{
-    	return $this->restfulRepository->index(new Project);
+    	return $this->projectRepository->index(new Project);
 	}
 
 
@@ -48,7 +48,7 @@ class ProjectController extends Controller {
      */
     public function show($id)
 	{
-        return $this->restfulRepository->show(new Project, $id, ['sections']);
+        return $this->projectRepository->show(new Project, $id, ['sections']);
 	}
 
 
@@ -61,7 +61,7 @@ class ProjectController extends Controller {
      */
     public function store(Request $request)
 	{
-        return $this->restfulRepository->store(new Project, $request);
+        return $this->projectRepository->store(new Project, $request);
 	}
 
 
@@ -72,7 +72,7 @@ class ProjectController extends Controller {
      */
     public function update($id, Request $request)
 	{
-        return $this->restfulRepository->update(new Project, $id, $request);
+        return $this->projectRepository->update(new Project, $id, $request);
 	}
 
 
@@ -83,7 +83,7 @@ class ProjectController extends Controller {
      */
     public function destroy($id)
 	{
-        return $this->restfulRepository->destroy(new Project, $id);
+        return $this->projectRepository->destroy(new Project, $id);
 	}
 
 

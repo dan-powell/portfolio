@@ -16,6 +16,7 @@ class Section extends Model {
     public function rules()
 	{
 	    return [
+    	    'markup' => 'required',
 	        'rank' => 'integer'
 	    ];
 	}

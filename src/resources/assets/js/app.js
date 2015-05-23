@@ -127,6 +127,9 @@ app.factory('RestfulApi', function ($http, notificationService) {
                     store   : prefix + '/section',
                     update  : prefix + '/section/' + id,
                     destroy : prefix + '/section/' + id
+                },
+                projectSection     :  {
+                    store   : prefix + '/project/' + id + '/section'
                 }
             };
 
