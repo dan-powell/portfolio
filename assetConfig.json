@@ -9,6 +9,7 @@
                 "./src/resources/assets/js/controllers/dashboard.js",
                 "./src/resources/assets/js/controllers/project.js",
                 "./src/resources/assets/js/controllers/section.js",
+                "./src/resources/assets/js/controllers/tag.js",
                 "./src/resources/assets/js/main.js"
             ],
             "output": "./src/public/admin/js/main.js"

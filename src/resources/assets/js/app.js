@@ -58,6 +58,25 @@ app.config(function($stateProvider, $urlRouterProvider) {
       url: "/section/:id/edit",
       templateUrl: "/vendor/portfolio/admin/views/section/section.edit.html",
       controller: "SectionEditController"
+    })
+    .state('tag', {
+      url: "/tag",
+      templateUrl: "/vendor/portfolio/admin/views/tag/tag.html",
+    })
+    .state('tag.index', {
+      url: "/index",
+      templateUrl: "/vendor/portfolio/admin/views/tag/tag.index.html",
+      controller: "TagController"
+    })
+    .state('tag.create', {
+      url: "/create",
+      templateUrl: "/vendor/portfolio/admin/views/tag/tag.edit.html",
+      controller: "TagCreateController"
+    })
+    .state('tag.edit', {
+      url: "/:id/edit",
+      templateUrl: "/vendor/portfolio/admin/views/tag/tag.edit.html",
+      controller: "TagEditController"
     });
 });
 
@@ -130,6 +149,13 @@ app.factory('RestfulApi', function ($http, notificationService) {
                 },
                 projectSection     :  {
                     store   : prefix + '/project/' + id + '/section'
+                },
+                tag         :  {
+                    index   : prefix + '/tag',
+                    show    : prefix + '/tag/' + id,
+                    store   : prefix + '/tag',
+                    update  : prefix + '/tag/' + id,
+                    destroy : prefix + '/tag/' + id
                 }
             };
 

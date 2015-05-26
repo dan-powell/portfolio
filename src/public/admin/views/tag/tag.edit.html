@@ -1,0 +1,57 @@
+<h3>{{ data.title }}</h3>
+
+<p><strong>ID:</strong> {{ data.id }}</p>
+
+<p><strong>Last Updated:</strong> {{ data.updated_at_human }}</p>
+
+<tabset class="nav nav-tabs">
+    <tab class="tab-pane">
+        <tab-heading>Content
+            <span ng-show="errors.title || errors.markup" class="text-danger glyphicon glyphicon-exclamation-sign"> </span>
+        </tab-heading>
+
+        <br/>
+
+        <div class="form-group" ng-class="{'has-error':errors.title}">
+            <label for="title" class="control-label">Title</label>
+            <input type="text" id="title" class="form-control" ng-model="data.title" placeholder="Enter project name"/>
+            <p ng-repeat="error in errors.title" class="help-block">{{ error }}</p>
+        </div>
+    </tab>
+
+    <tab>
+        <tab-heading>Tagged
+            <span ng-show="" class="text-danger glyphicon glyphicon-exclamation-sign"> </span>
+        </tab-heading>
+
+        <div class="alert alert-info" ng-show="create">Please save the project before adding sections</div>
+
+        <div ng-hide="create">
+            <a ng-click="editSection(true)" class="btn btn-primary pull-right">Add Section</a>
+            <table class="table" ng-table="tableParams" show-filter="true" >
+                <tr ng-repeat="section in $data">
+                    <td data-title="'ID'" sortable="'id'" filter="{ 'id': 'text' }">
+                        {{section.id}}
+                    </td>
+                    <td data-title="'Title'" sortable="'title'" filter="{ 'title': 'text' }">
+                        <a href="#section/{{ section.id }}/edit">
+                            {{section.markup|limitTo : 50}}
+                        </a>
+                    </td>
+                    <td data-title="'Created'" sortable="'created_at'">
+                        {{project.created_at}}
+                    </td>
+                    <td>
+                        <a ng-click="editSection(false, section.id)" class="btn btn-primary">Edit</a>
+                        <a ng-click="deleteSection(section.id)" class="btn btn-danger">Delete</a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </tab>
+
+</tabset>
+
+<br/>
+
+<button ng-click="save()" class="btn btn-primary">Save</button> <button ng-click="save(true)" class="btn btn-info">Apply</button>

@@ -40,6 +40,9 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth']], function()
         // Admin project section items
         Route::resource('section', 'DanPowell\Portfolio\Http\Controllers\Api\SectionController', ['except' => ['create', 'edit']]);
 
+        // Admin project section items
+        Route::resource('tag', 'DanPowell\Portfolio\Http\Controllers\Api\TagController', ['except' => ['create', 'edit']]);
+
 
     });
 

@@ -3,28 +3,28 @@
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-use DanPowell\Portfolio\Repositories\ProjectRepository;
+use DanPowell\Portfolio\Repositories\TagRepository;
 
 // Load up the models
-use DanPowell\Portfolio\Models\Project;
+use DanPowell\Portfolio\Models\Tag;
 
 
-class ProjectController extends Controller {
+class TagController extends Controller {
 
 
     /**
      * RESTful Repository
      * @var Repository
      */
-    protected $projectRepository;
+    protected $tagRepository;
 
     /**
      * Inject the repos
      * @param RestfulRepository $restfulRepository
      */
-    public function __construct(ProjectRepository $projectRepository)
+    public function __construct(TagRepository $tagRepository)
     {
-        $this->projectRepository = $projectRepository;
+        $this->tagRepository = $tagRepository;
     }
 
 
@@ -35,7 +35,7 @@ class ProjectController extends Controller {
      */
 	public function index()
 	{
-    	return $this->projectRepository->index(new Project);
+    	return $this->tagRepository->index(new Tag);
 	}
 
 
@@ -48,7 +48,7 @@ class ProjectController extends Controller {
      */
     public function show($id)
 	{
-        return $this->projectRepository->show(new Project, $id, ['sections']);
+        return $this->tagRepository->show(new Tag, $id);
 	}
 
 
@@ -61,7 +61,7 @@ class ProjectController extends Controller {
      */
     public function store(Request $request)
 	{
-        return $this->projectRepository->store(new Project, $request);
+        return $this->tagRepository->store(new Tag, $request);
 	}
 
 
@@ -72,7 +72,7 @@ class ProjectController extends Controller {
      */
     public function update($id, Request $request)
 	{
-        return $this->projectRepository->update(new Project, $id, $request);
+        return $this->tagRepository->update(new Tag, $id, $request);
 	}
 
 
@@ -83,7 +83,7 @@ class ProjectController extends Controller {
      */
     public function destroy($id)
 	{
-        return $this->projectRepository->destroy(new Project, $id);
+        return $this->tagRepository->destroy(new Tag, $id);
 	}
 
 
