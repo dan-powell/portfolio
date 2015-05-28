@@ -48,7 +48,7 @@ class ProjectController extends Controller {
      */
     public function show($id)
 	{
-        return $this->projectRepository->show(new Project, $id, ['sections']);
+        return $this->projectRepository->show(new Project, $id, ['sections', 'tags']);
 	}
 
 

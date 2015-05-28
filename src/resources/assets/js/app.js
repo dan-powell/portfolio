@@ -1,5 +1,5 @@
 // Fire up the app
-var app = angular.module('ng-portfolio', ['ui.router', 'ui.bootstrap', 'ngTable', 'hc.marked']);
+var app = angular.module('ng-portfolio', ['ui.router', 'ui.bootstrap', 'ngTable', 'hc.marked', 'ngTagsInput']);
 
 // Configure Angular
 
