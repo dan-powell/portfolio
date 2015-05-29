@@ -8,10 +8,10 @@ class Tag extends Model {
         'title'
     ];
 
-    public function rules()
+    public function rules($id = null)
 	{
 	    return [
-    	    'title' => 'required'
+    	    'title' => 'required|unique:tags,title,' . $id
 	    ];
 	}
 

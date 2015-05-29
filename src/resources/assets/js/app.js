@@ -14,6 +14,21 @@ app.config(function($httpProvider) {
     $httpProvider.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
 });
 
+app.config(function(tagsInputConfigProvider) {
+  tagsInputConfigProvider.setDefaults('tagsInput', {
+    replaceSpacesWithDashes : false
+    //placeholder: 'New tag',
+    //removeTagSymbol: '✖'
+  })
+});
+
+app.config(['markedProvider', function(markedProvider) {
+    markedProvider.setOptions({
+        gfm: true,
+        tables: true
+    });
+}]);
+
 
 // Setup the state manager (Router)
 app.config(function($stateProvider, $urlRouterProvider) {
@@ -80,13 +95,6 @@ app.config(function($stateProvider, $urlRouterProvider) {
     });
 });
 
-
-app.config(['markedProvider', function(markedProvider) {
-    markedProvider.setOptions({
-        gfm: true,
-        tables: true
-    });
-}]);
 
 
 // Some helpful functions for AJAX requests
