@@ -73,6 +73,7 @@ app.controller('TagCreateController', function($scope, $http, $stateParams, $sta
 
     $scope.create = true;
 
+
     $scope.save = function(apply) {
 
         $http.post(RestfulApi.getRoute('tag', 'store'), $scope.data).
@@ -97,17 +98,50 @@ app.controller('TagCreateController', function($scope, $http, $stateParams, $sta
 
 app.controller('TagEditController', function($scope, $http, $stateParams, $state, RestfulApi, notificationService, ngTableParams, $filter, $modal) {
 
-    $scope.data = {};
+    $scope.data = {
+        projects: []
+    };
+
+
+    $scope.tableParams = new ngTableParams({
+        page: 1,            // show first page
+        count: 10,          // count per page
+        sorting: {
+            updated_at: 'desc'     // initial sorting
+        },
+    }, {
+        filterDelay: 10,
+        total: $scope.data.projects.length, // length of data
+        getData: function($defer, params) {
+            // use build-in angular filter
+            var filteredData = params.filter() ?
+                    $filter('filter')($scope.data.projects, params.filter()) :
+                    $scope.data.projects;
+            var orderedData = params.sorting() ?
+                    $filter('orderBy')(filteredData, params.orderBy()) :
+                    $scope.data.projects;
+
+            params.total(orderedData.length); // set total for recalc pagination
+            $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
+        }
+    });
+
 
     $http.get(RestfulApi.getRoute('tag', 'show', $stateParams.id)).
         success(function(data, status, headers, config) {
             RestfulApi.success(data, status, headers, config);
             $scope.data = data;
+            console.log($scope.data);
+            $scope.tableParams.reload();
         }).
         error(function(data, status, headers, config) {
             RestfulApi.error(data, status, headers, config);
             $scope.errors = data;
         });
+
+
+
+
 
     $scope.save = function(apply) {
         apply = typeof apply !== 'undefined' ? apply : false;

@@ -24,26 +24,21 @@
             <span ng-show="" class="text-danger glyphicon glyphicon-exclamation-sign"> </span>
         </tab-heading>
 
-        <div class="alert alert-info" ng-show="create">Please save the project before adding sections</div>
+        <div class="alert alert-info" ng-show="create">Please save the tag before viewing tagged items</div>
 
         <div ng-hide="create">
-            <a ng-click="editSection(true)" class="btn btn-primary pull-right">Add Section</a>
             <table class="table" ng-table="tableParams" show-filter="true" >
-                <tr ng-repeat="section in $data">
+                <tr ng-repeat="project in $data">
                     <td data-title="'ID'" sortable="'id'" filter="{ 'id': 'text' }">
-                        {{section.id}}
+                        {{project.id}}
                     </td>
                     <td data-title="'Title'" sortable="'title'" filter="{ 'title': 'text' }">
-                        <a href="#section/{{ section.id }}/edit">
-                            {{section.markup|limitTo : 50}}
+                        <a href="#project/{{ project.id }}/edit">
+                            {{project.title}}
                         </a>
                     </td>
                     <td data-title="'Created'" sortable="'created_at'">
                         {{project.created_at}}
-                    </td>
-                    <td>
-                        <a ng-click="editSection(false, section.id)" class="btn btn-primary">Edit</a>
-                        <a ng-click="deleteSection(section.id)" class="btn btn-danger">Delete</a>
                     </td>
                 </tr>
             </table>

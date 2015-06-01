@@ -48,7 +48,7 @@ class TagController extends Controller {
      */
     public function show($id)
 	{
-        return $this->tagRepository->show(new Tag, $id);
+        return $this->tagRepository->show(new Tag, $id, ['projects']);
 	}
 
 
