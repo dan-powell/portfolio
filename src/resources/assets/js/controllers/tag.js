@@ -1,4 +1,4 @@
-app.controller('TagController', function($scope, $filter, ngTableParams, $http, RestfulApi, notificationService) {
+app.controller('TagController', function($scope, $filter, ngTableParams, $http, notificationService) {
 
     // Initialise an empty array to hold data
     $scope.data = [];
@@ -16,11 +16,11 @@ app.controller('TagController', function($scope, $filter, ngTableParams, $http, 
         getData: function($defer, params) {
             // use build-in angular filter
             var filteredData = params.filter() ?
-                    $filter('filter')($scope.data, params.filter()) :
-                    $scope.data;
+                $filter('filter')($scope.data, params.filter()) :
+                $scope.data;
             var orderedData = params.sorting() ?
-                    $filter('orderBy')(filteredData, params.orderBy()) :
-                    $scope.data;
+                $filter('orderBy')(filteredData, params.orderBy()) :
+                $scope.data;
 
             params.total(orderedData.length); // set total for recalc pagination
             $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
@@ -30,17 +30,11 @@ app.controller('TagController', function($scope, $filter, ngTableParams, $http, 
     // Initialise (load) data
     $scope.init = function() {
 
-        //console.log(RestfulApi.getRoute('project', 'update', 4));
-
-        $http.get(RestfulApi.getRoute('tag', 'index')).
-        success(function(data, status, headers, config) {
-            RestfulApi.success(data, status, headers, config);
-            $scope.data = data;
-            $scope.tableParams.reload();
-        }).
-        error(function(data, status, headers, config) {
-            RestfulApi.error(data, status, headers, config);
-        });
+        $http.get('/api/tag')
+            .success(function(data) {
+                $scope.data = data;
+                $scope.tableParams.reload();
+            })
 
     };
 
@@ -49,13 +43,12 @@ app.controller('TagController', function($scope, $filter, ngTableParams, $http, 
 
         if (confirm('Are you sure you wish to delete ' + title + '?')) {
 
-            $http.delete(RestfulApi.getRoute('tag', 'destroy', id)).
-                success(function(data, status, headers, config) {
+            $http.delete('/api/tag/' + id)
+                .success(function(data) {
                     notificationService.add("Project '" + data.title + "' deleted successfully", 'info');
                     $scope.init();
-                }).
-                error(function(data, status, headers, config) {
-                    RestfulApi.error(data, status, headers, config);
+                })
+                .error(function(data) {
                     $scope.errors = data;
                 });
         }
@@ -67,18 +60,14 @@ app.controller('TagController', function($scope, $filter, ngTableParams, $http, 
 });
 
 
-app.controller('TagCreateController', function($scope, $http, $stateParams, $state, RestfulApi, notificationService) {
+app.controller('TagCreateController', function($scope, $http, $stateParams, $state, notificationService) {
 
     $scope.data = {};
 
-    $scope.create = true;
-
-
     $scope.save = function(apply) {
 
-        $http.post(RestfulApi.getRoute('tag', 'store'), $scope.data).
-            success(function(data, status, headers, config) {
-                RestfulApi.success(data, status, headers, config);
+        $http.post('/api/tag', $scope.data)
+            .success(function(data) {
                 notificationService.add("Tag '" + data.title + "' added successfully", 'success');
                 $scope.errors = [];
                 if (!apply) {
@@ -86,9 +75,8 @@ app.controller('TagCreateController', function($scope, $http, $stateParams, $sta
                 } else {
 	                $state.go( "tag.edit", {id: data.id});
                 }
-            }).
-            error(function(data, status, headers, config) {
-                RestfulApi.error(data, status, headers, config);
+            })
+            .error(function(data) {
                 $scope.errors = data;
             });
     }
@@ -96,7 +84,7 @@ app.controller('TagCreateController', function($scope, $http, $stateParams, $sta
 });
 
 
-app.controller('TagEditController', function($scope, $http, $stateParams, $state, RestfulApi, notificationService, ngTableParams, $filter, $modal) {
+app.controller('TagEditController', function($scope, $http, $stateParams, $state, notificationService, ngTableParams, $filter, $modal) {
 
     $scope.data = {
         projects: []
@@ -115,11 +103,11 @@ app.controller('TagEditController', function($scope, $http, $stateParams, $state
         getData: function($defer, params) {
             // use build-in angular filter
             var filteredData = params.filter() ?
-                    $filter('filter')($scope.data.projects, params.filter()) :
-                    $scope.data.projects;
+                $filter('filter')($scope.data.projects, params.filter()) :
+                $scope.data.projects;
             var orderedData = params.sorting() ?
-                    $filter('orderBy')(filteredData, params.orderBy()) :
-                    $scope.data.projects;
+                $filter('orderBy')(filteredData, params.orderBy()) :
+                $scope.data.projects;
 
             params.total(orderedData.length); // set total for recalc pagination
             $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
@@ -127,42 +115,30 @@ app.controller('TagEditController', function($scope, $http, $stateParams, $state
     });
 
 
-    $http.get(RestfulApi.getRoute('tag', 'show', $stateParams.id)).
-        success(function(data, status, headers, config) {
-            RestfulApi.success(data, status, headers, config);
+    $http.get('/api/tag/' + $stateParams.id)
+        .success(function(data) {
             $scope.data = data;
-            console.log($scope.data);
             $scope.tableParams.reload();
-        }).
-        error(function(data, status, headers, config) {
-            RestfulApi.error(data, status, headers, config);
+        })
+        .error(function(data) {
             $scope.errors = data;
         });
-
-
-
 
 
     $scope.save = function(apply) {
         apply = typeof apply !== 'undefined' ? apply : false;
-        $scope.put(apply);
-    }
 
-    $scope.put = function(apply) {
-        $http.put(RestfulApi.getRoute('tag', 'update', $stateParams.id), $scope.data).
-        success(function(data, status, headers, config) {
-            RestfulApi.success(data, status, headers, config);
-            notificationService.add("Tag '" + data.title + "' updated successfully", 'success');
-            $scope.errors = [];
-            if (!apply) {
-                $state.go( "tag.index" );
-            }
-        }).
-        error(function(data, status, headers, config) {
-            RestfulApi.error(data, status, headers, config);
-            $scope.errors = data;
-        });
-    }
-
+        $http.put('/api/tag/' + $stateParams.id, $scope.data)
+            .success(function(data) {
+                notificationService.add("Tag '" + data.title + "' updated successfully", 'success');
+                $scope.errors = [];
+                if (!apply) {
+                    $state.go( "tag.index" );
+                }
+            })
+            .error(function(data){
+                $scope.errors = data;
+            });
+    };
 
 });

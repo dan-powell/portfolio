@@ -26,24 +26,23 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth']], function()
         return view('portfolio::admin.base');
     }]);
 
-
-    // RESTful API
-    Route::group(['prefix' => 'api', 'middleware' => ['auth']], function()
-    {
-
-        // Admin project items
-        Route::resource('project', 'DanPowell\Portfolio\Http\Controllers\Api\ProjectController', ['except' => ['create', 'edit']]);
-
-        // Admin project section items
-        Route::resource('project.section', 'DanPowell\Portfolio\Http\Controllers\Api\ProjectSectionController', ['except' => ['create', 'edit']]);
-
-        // Admin project section items
-        Route::resource('section', 'DanPowell\Portfolio\Http\Controllers\Api\SectionController', ['except' => ['create', 'edit']]);
-
-        // Admin project section items
-        Route::resource('tag', 'DanPowell\Portfolio\Http\Controllers\Api\TagController', ['except' => ['create', 'edit']]);
+});
 
 
-    });
+// RESTful API
+Route::group(['prefix' => 'api'], function()
+{
+
+    // Admin project items
+    Route::resource('project', 'DanPowell\Portfolio\Http\Controllers\Api\ProjectController', ['except' => ['create', 'edit']]);
+
+    // Admin project section items
+    Route::resource('project.section', 'DanPowell\Portfolio\Http\Controllers\Api\ProjectSectionController', ['except' => ['create', 'edit']]);
+
+    // Admin project section items
+    Route::resource('section', 'DanPowell\Portfolio\Http\Controllers\Api\SectionController', ['except' => ['create', 'edit']]);
+
+    // Admin project section items
+    Route::resource('tag', 'DanPowell\Portfolio\Http\Controllers\Api\TagController', ['except' => ['create', 'edit']]);
 
 });

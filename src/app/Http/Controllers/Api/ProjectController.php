@@ -24,6 +24,8 @@ class ProjectController extends Controller {
      */
     public function __construct(ProjectRepository $projectRepository)
     {
+        // Make sure oly authorised users can post/put. 'Get' does not require authorisation.
+        $this->middleware('auth', ['except' => ['index','show']]);
         $this->projectRepository = $projectRepository;
     }
 

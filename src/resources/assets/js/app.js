@@ -1,7 +1,10 @@
 // Fire up the app
 var app = angular.module('ng-portfolio', ['ui.router', 'ui.bootstrap', 'ngTable', 'hc.marked', 'ngTagsInput']);
 
-// Configure Angular
+/*  Angular Configuration
+    -------------------------------------------------------------------------------------------------
+    Angular routes (states) are defined here. Each State is usually assigned a controller and a view
+*/
 
 /* app.config(function($interpolateProvider) {
     // Set Angular to use square-brackets instead of curly - a work around to play nice with Laravel Blade templates
@@ -12,6 +15,8 @@ var app = angular.module('ng-portfolio', ['ui.router', 'ui.bootstrap', 'ngTable'
 app.config(function($httpProvider) {
     // Add the XMLHttpRequest header so that Laravel can tell apart AJAX requests
     $httpProvider.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
+
+    $httpProvider.interceptors.push('HttpInterceptor');
 });
 
 app.config(function(tagsInputConfigProvider) {
@@ -30,13 +35,14 @@ app.config(['markedProvider', function(markedProvider) {
 }]);
 
 
-// Setup the state manager (Router)
+/*  State Provider
+    -------------------------------------------------------------------------------------------------
+    Angular routes (states) are defined here. Each State is usually assigned a controller and a view
+*/
 app.config(function($stateProvider, $urlRouterProvider) {
 
-  // For any unmatched url, redirect to /state1
+  // For any unmatched url, redirect to dasboard
   $urlRouterProvider.otherwise("/dashboard");
-
-  //$urlRouterProvider.when('/project', '/project/index');
 
   // Now set up the states
   $stateProvider
@@ -64,16 +70,6 @@ app.config(function($stateProvider, $urlRouterProvider) {
       templateUrl: "/vendor/portfolio/admin/views/project/project.edit.html",
       controller: "ProjectEditController"
     })
-    .state('project-section', {
-      url: "/project/:id/section",
-      templateUrl: "/vendor/portfolio/admin/views/project/project.section.index.html",
-      controller: "ProjectSectionController"
-    })
-    .state('section-edit', {
-      url: "/section/:id/edit",
-      templateUrl: "/vendor/portfolio/admin/views/section/section.edit.html",
-      controller: "SectionEditController"
-    })
     .state('tag', {
       url: "/tag",
       templateUrl: "/vendor/portfolio/admin/views/tag/tag.html",
@@ -97,8 +93,59 @@ app.config(function($stateProvider, $urlRouterProvider) {
 
 
 
-// Some helpful functions for AJAX requests
-app.factory('RestfulApi', function ($http, notificationService) {
+/*  Restful Api (Deprecated)
+    -------------------------------------------------------------------------------------------------
+    Some helpful functions for AJAX requests
+*/
+app.factory('RestfulApi', function () {
+
+    return {
+
+        // Returns the string of a particular route
+        getRoute: function(resource, method, id) {
+            if (typeof id === 'undefined') { id = '0'; }
+
+            var prefix = '/api';
+
+            var routes = {
+                project     :  {
+                    index   : prefix + '/project',
+                    show    : prefix + '/project/' + id,
+                    store   : prefix + '/project',
+                    update  : prefix + '/project/' + id,
+                    destroy : prefix + '/project/' + id
+                },
+                section     :  {
+                    index   : prefix + '/section',
+                    show    : prefix + '/section/' + id,
+                    store   : prefix + '/section',
+                    update  : prefix + '/section/' + id,
+                    destroy : prefix + '/section/' + id
+                },
+                projectSection     :  {
+                    store   : prefix + '/project/' + id + '/section'
+                },
+                tag         :  {
+                    index   : prefix + '/tag',
+                    show    : prefix + '/tag/' + id,
+                    store   : prefix + '/tag',
+                    update  : prefix + '/tag/' + id,
+                    destroy : prefix + '/tag/' + id
+                }
+            };
+
+            return routes[resource][method];
+
+        }
+    }
+});
+
+
+/*  HTTP Intercepter
+    -------------------------------------------------------------------------------------------------
+    Intercepts all AJAX request and responses. Used to perform a few checks on each request.
+*/
+app.factory('HttpInterceptor', function($q, notificationService) {
 
     // Wot to do incase API fails to respond with 200
     var checkResponseCode = function(data, status) {
@@ -132,59 +179,53 @@ app.factory('RestfulApi', function ($http, notificationService) {
         }
     }
 
-    return {
 
-        // Returns the string of a particular route
-        getRoute: function(resource, method, id) {
-            if (typeof id === 'undefined') { id = '0'; }
+  return {
+    // optional method
+    'request': function(config) {
+      // do something on success
+      //console.log('request');
+      //console.log(config);
+      return config;
+    },
 
-            var prefix = '/admin/api';
+    // optional method
+   'requestError': function(rejection) {
+      // do something on error
+      if (canRecover(rejection)) {
+        return responseOrNewPromise
+      }
+      return $q.reject(rejection);
+    },
 
-            var routes = {
-                project     :  {
-                    index   : prefix + '/project',
-                    show    : prefix + '/project/' + id,
-                    store   : prefix + '/project',
-                    update  : prefix + '/project/' + id,
-                    destroy : prefix + '/project/' + id
-                },
-                section     :  {
-                    index   : prefix + '/section',
-                    show    : prefix + '/section/' + id,
-                    store   : prefix + '/section',
-                    update  : prefix + '/section/' + id,
-                    destroy : prefix + '/section/' + id
-                },
-                projectSection     :  {
-                    store   : prefix + '/project/' + id + '/section'
-                },
-                tag         :  {
-                    index   : prefix + '/tag',
-                    show    : prefix + '/tag/' + id,
-                    store   : prefix + '/tag',
-                    update  : prefix + '/tag/' + id,
-                    destroy : prefix + '/tag/' + id
-                }
-            };
+    // optional method
+    'response': function(response) {
+      // do something on success
+      //console.log('Response');
+      //console.log(response);
+      notificationService.removeByType('danger');
+      return response;
+    },
 
-            return routes[resource][method];
+    // optional method
+   'responseError': function(rejection) {
+      // do something on error
+      checkResponseCode(rejection.data, rejection.status);
+      console.log(rejection);
 
-        },
-
-        // Do some stuff upon a successful Ajax request
-        success: function(data, status, headers, config) {
-            notificationService.removeByType('danger');
-            return data;
-        },
-        // Do some stuff upon an unsuccessful Ajax request
-        error: function(data, status, headers, config) {
-            checkResponseCode(data, status);
-            return data;
-        }
+      if (canRecover(rejection)) {
+        return responseOrNewPromise
+      }
+      return $q.reject(rejection);
     }
+  };
 });
 
 
+/*  Notification Service
+    -------------------------------------------------------------------------------------------------
+    Manages pop-up alert info & danger messages that are displayed on page
+*/
 app.service('notificationService', function ($timeout) {
 
     var notifications = [];
@@ -217,7 +258,6 @@ app.service('notificationService', function ($timeout) {
             // Set the alert to be removed after a delay
             $timeout(function(){
                 notifications.splice(notifications.indexOf(notification), 1);
-                //$scope.alerts.splice($scope.alerts.indexOf(alert), 1);
             }, 6000); // maybe '}, 3000, false);' to avoid calling apply
         }
 

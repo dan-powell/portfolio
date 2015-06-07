@@ -11,7 +11,6 @@ use DanPowell\Portfolio\Models\Tag;
 
 class TagController extends Controller {
 
-
     /**
      * RESTful Repository
      * @var Repository
@@ -24,6 +23,8 @@ class TagController extends Controller {
      */
     public function __construct(TagRepository $tagRepository)
     {
+        // Make sure oly authorised users can post/put. 'Get' does not require authorisation.
+        $this->middleware('auth', ['except' => ['index','show']]);
         $this->tagRepository = $tagRepository;
     }
 

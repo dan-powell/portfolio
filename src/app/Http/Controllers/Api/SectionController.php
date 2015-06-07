@@ -24,6 +24,8 @@ class SectionController extends Controller {
      */
     public function __construct(RestfulRepository $restfulRepository)
     {
+        // Make sure oly authorised users can post/put. 'Get' does not require authorisation.
+        $this->middleware('auth', ['except' => ['index','show']]);
         $this->restfulRepository = $restfulRepository;
     }
 
