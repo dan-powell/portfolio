@@ -24,6 +24,7 @@
     "ng-table": "~0.5.4",
     "angular-ui-router": "~0.2.14",
     "angular-bootstrap": "~0.13.0",
-    "angular-marked": "~0.0.12"
+    "angular-marked": "~0.0.12",
+    "ng-tags-input": "~2.3.0"
   }
 }

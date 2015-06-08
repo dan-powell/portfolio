@@ -26,6 +26,10 @@
                     <a ui-sref="project" class="hidden">Projects</a>
                     <a ui-sref="project.index">Project</a>
                 </li>
+                <li ui-sref-active="active">
+                    <a ui-sref="tag" class="hidden">Tags</a>
+                    <a ui-sref="tag.index">Tag</a>
+                </li>
             </ul>
 
             <ul class="nav navbar-nav navbar-right">

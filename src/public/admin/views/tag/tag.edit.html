@@ -1,0 +1,52 @@
+<h3>{{ data.title }}</h3>
+
+<p><strong>ID:</strong> {{ data.id }}</p>
+
+<p><strong>Last Updated:</strong> {{ data.updated_at_human }}</p>
+
+<tabset class="nav nav-tabs">
+    <tab class="tab-pane">
+        <tab-heading>Content
+            <span ng-show="errors.title || errors.markup" class="text-danger glyphicon glyphicon-exclamation-sign"> </span>
+        </tab-heading>
+
+        <br/>
+
+        <div class="form-group" ng-class="{'has-error':errors.title}">
+            <label for="title" class="control-label">Title</label>
+            <input type="text" id="title" class="form-control" ng-model="data.title" placeholder="Enter project name"/>
+            <p ng-repeat="error in errors.title" class="help-block">{{ error }}</p>
+        </div>
+    </tab>
+
+    <tab>
+        <tab-heading>Tagged
+            <span ng-show="" class="text-danger glyphicon glyphicon-exclamation-sign"> </span>
+        </tab-heading>
+
+        <div class="alert alert-info" ng-show="create">Please save the tag before viewing tagged items</div>
+
+        <div ng-hide="create">
+            <table class="table" ng-table="tableParams" show-filter="true" >
+                <tr ng-repeat="project in $data">
+                    <td data-title="'ID'" sortable="'id'" filter="{ 'id': 'text' }">
+                        {{project.id}}
+                    </td>
+                    <td data-title="'Title'" sortable="'title'" filter="{ 'title': 'text' }">
+                        <a href="#project/{{ project.id }}/edit">
+                            {{project.title}}
+                        </a>
+                    </td>
+                    <td data-title="'Created'" sortable="'created_at'">
+                        {{project.created_at}}
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </tab>
+
+</tabset>
+
+<br/>
+
+<button ng-click="save()" class="btn btn-primary">Save</button> <button ng-click="save(true)" class="btn btn-info">Apply</button>

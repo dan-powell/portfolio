@@ -1,0 +1,31 @@
+<table class="table" ng-table="tableParams" show-filter="true" >
+    <colgroup>
+        <col width="5%">
+        <col width="55%">
+        <col width="20%">
+        <col width="20%">
+    </colgroup>
+    <tr ng-repeat="tag in $data">
+        <td data-title="'ID'" sortable="'id'" filter="{ 'id': 'text' }" class="text-center">
+            {{tag.id}}
+        </td>
+        <td data-title="'Title'" sortable="'title'" filter="{ 'title': 'text' }">
+            <a href="#tag/{{ tag.id }}/edit">
+                {{tag.title}}
+            </a>
+        </td>
+        <td data-title="'Last Updated'" sortable="'updated_at'">
+            {{tag.updated_at_human}}
+        </td>
+        <td class="text-right">
+            <a ui-sref="tag.edit({id: tag.id})" class="btn btn-primary">
+                <span class="glyphicon glyphicon-pencil"></span>
+            </a>
+
+            <a ng-click="delete(tag.id, tag.title)" class="btn btn-danger">
+                <span class="glyphicon glyphicon-remove"></span>
+            </a>
+        </td>
+    </tr>
+</table>
+

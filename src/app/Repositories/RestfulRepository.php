@@ -65,7 +65,7 @@ class RestfulRepository
             // If yes, order by last updated
             $collection = $class::where('attachment_id', '=', $id)->where('attachment_type', '=', get_class($related))->orderBy('updated_at', 'DESC')->with($with)->get();
         } else {
-            $collection = $class::where('attachment_id', '=', $id)->where('attachment_type', '=', get_class($related))->with([])->get();
+            $collection = $class::where('attachment_id', '=', $id)->where('attachment_type', '=', get_class($related))->with($with)->get();
         }
 
     	return response()->json($collection);
@@ -176,8 +176,10 @@ class RestfulRepository
             return response()->json(['errors' => [$this->messages['not_found']]], 422);
         } else {
 
+
             // Update the item with request data
             $collection->fill($request->all());
+
 
             // Check if the data saved OK
             if (!$collection->save()) {
@@ -191,6 +193,7 @@ class RestfulRepository
             }
         }
     }
+
 
     /**
      * Delete particular record of model
@@ -238,7 +241,7 @@ class RestfulRepository
      *
      * @return Illuminate Request
      */
-    private function modifyRequestData($request)
+    protected function modifyRequestData($request)
     {
         // Slugify the slug
         if ($request->get('slug')) {
@@ -247,6 +250,28 @@ class RestfulRepository
 
         return $request;
     }
+
+
+
+    protected function updateRelated($class, $request, $relations)
+    {
+
+        foreach($relations as $relation) {
+
+            foreach($request[$relation] as $item) {
+
+                $class[$relation]()->create($item);
+                //new App\Comment(['message' => 'Another comment.']),
+            };
+
+
+        }
+
+
+    }
+
+
+
 
 }
 

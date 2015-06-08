@@ -3,30 +3,29 @@
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-use DanPowell\Portfolio\Repositories\RestfulRepository;
+use DanPowell\Portfolio\Repositories\TagRepository;
 
 // Load up the models
-use DanPowell\Portfolio\Models\Section;
+use DanPowell\Portfolio\Models\Tag;
 
 
-class SectionController extends Controller {
-
+class TagController extends Controller {
 
     /**
      * RESTful Repository
      * @var Repository
      */
-    protected $restfulRepository;
+    protected $tagRepository;
 
     /**
      * Inject the repos
      * @param RestfulRepository $restfulRepository
      */
-    public function __construct(RestfulRepository $restfulRepository)
+    public function __construct(TagRepository $tagRepository)
     {
         // Make sure oly authorised users can post/put. 'Get' does not require authorisation.
         $this->middleware('auth', ['except' => ['index','show']]);
-        $this->restfulRepository = $restfulRepository;
+        $this->tagRepository = $tagRepository;
     }
 
 
@@ -37,7 +36,7 @@ class SectionController extends Controller {
      */
 	public function index()
 	{
-    	return $this->restfulRepository->index(new Section);
+    	return $this->tagRepository->index(new Tag);
 	}
 
 
@@ -50,7 +49,7 @@ class SectionController extends Controller {
      */
     public function show($id)
 	{
-        return $this->restfulRepository->show(new Section, $id);
+        return $this->tagRepository->show(new Tag, $id, ['projects']);
 	}
 
 
@@ -63,7 +62,7 @@ class SectionController extends Controller {
      */
     public function store(Request $request)
 	{
-        return $this->restfulRepository->store(new Section, $request);
+        return $this->tagRepository->store(new Tag, $request);
 	}
 
 
@@ -74,7 +73,7 @@ class SectionController extends Controller {
      */
     public function update($id, Request $request)
 	{
-        return $this->restfulRepository->update(new Section, $id, $request);
+        return $this->tagRepository->update(new Tag, $id, $request);
 	}
 
 
@@ -85,7 +84,7 @@ class SectionController extends Controller {
      */
     public function destroy($id)
 	{
-        return $this->restfulRepository->destroy(new Project, $id);
+        return $this->tagRepository->destroy(new Tag, $id);
 	}
 
 

@@ -84,6 +84,8 @@
             <p ng-repeat="error in errors.scripts" class="help-block">{{ error }}</p>
         </div>
 
+        <tags-input ng-model="data.tags" display-property="title"></tags-input>
+
     </tab>
 
     <tab>
@@ -121,26 +123,33 @@
             <span ng-show="" class="text-danger glyphicon glyphicon-exclamation-sign"> </span>
         </tab-heading>
 
+        <div class="alert alert-info" ng-show="create">Please save the project before adding sections</div>
 
-        <table class="table" ng-table="tableParams" show-filter="true" >
-            <tr ng-repeat="section in $data">
-                <td data-title="'ID'" sortable="'id'" filter="{ 'id': 'text' }">
-                    {{section.id}}
-                </td>
-                <td data-title="'Title'" sortable="'title'" filter="{ 'title': 'text' }">
-                    <a href="#section/{{ section.id }}/edit">
-                        {{section.markup|limitTo : 50}}
-                    </a>
-                </td>
-                <td data-title="'Created'" sortable="'created_at'">
-                    {{project.created_at}}
-                </td>
-                <td>
-                    <a ng-click="editSection($index)" class="btn btn-primary">Edit</a>
-                    <a ng-click="deleteSection(section.id)" class="btn btn-danger">Delete</a>
-                </td>
-            </tr>
-        </table>
+        <div ng-hide="create">
+
+            <a ng-click="editSection(true)" class="btn btn-primary pull-right">Add Section</a>
+
+            <table class="table" ng-table="tableParams" show-filter="true" >
+                <tr ng-repeat="section in $data">
+                    <td data-title="'ID'" sortable="'id'" filter="{ 'id': 'text' }">
+                        {{section.id}}
+                    </td>
+                    <td data-title="'Title'" sortable="'title'" filter="{ 'title': 'text' }">
+                        <a href="#section/{{ section.id }}/edit">
+                            {{section.markup|limitTo : 50}}
+                        </a>
+                    </td>
+                    <td data-title="'Created'" sortable="'created_at'">
+                        {{project.created_at}}
+                    </td>
+                    <td>
+                        <a ng-click="editSection(false, section.id)" class="btn btn-primary">Edit</a>
+                        <a ng-click="deleteSection(section.id)" class="btn btn-danger">Delete</a>
+                    </td>
+                </tr>
+            </table>
+
+        </div>
 
     </tab>
 
@@ -161,25 +170,25 @@
         </div>
         <div class="modal-body">
 
-            
+
             <div class="form-group" ng-class="{'has-error':errors.markup}">
 	            <label for="markup" class="control-label">Body text</label>
-	
+
 	            <div class="row">
-	
+
 	                <div class="col-sm-6">
 	                    <textarea id="markup" class="form-control" ng-model="section.markup" placeholder="Enter section content" rows="5"></textarea>
 	                </div>
-	
+
 	                <div class="col-sm-6">
 		                <style ng-bind="section.styles">
 			             </style>
 			                
 	                    <div class="well" marked="section.markup"></div>
 	                </div>
-	
+
 	                <p ng-repeat="error in errors.markup" class="help-block">{{ error }}</p>
-	
+
 	            </div>
 	        </div>
 
@@ -202,7 +211,7 @@
         </div>
         <div class="modal-footer">
             <button class="btn btn-primary" ng-click="save()">Save</button>
-            <button class="btn btn-info" ng-click="save(true)">Apply</button>
+<!--             <button class="btn btn-info" ng-click="save(true)">Apply</button> -->
             <button class="btn btn-default" ng-click="cancel()">Cancel</button>
         </div>
     </script>

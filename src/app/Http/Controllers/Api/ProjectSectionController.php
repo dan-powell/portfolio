@@ -3,7 +3,7 @@
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-use DanPowell\Portfolio\Repositories\RestfulRepository;
+use DanPowell\Portfolio\Repositories\sectionRepository;
 
 // Load up the models
 use DanPowell\Portfolio\Models\Section;
@@ -15,22 +15,30 @@ class ProjectSectionController extends Controller {
      * RESTful Repository
      * @var Repository
      */
-    protected $restfulRepository;
+    protected $sectionRepository;
 
     /**
      * Inject the repos
      * @param ClueRepository $clueRepo
      * @param TagRepository $tagRepo
      */
-    public function __construct(RestfulRepository $restfulRepository)
+    public function __construct(sectionRepository $sectionRepository)
     {
-        $this->restfulRepository = $restfulRepository;
+        // Make sure oly authorised users can post/put. 'Get' does not require authorisation.
+        $this->middleware('auth', ['except' => ['index','show']]);
+        $this->sectionRepository = $sectionRepository;
     }
 
 
     public function index($project_id)
     {
-    	return $this->restfulRepository->indexRelated(new Section, $project_id, new Project);
+    	return $this->sectionRepository->indexRelated(new Section, $project_id, new Project);
+    }
+
+
+    public function store($project_id, Request $request)
+    {
+    	return $this->sectionRepository->storeSection(new Project, $project_id, $request);
     }
 
 }

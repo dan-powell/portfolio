@@ -8,7 +8,7 @@
                 "./src/resources/assets/js/controllers/notification.js",
                 "./src/resources/assets/js/controllers/dashboard.js",
                 "./src/resources/assets/js/controllers/project.js",
-                "./src/resources/assets/js/controllers/section.js",
+                "./src/resources/assets/js/controllers/tag.js",
                 "./src/resources/assets/js/main.js"
             ],
             "output": "./src/public/admin/js/main.js"
@@ -21,7 +21,8 @@
                 "./bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js",
                 "./bower_components/ng-table/dist/ng-table.min.js",
                 "./bower_components/marked/lib/marked.js",
-                "./bower_components/angular-marked/angular-marked.min.js"
+                "./bower_components/angular-marked/angular-marked.min.js",
+                "./bower_components/ng-tags-input/ng-tags-input.min.js"
             ],
             "output": "./src/public/admin/js/plugins.js"
         }
