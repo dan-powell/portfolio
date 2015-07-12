@@ -39,10 +39,20 @@ Route::group(['prefix' => 'api'], function()
     // Admin project section items
     Route::resource('project.section', 'DanPowell\Portfolio\Http\Controllers\Api\ProjectSectionController', ['except' => ['create', 'edit']]);
 
-    // Admin project section items
+    // Admin section items
     Route::resource('section', 'DanPowell\Portfolio\Http\Controllers\Api\SectionController', ['except' => ['create', 'edit']]);
 
-    // Admin project section items
+    // Admin tag items
     Route::resource('tag', 'DanPowell\Portfolio\Http\Controllers\Api\TagController', ['except' => ['create', 'edit']]);
+
+    // Admin project page items
+    Route::resource('project.page', 'DanPowell\Portfolio\Http\Controllers\Api\ProjectPageController', ['except' => ['create', 'edit']]);
+
+    // Admin page items
+    Route::resource('page', 'DanPowell\Portfolio\Http\Controllers\Api\PageController', ['except' => ['create', 'edit']]);
+
+    // Admin project section items
+    Route::resource('page.section', 'DanPowell\Portfolio\Http\Controllers\Api\PageSectionController', ['except' => ['create', 'edit']]);
+
 
 });

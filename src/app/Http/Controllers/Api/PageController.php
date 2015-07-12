@@ -3,30 +3,30 @@
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-use DanPowell\Portfolio\Repositories\RestfulRepository;
+use DanPowell\Portfolio\Repositories\PageRepository;
 
 // Load up the models
-use DanPowell\Portfolio\Models\Section;
+use DanPowell\Portfolio\Models\Page;
 
 
-class SectionController extends Controller {
+class PageController extends Controller {
 
 
     /**
      * RESTful Repository
      * @var Repository
      */
-    protected $restfulRepository;
+    protected $pageRepository;
 
     /**
      * Inject the repos
      * @param RestfulRepository $restfulRepository
      */
-    public function __construct(RestfulRepository $restfulRepository)
+    public function __construct(PageRepository $pageRepository)
     {
         // Make sure oly authorised users can post/put. 'Get' does not require authorisation.
         $this->middleware('auth', ['except' => ['index','show']]);
-        $this->restfulRepository = $restfulRepository;
+        $this->pageRepository = $pageRepository;
     }
 
 
@@ -37,7 +37,7 @@ class SectionController extends Controller {
      */
 	public function index()
 	{
-    	return $this->restfulRepository->index(new Section);
+    	return $this->pageRepository->index(new Page);
 	}
 
 
@@ -50,7 +50,7 @@ class SectionController extends Controller {
      */
     public function show($id)
 	{
-        return $this->restfulRepository->show(new Section, $id);
+        return $this->pageRepository->show(new Page, $id, ['sections', 'attachment']);
 	}
 
 
@@ -63,7 +63,7 @@ class SectionController extends Controller {
      */
     public function store(Request $request)
 	{
-        return $this->restfulRepository->store(new Section, $request);
+        return $this->pageRepository->store(new Page, $request);
 	}
 
 
@@ -74,7 +74,7 @@ class SectionController extends Controller {
      */
     public function update($id, Request $request)
 	{
-        return $this->restfulRepository->update(new Section, $id, $request);
+        return $this->pageRepository->update(new Page, $id, $request);
 	}
 
 
@@ -85,7 +85,7 @@ class SectionController extends Controller {
      */
     public function destroy($id)
 	{
-        return $this->restfulRepository->destroy(new Section, $id);
+        return $this->pageRepository->destroy(new Page, $id);
 	}
 
 

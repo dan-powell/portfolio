@@ -22,8 +22,7 @@ class Section extends Model {
 	}
 
     protected $casts = [
-        'id' => 'integer',
-        'featured' => 'integer',
+        'id' => 'integer'
     ];
 
 	public $timestamps = false;

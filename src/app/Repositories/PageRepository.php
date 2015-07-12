@@ -14,13 +14,13 @@ use DanPowell\Portfolio\Models\Tag;
 */
 
 use DanPowell\Portfolio\Models\Section;
-use DanPowell\Portfolio\Models\Tag;
+use DanPowell\Portfolio\Models\Project;
 use DanPowell\Portfolio\Models\Page;
 
 /**
  * A handy repo for doing common RESTful based things like indexing, saving etc.
  */
-class ProjectRepository extends RestfulRepository
+class PageRepository extends RestfulRepository
 {
 
     /**
@@ -84,53 +84,47 @@ class ProjectRepository extends RestfulRepository
                 }
                 $collection->sections()->saveMany($sectionsToUpdate);
 
-                // Save tags
-                $tagsToUpdate = [];
-                foreach ($request->tags as $tag) {
-
-                    if(isset($tag['id'])) {
-                        // check if a tag can be found by ID
-                        $newTag = Tag::find($tag['id']);
-                    } else {
-                        $newTag = false;
-                    }
-
-                    // if no existing model is found, create a new tag
-                    if(!$newTag) {
-                        $newTag = new Tag;
-                        $newTag->fill($tag);
-                        // Save the tag
-                        $newTag = $collection->tags()->save($newTag);
-                    }
-
-                    array_push($tagsToUpdate, $newTag->id);
-                }
-                $collection->tags()->sync($tagsToUpdate);
-
-
-                // Save pages
-                $pagesToUpdate = [];
-                foreach ($request->pages as $page) {
-
-                    $newPage = Page::find($page['id']);
-
-                    // if no existing model is found, create a new section
-                    if(!$newPage) {
-                        $newPage = new Page;
-                    }
-                    $newPage->fill($page);
-
-                    array_push($pagesToUpdate, $newPage);
-                }
-                $collection->pages()->saveMany($pagesToUpdate);
-
-
-
                 // Success - Return item ID as JSON
                 return response()->json($collection, 200);
             }
         }
 
+    }
+
+
+    public function storePage($class, $id, $request)
+    {
+        // Modify some of the input data
+        $this->modifyRequestData($request);
+
+        $page = new Page;
+
+        // Return errors as JSON if request does not validate against model rules
+        $v = Validator::make($request->all(), $page->rules());
+
+        if ($v->fails())
+        {
+            return response()->json($v->errors(), 422);
+        }
+
+
+        $collection = $class::find($id);
+
+
+        // Update the item with request data
+        $page->fill($request->all());
+
+
+        // Check if the data saved OK
+        if (!$collection->sections()->save($page)) {
+
+            // Fail - Return error as JSON
+            return response()->json(['errors' => [$this->messages['error_updating']]], 422);
+        } else {
+
+            // Success - Return item ID as JSON
+            return response()->json($page, 200);
+        }
     }
 
 

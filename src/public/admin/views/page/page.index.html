@@ -1,0 +1,35 @@
+<table class="table" ng-table="tableParams" show-filter="true" >
+    <colgroup>
+        <col width="5%">
+        <col width="55%">
+        <col width="20%">
+        <col width="20%">
+    </colgroup>
+    <tr ng-repeat="page in $data">
+        <td data-title="'ID'" sortable="'id'" filter="{ 'id': 'text' }" class="text-center">
+            {{page.id}}
+        </td>
+        <td data-title="'Title'" sortable="'title'" filter="{ 'title': 'text' }">
+            <a href="#page/{{ page.id }}/edit">
+                {{page.title}}
+            </a>
+        </td>
+        <td data-title="'Last Updated'" sortable="'updated_at'">
+            {{page.updated_at_human}}
+        </td>
+        <td class="text-right">
+            <a ui-sref="page.edit({id: page.id})" class="btn btn-primary">
+                <span class="glyphicon glyphicon-pencil"></span>
+            </a>
+
+            <a href="/portfolio/{{page.slug}}" target="_blank" class="btn btn-info">
+                <span class="glyphicon glyphicon-eye-open"></span>
+            </a>
+
+            <a ng-click="delete(page.id, page.title)" class="btn btn-danger">
+                <span class="glyphicon glyphicon-remove"></span>
+            </a>
+        </td>
+    </tr>
+</table>
+

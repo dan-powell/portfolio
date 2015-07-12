@@ -24,11 +24,15 @@
                 <li ui-sref-active="active"><a ui-sref="dashboard">Dashboard</a></li>
                 <li ui-sref-active="active">
                     <a ui-sref="project" class="hidden">Projects</a>
-                    <a ui-sref="project.index">Project</a>
+                    <a ui-sref="project.index">Projects</a>
                 </li>
                 <li ui-sref-active="active">
                     <a ui-sref="tag" class="hidden">Tags</a>
-                    <a ui-sref="tag.index">Tag</a>
+                    <a ui-sref="tag.index">Tags</a>
+                </li>
+                <li ui-sref-active="active">
+                    <a ui-sref="page" class="hidden">Pages</a>
+                    <a ui-sref="page.index">Pages</a>
                 </li>
             </ul>
 

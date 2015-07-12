@@ -155,6 +155,7 @@ class RestfulRepository
      */
     public function update($class, $id, $request)
     {
+
         // Modify some of the input data
         $this->modifyRequestData($request);
 

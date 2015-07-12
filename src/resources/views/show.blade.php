@@ -28,8 +28,7 @@
             <h1>{{ $project->title }}</h1>
 
             <div class="row">
-                <article class="col-sm-8">
-
+                <article class="col-sm-6">
             		@if (count($project->sections) > 0)
             	        @foreach($project->sections as $section)
             	            @include('portfolio::partials.section')
@@ -37,25 +36,42 @@
                     @else
                         {{ $project->markup }}
             		@endif
-
                 </article>
-                <aside class="col-sm-4">
-
-                    @if (count($project->tags) > 0)
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <h3>Tags</h3>
-                            </div>
-                            <div class="panel-body">
-                                <ul class="list-group">
+                <aside class="col-sm-3">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3>Tags</h3>
+                        </div>
+                        <div class="panel-body">
+                            <ul class="list-group">
+                                @if (count($project->tags) > 0)
                                     @foreach($project->tags as $tag)
                                         <li class="list-group-item">{{ $tag->title }}</li>
                                     @endforeach
-                                </ul>
-                            </div>
+                                @else
+                                    <li class="list-group-item">No tags</li>
+                                @endif
+                            </ul>
                         </div>
-                    @endif
-
+                    </div>
+                </aside>
+                <aside class="col-sm-3">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3>Pages</h3>
+                        </div>
+                        <div class="panel-body">
+                            <ul class="list-group">
+                                @if (count($project->pages) > 0)
+                                    @foreach($project->pages as $page)
+                                        <li class="list-group-item"><a href="{{ route('projects.page', [$project->slug, $page->slug]) }}">{{ $page->title }}</a></li>
+                                    @endforeach
+                                @else
+                                    <li class="list-group-item">No pages</li>
+                                @endif
+                            </ul>
+                        </div>
+                    </div>
                 </aside>
             </div>
 

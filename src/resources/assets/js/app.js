@@ -1,5 +1,5 @@
 // Fire up the app
-var app = angular.module('ng-portfolio', ['ui.router', 'ui.bootstrap', 'ngTable', 'hc.marked', 'ngTagsInput']);
+var app = angular.module('ng-portfolio', ['ui.router', 'ui.bootstrap', 'ngTable', 'hc.marked', 'ngTagsInput', 'ui.tree']);
 
 /*  Angular Configuration
     -------------------------------------------------------------------------------------------------
@@ -88,7 +88,29 @@ app.config(function($stateProvider, $urlRouterProvider) {
       url: "/:id/edit",
       templateUrl: "/vendor/portfolio/admin/views/tag/tag.edit.html",
       controller: "TagEditController"
+    })
+    .state('page', {
+      url: "/page",
+      templateUrl: "/vendor/portfolio/admin/views/page/page.html",
+    })
+    .state('page.index', {
+      url: "/index",
+      templateUrl: "/vendor/portfolio/admin/views/page/page.index.html",
+      controller: "PageController"
+    })
+    /*
+    .state('page.create', {
+      url: "/create",
+      templateUrl: "/vendor/portfolio/admin/views/page/page.edit.html",
+      controller: "PageCreateController"
+    })
+    */
+    .state('page.edit', {
+      url: "/:id/edit",
+      templateUrl: "/vendor/portfolio/admin/views/page/page.edit.html",
+      controller: "PageEditController"
     });
+
 });
 
 
@@ -125,12 +147,25 @@ app.factory('RestfulApi', function () {
                 projectSection     :  {
                     store   : prefix + '/project/' + id + '/section'
                 },
+                projectPage     :  {
+                    store   : prefix + '/project/' + id + '/page'
+                },
                 tag         :  {
                     index   : prefix + '/tag',
                     show    : prefix + '/tag/' + id,
                     store   : prefix + '/tag',
                     update  : prefix + '/tag/' + id,
                     destroy : prefix + '/tag/' + id
+                },
+                page     :  {
+                    index   : prefix + '/page',
+                    show    : prefix + '/page/' + id,
+                    store   : prefix + '/page',
+                    update  : prefix + '/page/' + id,
+                    destroy : prefix + '/page/' + id
+                },
+                pageSection     :  {
+                    store   : prefix + '/page/' + id + '/section'
                 }
             };
 
