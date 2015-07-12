@@ -1,152 +1,196 @@
-// Load Gulp plugins
-var gulp        = require('gulp');
-var plumber = require('gulp-plumber');
-var less = require('gulp-less');
-var uglify = require('gulp-uglify');
-var filter      = require('gulp-filter');
-var concat = require('gulp-concat');
-var streamqueue = require('streamqueue');
-var sourcemaps = require('gulp-sourcemaps');
-var notify = require("gulp-notify");
-var browserSync = require('browser-sync');
-var mergeStream = require('merge-stream');
-var shell = require('gulp-shell');
+// Load environment config
+try {
+    var config = require('./assetconfig.json');
+} catch(err) {
+	if (err.code == 'MODULE_NOT_FOUND') {
+		console.log('assetconfig.json file missing. Please duplicate & rename the example.');
+	} else {
+		console.log('There is an error in the config file. Please fix it :)');
+		console.log(err);
+	}
+	process.exit()
+}
 
-var config = require('./assetconfig.json');
 
-// Process LESS
-gulp.task('less', function () {
+// Load plugins
+var gulp        = require('gulp'),
+  plumber 		= require('gulp-plumber'),
+  less         	= require('gulp-less'),
+  minifycss    	= require('gulp-minify-css'),
+  uglify       	= require('gulp-uglify'),
+  concat       	= require('gulp-concat'),
+  gulpif 		= require('gulp-if');
 
-    // Merges multiple streams together - Allows multiple groups of scripts to be processed through one pipe.
-    var mergeSources = function(i, source) {
-        //Check if this is the last iteration or not
-        if (i > 0){
-            // Merge the current stream with the next by a calling this function recursively
-            return mergeStream(mergeSources(i - 1, source), gulp.src(source[i].input));
-        } else {
-            // Return last stream
-            return gulp.src(source[i].input).pipe(concat(source[i].output));
-        }
-    };
+// Load local development plugins
+if (config.developmentMode) {
+	var sourcemaps 	= require('gulp-sourcemaps'),
+		filter       	= require('gulp-filter'),
+		notify      	= require('gulp-notify'),
+		shell      	= require('gulp-shell'),
+		browserSync 	= require('browser-sync')
+}
 
-    // Merge the groups of scripts in to a single stream
-    mergeSources(config.less.length - 1, config.less)
 
-	    // Use plumber to output errors through Notify
-	    .pipe(plumber({errorHandler: notify.onError("Error: <%= error.message %> | Extract: <%= error.extract %>")}))
+/* TASKS
+	========================================= */
 
-	    // initialize source-maps
-	    .pipe(sourcemaps.init())
-
-	    // Do the processing
-	    .pipe(less({
-            compress: false
-        }))
-
-	    // Write source maps to file
-	    .pipe(sourcemaps.write())
-
-	    // Write processed data to file
-	    .pipe(gulp.dest('.'))
-
-	    // Filtering stream to only relevant files get passed to browser sync for injection & Notify upon successful completion!
-	    .pipe(filter('**/*.css'))
-
-	    .pipe(shell([
-            'cd ../../.. && php artisan vendor:publish --tag=public --force'
-        ]))
-
-	    .pipe(notify("Less Gulped!"))
-
-	    .pipe(browserSync.reload({stream:true}));
+// Browser Sync
+gulp.task('browser-sync', function() {
+	browserSync({
+    proxy: config.proxy,
+    browser: config.browser
+	});
 });
 
-// Process JS
-gulp.task('js', function() {
 
-    // Merges multiple streams together - Allows multiple groups of scripts to be processed through one pipe.
-    var mergeSources = function(i, source) {
-        //Check if this is the last iteration or not
-        if (i > 0){
-            // Merge the current stream with the next by a calling this function recursively
-            return mergeStream(mergeSources(i - 1, source), gulp.src(source[i].input).pipe(concat(source[i].output)));
-        } else {
-            // Return last stream
-            return gulp.src(source[i].input).pipe(concat(source[i].output));
-        }
-    };
+/* LESS Tasks
+	----------------------------------------- */
 
-    // Merge the groups of scripts in to a single stream
-    mergeSources(config.js.length - 1, config.js)
+gulp.task('less', function() {
 
-        // Use plumber to output errors through Notify
-        .pipe(plumber({errorHandler: notify.onError("Error: <%= error.message %> | Extract: <%= error.extract %>")}))
+	if(config.tasks.less.length > 0) {
+		// Loop over all the tasks and run 'em
+		config.tasks.less.forEach(function(task) {
 
-        // initialize source-maps
-        .pipe(sourcemaps.init())
+		  gulp.src(task.src)
+		  	.pipe(plumber({errorHandler: notify.onError(task.name + " Error: <%= error.message %> | Extract: <%= error.extract %>")}))
+		  	.pipe(gulpif(config.developmentMode, gulpif(config.sourceMaps, sourcemaps.init()) ))
+		  	.pipe(less())
+				.pipe(gulpif(config.minifyCss, minifycss() ))
+				.pipe(gulpif(config.developmentMode, gulpif(config.sourceMaps, sourcemaps.write('.')) ))
+		    .pipe(gulp.dest(task.dest))
+		    .pipe(gulpif(config.developmentMode, filter('**/*.css') ))
+		    .pipe(gulpif(config.developmentMode, shell(config.shell) ))
+		    .pipe(gulpif(config.developmentMode, notify({ message: task.name + ' Successful' }) ))
+		    .pipe(gulpif(config.developmentMode, browserSync.reload({stream:true}) ));
 
-        // Do the processing
-        .pipe(uglify({
-            compress: false,
-            mangle: false
-        }))
-
-        // Write source maps to file
-        .pipe(sourcemaps.write())
-
-        // Write processed data to file
-        .pipe(gulp.dest('.'))
-
-        .pipe(shell([
-            'cd ../../.. && php artisan vendor:publish --tag=public --force'
-        ]))
-
-        // Notify upon successful completion & reload page via Browser-sync
-        .pipe(notify("Scripts Gulped!"))
-
-        .pipe(browserSync.reload({stream:true}));
+	  });
+	} else {
+		console.log('No Less tasks defined. Please add some to assetconfig.json');
+	}
 
 });
 
 
+/* JS Tasks
+	----------------------------------------- */
 
-gulp.task('copy', function() {
-    gulp.src(config.copy[0].input)
-        .pipe(gulp.dest(config.copy[0].output));
+gulp.task('js-all', function() {
+
+	if(config.tasks.js.length > 0) {
+
+		// Loop over all the tasks and run 'em
+		config.tasks.js.forEach(function(task) {
+
+		  gulp.src(task.src)
+			  .pipe(concat(task.dest))
+		  	.pipe(plumber({errorHandler: notify.onError(task.name + " Error: <%= error.message %> | Extract: <%= error.extract %>")}))
+		  	.pipe(gulpif(config.developmentMode, gulpif(config.sourceMaps, sourcemaps.init()) ))
+		  	.pipe(uglify({
+		      compress: config.uglifyJS,
+		      mangle: false
+		    }))
+				.pipe(gulpif(config.developmentMode, gulpif(config.sourceMaps, sourcemaps.write('.')) ))
+		    .pipe(gulp.dest(task.destFolder))
+		    .pipe(gulpif(config.developmentMode, filter('**/*.js') ))
+		    .pipe(gulpif(config.developmentMode, shell(config.shell) ))
+		    .pipe(gulpif(config.developmentMode, notify({ message: task.name + ' Successful' }) ))
+		    .pipe(gulpif(config.developmentMode, browserSync.reload({stream:true}) ));
+
+		});
+	} else {
+		console.log('No JS tasks defined. Please add some to assetconfig.json');
+	}
 });
 
+
+/* Copy
+	----------------------------------------- */
+
+gulp.task('copy-all', function() {
+
+	if(config.tasks.less.length > 0) {
+		// Loop over all the tasks and run 'em
+		config.tasks.copy.forEach(function(task) {
+
+		  gulp.src(task.src)
+		    .pipe(gulp.dest(task.dest))
+		    .pipe(notify({ message: 'Successfully copied ' + task.name }));
+
+		});
+	} else {
+		console.log('No Copy tasks defined. Please add some to assetconfig.json');
+	}
+});
+
+
+/* Publish Assets Task
+	----------------------------------------- */
 
 gulp.task('publish', function () {
-    return gulp.src('')
-        .pipe(shell([
-            'cd ../../.. && php artisan vendor:publish --tag=public --force'
-        ]))
+    gulp.src('')
+        .pipe(shell(config.shell))
         .pipe(browserSync.reload({stream:true}));
 });
 
 
-// Browser-Sync
-gulp.task('browser-sync', function() {
-    browserSync({
-        proxy: config.proxy,
-        browser: "google chrome"
-    });
+/* Task Groupings
+	========================================= */
+
+// Default
+gulp.task('default', [], function() {
+  gulp.start('watch');
+});
+
+// Kitchen sink - should be used to compile for production
+gulp.task('build', [], function() {
+
+	// Force minification when running build
+	config.minifyCss = true;
+  config.uglifyJS = true;
+  config.sourceMaps = false;
+
+  gulp.start('css', 'js', 'copy', 'publish');
+});
+
+// Task aliases - should always exist, but can be customised
+gulp.task('css', [], function() {
+  gulp.start('less');
+});
+
+gulp.task('js', [], function() {
+  gulp.start('js-all');
+});
+
+gulp.task('copy', [], function() {
+  gulp.start('copy-all');
+});
+
+gulp.task('cachebust', [], function() {
+  gulp.start('rev');
 });
 
 
-// Reload all Browsers using browser-sync
-gulp.task('bs-reload', function () {
-    browserSync.reload();
+// BrowserSync Reload
+gulp.task('reload', [], function () {
+  browserSync.reload();
 });
 
 
-// Watch files, doing different things with each type.
-gulp.task('default', ['browser-sync'], function () {
-    gulp.watch("./src/resources/assets/less/**/*.less", {debounceDelay: 2000}, ['less']);
-    gulp.watch("./src/resources/assets/js/**/*.js", {debounceDelay: 2000}, ['js']);
-    gulp.watch("./src/resources/views/**/*.php", {debounceDelay: 2000}, ['publish']);
-    gulp.watch("./src/public/admin/views/**/*.html", {debounceDelay: 2000}, ['publish']);
+// Custom tasks
+
+
+
+/* Watch Files
+	----------------------------------------- */
+
+// Watch
+gulp.task('watch', ['browser-sync'], function () {
+	if(config.watch.length > 0) {
+		config.watch.forEach(function(watch) {
+	    gulp.watch(watch.files, watch.tasks);
+		});
+	} else {
+		console.log('No watch tasks defined. Please add some to assetconfig.json');
+	}
 });
-
-
-

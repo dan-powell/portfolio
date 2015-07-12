@@ -1,38 +1,108 @@
 {
-    "title" : "Portfolio",
-    "proxy" : "portfolio.dev",
-    "js": [
-        {
-            "input": [
-                "./src/resources/assets/js/app.js",
-                "./src/resources/assets/js/controllers/notification.js",
-                "./src/resources/assets/js/controllers/dashboard.js",
-                "./src/resources/assets/js/controllers/project.js",
-                "./src/resources/assets/js/controllers/tag.js",
-                "./src/resources/assets/js/main.js"
-            ],
-            "output": "./src/public/admin/js/main.js"
-        },
-        {
-            "input": [
-                "./bower_components/angular/angular.min.js",
-                "./bower_components/angular-ui-router/release/angular-ui-router.min.js",
-                "./bower_components/angular-bootstrap/ui-bootstrap.min.js",
-                "./bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js",
-                "./bower_components/ng-table/dist/ng-table.min.js",
-                "./bower_components/marked/lib/marked.js",
-                "./bower_components/angular-marked/angular-marked.min.js",
-                "./bower_components/ng-tags-input/ng-tags-input.min.js"
-            ],
-            "output": "./src/public/admin/js/plugins.js"
-        }
+  "title" : "Portfolio",
+  "proxy" : "portfolio.dev",
+  "browser": "google chrome",
+  "developmentMode" : true,
+  "minifyCss": true,
+  "uglifyJS": true,
+  "sourceMaps": true,
+
+  "tasks" : {
+
+	  "less" : [
+      {
+        "name" : "Main CSS",
+        "src": [
+          "./src/resources/assets/less/main.less"
+        ],
+        "dest": "./src/public/admin/css"
+      }
     ],
-    "less": [
-        {
-            "input": [
-                "./src/resources/assets/less/main.less"
-            ],
-            "output": "./src/public/admin/css/main.css"
-        }
+
+		"js" : [
+			{
+				"name" : "Main JS",
+				"src": [
+					"./src/resources/assets/js/app.js",
+                    "./src/resources/assets/js/controllers/notification.js",
+                    "./src/resources/assets/js/controllers/dashboard.js",
+                    "./src/resources/assets/js/controllers/project.js",
+                    "./src/resources/assets/js/controllers/tag.js",
+                    "./src/resources/assets/js/controllers/page.js",
+                    "./src/resources/assets/js/main.js"
+				],
+				"destFolder": "./src/public/admin/js",
+				"dest": "main.js"
+			},
+			{
+				"name" : "JS Plugins",
+				"src": [
+					"./bower_components/angular/angular.min.js",
+                    "./bower_components/angular-ui-router/release/angular-ui-router.min.js",
+                    "./bower_components/angular-bootstrap/ui-bootstrap.min.js",
+                    "./bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js",
+                    "./bower_components/ng-table/dist/ng-table.min.js",
+                    "./bower_components/marked/lib/marked.js",
+                    "./bower_components/angular-marked/angular-marked.min.js",
+                    "./bower_components/ng-tags-input/ng-tags-input.min.js",
+                    "./bower_components/angular-ui-tree/dist/angular-ui-tree.min.js"
+				],
+				"destFolder": "./src/public/admin/js",
+				"dest": "plugins.js"
+			}
+    ],
+
+    "copy" : [
+      {
+        "name" : "JS Vendor Plugins",
+        "src": [
+					"bower_components/modernizr/modernizr.js",
+					"bower_components/respond/dest/respond.min.js"
+				],
+        "dest": "./public_html/js/vendor"
+      },
+      {
+        "name" : "Fonts",
+        "src": [
+					"bower_components/bootstrap/fonts/**",
+					"bower_components/fontawesome/fonts/**"
+				],
+        "dest": "./public_html/fonts"
+      }
     ]
+
+  },
+
+  "watch" : [
+	  {
+		  "files" : [
+		  	"./src/resources/assets/less/**/*.less"
+		  ],
+		  "tasks" : [
+		  	"css"
+		  ]
+		},
+	  {
+		  "files" : [
+		  	"./src/resources/assets/js/**/*.js"
+		  ],
+		  "tasks" : [
+		  	"js"
+		  ]
+		},
+		{
+		  "files" : [
+		  	"./src/resources/views/**/*.php",
+		  	"./src/public/admin/views/**/*.html"
+		  ],
+		  "tasks" : [
+		  	"publish"
+		  ]
+		}
+  ],
+
+  "shell" : [
+    "cd ../../.. && php artisan vendor:publish --tag=public --force"
+]
+
 }
