@@ -37,4 +37,15 @@ class Tag extends Model {
         return $this->morphedByMany('DanPowell\Portfolio\Models\Project', 'taggable');
     }
 
+
+
+    protected static function boot() {
+        parent::boot();
+
+        // When deleting a tag we should also clean up any relationships
+        static::deleting(function($tag) {
+             $tag->projects()->detach();
+        });
+    }
+
 }

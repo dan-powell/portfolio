@@ -50,4 +50,17 @@ class Page extends Model {
         return $this->morphMany('DanPowell\Portfolio\Models\Section', 'attachment')->orderBy('rank', 'ASC');
     }
 
+
+
+
+
+    protected static function boot() {
+        parent::boot();
+
+        // When deleting we should also clean up any relationships
+        static::deleting(function($model) {
+             $model->sections()->delete();
+        });
+    }
+
 }
