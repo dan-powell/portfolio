@@ -3,6 +3,9 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
+use DanPowell\Portfolio\Models\Tag;
+use Illuminate\Support\Str;
+
 class AddSlugToTags extends Migration
 {
     /**
@@ -15,6 +18,22 @@ class AddSlugToTags extends Migration
         Schema::table('tags', function (Blueprint $table) {
             $table->string('slug', 255);
         });
+
+
+        $query = Tag::where('slug', '=', '');
+        $tags = $query->get();
+
+        if ($tags) {
+            foreach($tags as $tag) {
+
+                $tag->slug = Str::slug($tag->title);
+                $tag->save();
+
+            }
+
+
+        }
+
     }
 
     /**
