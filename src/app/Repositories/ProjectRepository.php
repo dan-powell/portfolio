@@ -92,7 +92,9 @@ class ProjectRepository extends RestfulRepository
                         // check if a tag can be found by ID
                         $newTag = Tag::find($tag['id']);
                     } else {
-                        $newTag = false;
+                        // Check if the model can be found by slug (prevents duplicate tags)
+                        $query = Tag::where('slug', '=', Str::slug($tag['title']));
+                        $newTag = $query->first();
                     }
 
                     // if no existing model is found, create a new tag

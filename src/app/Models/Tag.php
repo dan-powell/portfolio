@@ -1,17 +1,20 @@
 <?php namespace DanPowell\Portfolio\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Tag extends Model {
 
     protected $fillable = [
-        'title'
+        'title',
+        'slug'
     ];
 
     public function rules($id = null)
 	{
 	    return [
-    	    'title' => 'required|unique:tags,title,' . $id
+    	    'title' => 'required|unique:tags,title,' . $id,
+    	    'slug' => 'required|unique:tags,slug,' . $id
 	    ];
 	}
 
@@ -45,6 +48,11 @@ class Tag extends Model {
         // When deleting a tag we should also clean up any relationships
         static::deleting(function($tag) {
              $tag->projects()->detach();
+        });
+
+        // When saving, the slug is always a sluggified version of the title
+        static::saving(function($tag) {
+             $tag->slug = Str::slug($tag->title);
         });
     }
 
