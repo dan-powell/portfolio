@@ -32,4 +32,6 @@ class Section extends Model {
         return $this->morphTo();
     }
 
+    protected $touches = ['attachment'];
+
 }

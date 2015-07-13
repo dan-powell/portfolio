@@ -203,6 +203,7 @@ app.controller('PageEditController', function($scope, $http, $stateParams, $stat
             .success(function(data) {
                 notificationService.add("Page '" + data.title + "' updated successfully", 'success');
                 $scope.errors = [];
+                $scope.model.updated_at_human = 'Just now';
                 if (!apply) {
                     $state.go( "page.index" );
                 }

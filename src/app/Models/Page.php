@@ -50,7 +50,7 @@ class Page extends Model {
         return $this->morphMany('DanPowell\Portfolio\Models\Section', 'attachment')->orderBy('rank', 'ASC');
     }
 
-
+    protected $touches = ['attachment'];
 
 
 

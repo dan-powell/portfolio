@@ -40,6 +40,7 @@ class Tag extends Model {
         return $this->morphedByMany('DanPowell\Portfolio\Models\Project', 'taggable');
     }
 
+    protected $touches = ['projects'];
 
 
     protected static function boot() {

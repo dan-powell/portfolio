@@ -69,63 +69,68 @@ class ProjectRepository extends RestfulRepository
             } else {
 
                 // Save sections
-                $sectionsToUpdate = [];
-                foreach ($request->sections as $section) {
+                if(count($request->sections) > 0) {
+                    $sectionsToUpdate = [];
+                    foreach ($request->sections as $section) {
 
-                    $newSection = Section::find($section['id']);
+                        $newSection = Section::find($section['id']);
 
-                    // if no existing model is found, create a new section
-                    if(!$newSection) {
-                        $newSection = new Section;
+                        // if no existing model is found, create a new section
+                        if(!$newSection) {
+                            $newSection = new Section;
+                        }
+                        $newSection->fill($section);
+
+                        array_push($sectionsToUpdate, $newSection);
                     }
-                    $newSection->fill($section);
-
-                    array_push($sectionsToUpdate, $newSection);
+                    $collection->sections()->saveMany($sectionsToUpdate);
                 }
-                $collection->sections()->saveMany($sectionsToUpdate);
 
                 // Save tags
-                $tagsToUpdate = [];
-                foreach ($request->tags as $tag) {
+                if(count($request->tags) > 0) {
+                    $tagsToUpdate = [];
+                    foreach ($request->tags as $tag) {
 
-                    if(isset($tag['id'])) {
-                        // check if a tag can be found by ID
-                        $newTag = Tag::find($tag['id']);
-                    } else {
-                        // Check if the model can be found by slug (prevents duplicate tags)
-                        $query = Tag::where('slug', '=', Str::slug($tag['title']));
-                        $newTag = $query->first();
+                        if(isset($tag['id'])) {
+                            // check if a tag can be found by ID
+                            $newTag = Tag::find($tag['id']);
+                        } else {
+                            // Check if the model can be found by slug (prevents duplicate tags)
+                            $query = Tag::where('slug', '=', Str::slug($tag['title']));
+                            $newTag = $query->first();
+                        }
+
+                        // if no existing model is found, create a new tag
+                        if(!$newTag) {
+                            $newTag = new Tag;
+                            $newTag->fill($tag);
+                            // Save the tag
+                            $newTag = $collection->tags()->save($newTag);
+                        }
+
+                        array_push($tagsToUpdate, $newTag->id);
                     }
-
-                    // if no existing model is found, create a new tag
-                    if(!$newTag) {
-                        $newTag = new Tag;
-                        $newTag->fill($tag);
-                        // Save the tag
-                        $newTag = $collection->tags()->save($newTag);
-                    }
-
-                    array_push($tagsToUpdate, $newTag->id);
+                    $collection->tags()->sync($tagsToUpdate);
                 }
-                $collection->tags()->sync($tagsToUpdate);
 
 
                 // Save pages
-                $pagesToUpdate = [];
-                foreach ($request->pages as $page) {
+                if(count($request->pages) > 0) {
+                    $pagesToUpdate = [];
+                    foreach ($request->pages as $page) {
 
-                    $newPage = Page::find($page['id']);
+                        $newPage = Page::find($page['id']);
 
-                    // if no existing model is found, create a new section
-                    if(!$newPage) {
-                        $newPage = new Page;
+                        // if no existing model is found, create a new section
+                        if(!$newPage) {
+                            $newPage = new Page;
+                        }
+                        $newPage->fill($page);
+
+                        array_push($pagesToUpdate, $newPage);
                     }
-                    $newPage->fill($page);
-
-                    array_push($pagesToUpdate, $newPage);
+                    $collection->pages()->saveMany($pagesToUpdate);
                 }
-                $collection->pages()->saveMany($pagesToUpdate);
-
 
 
                 // Success - Return item ID as JSON
