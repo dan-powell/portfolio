@@ -34,7 +34,7 @@
             	            @include('portfolio::partials.section')
             	        @endforeach
                     @else
-                        {{ $project->markup }}
+                        {!! Markdown::parse($project->markup) !!}
             		@endif
                 </article>
                 <aside class="col-sm-3">

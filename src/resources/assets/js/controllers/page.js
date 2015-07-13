@@ -43,7 +43,7 @@ app.controller('PageController', function($scope, $filter, ngTableParams, $http,
 
         if (confirm('Are you sure you wish to delete ' + title + '?')) {
 
-            $http.delete('/admin/api/page/' + id)
+            $http.delete('/api/page/' + id)
                 .success(function(data) {
                     notificationService.add("Page '" + data.title + "' deleted successfully", 'info');
                     $scope.init();

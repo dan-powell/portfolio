@@ -43,7 +43,7 @@ app.controller('ProjectController', function($scope, $filter, ngTableParams, $ht
 
         if (confirm('Are you sure you wish to delete ' + title + '?')) {
 
-            $http.delete('/admin/api/project/' + id)
+            $http.delete('/api/project/' + id)
                 .success(function(data) {
                     notificationService.add("Project '" + data.title + "' deleted successfully", 'info');
                     $scope.init();

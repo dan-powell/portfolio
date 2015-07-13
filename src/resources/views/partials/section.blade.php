@@ -8,7 +8,7 @@
 @stop
 
 @if(isset($section->markup) && $section->markup != '')
-    {{ $section->markup }}
+    {!! Markdown::parse($section->markup) !!}
 @endif
 
 @section('scripts')
