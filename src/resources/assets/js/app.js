@@ -227,9 +227,6 @@ app.factory('HttpInterceptor', function($q, notificationService) {
     // optional method
    'requestError': function(rejection) {
       // do something on error
-      if (canRecover(rejection)) {
-        return responseOrNewPromise
-      }
       return $q.reject(rejection);
     },
 
@@ -247,10 +244,6 @@ app.factory('HttpInterceptor', function($q, notificationService) {
       // do something on error
       checkResponseCode(rejection.data, rejection.status);
       console.log(rejection);
-
-      if (canRecover(rejection)) {
-        return responseOrNewPromise
-      }
       return $q.reject(rejection);
     }
   };

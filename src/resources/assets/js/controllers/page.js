@@ -242,7 +242,7 @@ app.controller('editPageSectionController', function ($scope, $http, $modalInsta
 
             $http.post(RestfulApi.getRoute('pageSection', 'store', modalData.pageId), $scope.section)
                 .success(function(data) {
-                    notificationService.add("Section '" + data.title + "' created successfully", 'success');
+                    notificationService.add("Section (ID:" + data.id + ") created successfully", 'success');
                     $scope.errors = [];
                     $modalInstance.close(data);
                 })
@@ -256,7 +256,7 @@ app.controller('editPageSectionController', function ($scope, $http, $modalInsta
 
             $http.put(RestfulApi.getRoute('section', 'update', $scope.section.id), $scope.section)
                 .success(function(data) {
-                    notificationService.add("Section '" + data.title + "' updated successfully", 'success');
+                    notificationService.add("Section (ID:" + data.id + ") updated successfully", 'success');
                     $scope.errors = [];
                     $modalInstance.close(data);
                 })

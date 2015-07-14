@@ -369,7 +369,7 @@ app.controller('editSectionController', function ($scope, $http, $modalInstance,
 
             $http.post(RestfulApi.getRoute('projectSection', 'store', modalData.projectId), $scope.section)
                 .success(function(data) {
-                    notificationService.add("Section '" + data.title + "' created successfully", 'success');
+                    notificationService.add("Section (ID:" + data.id + ") created successfully", 'success');
                     $scope.errors = [];
                     $modalInstance.close(data);
                 })
@@ -383,7 +383,7 @@ app.controller('editSectionController', function ($scope, $http, $modalInstance,
 
             $http.put(RestfulApi.getRoute('section', 'update', $scope.section.id), $scope.section)
                 .success(function(data) {
-                    notificationService.add("Section '" + data.title + "' updated successfully", 'success');
+                    notificationService.add("Section (ID:" + data.id + ") updated successfully", 'success');
                     $scope.errors = [];
                     $modalInstance.close(data);
                 })
