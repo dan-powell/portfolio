@@ -14,7 +14,7 @@ class Tag extends Model {
 	{
 	    return [
     	    'title' => 'required|unique:tags,title,' . $id,
-    	    'slug' => 'required|unique:tags,slug,' . $id
+    	    'slug' => 'unique:tags,slug,' . $id
 	    ];
 	}
 
