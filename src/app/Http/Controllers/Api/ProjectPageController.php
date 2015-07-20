@@ -3,7 +3,7 @@
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-use DanPowell\Portfolio\Repositories\pageRepository;
+use DanPowell\Portfolio\Repositories\PageRepository;
 
 // Load up the models
 use DanPowell\Portfolio\Models\Page;
@@ -22,7 +22,7 @@ class ProjectPageController extends Controller {
      * @param ClueRepository $clueRepo
      * @param TagRepository $tagRepo
      */
-    public function __construct(pageRepository $pageRepository)
+    public function __construct(PageRepository $pageRepository)
     {
         // Make sure only authorised users can Create Udate & Delete. 'Read' does not require authorisation.
         $this->middleware('auth', ['except' => ['index','show']]);

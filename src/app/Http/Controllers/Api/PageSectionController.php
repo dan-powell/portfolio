@@ -3,7 +3,7 @@
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-use DanPowell\Portfolio\Repositories\sectionRepository;
+use DanPowell\Portfolio\Repositories\SectionRepository;
 
 // Load up the models
 use DanPowell\Portfolio\Models\Section;
@@ -22,7 +22,7 @@ class PageSectionController extends Controller {
      * @param ClueRepository $clueRepo
      * @param TagRepository $tagRepo
      */
-    public function __construct(sectionRepository $sectionRepository)
+    public function __construct(SectionRepository $sectionRepository)
     {
         // Make sure oly authorised users can post/put. 'Get' does not require authorisation.
         $this->middleware('auth', ['except' => ['index','show']]);
