@@ -28,6 +28,12 @@ class Seed extends Command {
 	public function handle()
 	{
 
+        if (\App::environment('local', 'staging')) {
+          	// Clear existing data
+          	$this->comment("Clearing old data...");
+            $this->clearData();
+      	}
+
         $this->comment("Seeding Projects...");
         $this->seedProjects();
 
@@ -35,9 +41,18 @@ class Seed extends Command {
         $this->seedTags();
 
         $this->comment("Portfolio seeded!");
-
-
 	}
+
+
+    private function clearData()
+  	{
+        DB::table('pages')->truncate();
+        DB::table('projects')->truncate();
+        DB::table('sections')->truncate();
+        DB::table('taggables')->truncate();
+        DB::table('tags')->truncate();
+    }
+
 
   	private function seedProjects()
   	{
