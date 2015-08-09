@@ -1,68 +1,96 @@
 // Load environment config
 try {
-    var config = require('./assetconfig.json');
+    var config = require('./gulpconfig.json');
 } catch(err) {
 	if (err.code == 'MODULE_NOT_FOUND') {
-		console.log('assetconfig.json file missing. Please duplicate & rename the example.');
+		console.log('Gulp config file missing (gulpconfig.json). Defaulting to values in example file.');
+		var config = require('./gulpconfig.default.json');
 	} else {
-		console.log('There is an error in the config file. Please fix it :)');
+		console.log('There is an error in the CONFIG file. Please fix it :)');
 		console.log(err);
+		process.exit()
 	}
-	process.exit()
 }
 
 
+// Load assets config
+try {
+    var assets = require('./gulpassets.json');
+} catch(err) {
+	if (err.code == 'MODULE_NOT_FOUND') {
+		console.log('Asset config file missing (gulpassets.json). Defaulting to values in example file.');
+		var assets = require('./gulpassets.default.json');
+	} else {
+		console.log('There is an error in the ASSETS file. Please fix it :)');
+		console.log(err);
+		process.exit()
+	}
+}
+
+
+
 // Load plugins
-var gulp        = require('gulp'),
-  plumber 		= require('gulp-plumber'),
-  less         	= require('gulp-less'),
-  minifycss    	= require('gulp-minify-css'),
-  uglify       	= require('gulp-uglify'),
-  concat       	= require('gulp-concat'),
-  gulpif 		= require('gulp-if');
+var gulp		= require('gulp'),
+	plumber 	= require('gulp-plumber'),
+	less        = require('gulp-less'),
+	minifycss   = require('gulp-minify-css'),
+	uglify      = require('gulp-uglify'),
+	concat      = require('gulp-concat'),
+	gulpif 		= require('gulp-if');
 
 // Load local development plugins
 if (config.developmentMode) {
 	var sourcemaps 	= require('gulp-sourcemaps'),
 		filter       	= require('gulp-filter'),
 		notify      	= require('gulp-notify'),
-		shell      	= require('gulp-shell'),
-		browserSync 	= require('browser-sync')
+		browserSync 	= require('browser-sync'),
+		shell = require('gulp-shell')
+} else {
+	// TODO - This is a hacky way of dealing with missing dependancies
+	var notify = function() {return true};
+	notify.onError = function() {return true};
+	var sourcemaps = {
+		init : function() {return true},
+		write : function() {return true}
+	},
+	filter = function() {return true};
+	var browserSync = function() {return true};
+	browserSync.reload = function() {return true};
 }
 
 
-/* TASKS
+/* 	TASKS
 	========================================= */
 
 // Browser Sync
 gulp.task('browser-sync', function() {
 	browserSync({
-    proxy: config.proxy,
-    browser: config.browser
+        proxy: config.browsersync.proxy,
+        browser: config.browsersync.browser
 	});
 });
 
 
-/* LESS Tasks
+/* 	LESS Tasks
 	----------------------------------------- */
 
 gulp.task('less', function() {
 
-	if(config.tasks.less.length > 0) {
+	if(typeof assets.tasks.less != 'undefined' && assets.tasks.less.length > 0) {
 		// Loop over all the tasks and run 'em
-		config.tasks.less.forEach(function(task) {
+		assets.tasks.less.forEach(function(task) {
 
-		  gulp.src(task.src)
-		  	.pipe(plumber({errorHandler: notify.onError(task.name + " Error: <%= error.message %> | Extract: <%= error.extract %>")}))
-		  	.pipe(gulpif(config.developmentMode, gulpif(config.sourceMaps, sourcemaps.init()) ))
-		  	.pipe(less())
-				.pipe(gulpif(config.minifyCss, minifycss() ))
-				.pipe(gulpif(config.developmentMode, gulpif(config.sourceMaps, sourcemaps.write('.')) ))
-		    .pipe(gulp.dest(task.dest))
-		    .pipe(gulpif(config.developmentMode, filter('**/*.css') ))
-		    .pipe(gulpif(config.developmentMode, shell(config.shell) ))
-		    .pipe(gulpif(config.developmentMode, notify({ message: task.name + ' Successful' }) ))
-		    .pipe(gulpif(config.developmentMode, browserSync.reload({stream:true}) ));
+		    gulp.src(task.src)
+                .pipe(gulpif(config.developmentMode, plumber({errorHandler: notify.onError(task.name + " Error: <%= error.message %> | Extract: <%= error.extract %>")}) ))
+                .pipe(gulpif(config.developmentMode, gulpif(config.css.sourceMaps, sourcemaps.init()) ))
+                .pipe(less())
+                .pipe(gulpif(config.css.minify, minifycss() ))
+                .pipe(gulpif(config.developmentMode, gulpif(config.css.sourceMaps, sourcemaps.write('.')) ))
+    		    .pipe(gulp.dest(task.dest))
+    		    .pipe(gulpif(config.developmentMode, filter('**/*.css') ))
+    		    .pipe(gulpif(config.developmentMode, shell(assets.tasks.shell.publish.cmd, {}) ))
+    		    .pipe(gulpif(config.developmentMode, notify({ message: task.name + ' Successful' }) ))
+    		    .pipe(gulpif(config.developmentMode, browserSync.reload({stream:true}) ));
 
 	  });
 	} else {
@@ -72,30 +100,30 @@ gulp.task('less', function() {
 });
 
 
-/* JS Tasks
+/* 	JS Tasks
 	----------------------------------------- */
 
 gulp.task('js-all', function() {
 
-	if(config.tasks.js.length > 0) {
+	if(typeof assets.tasks.js != 'undefined' && assets.tasks.js.length > 0) {
 
 		// Loop over all the tasks and run 'em
-		config.tasks.js.forEach(function(task) {
+		assets.tasks.js.forEach(function(task) {
 
 		  gulp.src(task.src)
-			  .pipe(concat(task.dest))
-		  	.pipe(plumber({errorHandler: notify.onError(task.name + " Error: <%= error.message %> | Extract: <%= error.extract %>")}))
-		  	.pipe(gulpif(config.developmentMode, gulpif(config.sourceMaps, sourcemaps.init()) ))
-		  	.pipe(uglify({
-		      compress: config.uglifyJS,
-		      mangle: false
-		    }))
-				.pipe(gulpif(config.developmentMode, gulpif(config.sourceMaps, sourcemaps.write('.')) ))
-		    .pipe(gulp.dest(task.destFolder))
-		    .pipe(gulpif(config.developmentMode, filter('**/*.js') ))
-		    .pipe(gulpif(config.developmentMode, shell(config.shell) ))
-		    .pipe(gulpif(config.developmentMode, notify({ message: task.name + ' Successful' }) ))
-		    .pipe(gulpif(config.developmentMode, browserSync.reload({stream:true}) ));
+			    .pipe(concat(task.dest))
+                .pipe(gulpif(config.developmentMode, plumber({errorHandler: notify.onError(task.name + " Error: <%= error.message %> | Extract: <%= error.extract %>")}) ))
+                .pipe(gulpif(config.developmentMode, gulpif(config.js.sourceMaps, sourcemaps.init()) ))
+                .pipe(uglify({
+                    compress: config.js.minify,
+                    mangle: false
+                }))
+                .pipe(gulpif(config.developmentMode, gulpif(config.js.sourceMaps, sourcemaps.write('.')) ))
+                .pipe(gulp.dest(task.destFolder))
+                .pipe(gulpif(config.developmentMode, filter('**/*.js') ))
+                .pipe(gulpif(config.developmentMode, shell(assets.tasks.shell.publish.cmd, {}) ))
+                .pipe(gulpif(config.developmentMode, notify({ message: task.name + ' Successful' }) ))
+                .pipe(gulpif(config.developmentMode, browserSync.reload({stream:true}) ));
 
 		});
 	} else {
@@ -104,18 +132,18 @@ gulp.task('js-all', function() {
 });
 
 
-/* Copy
+/* 	Copy
 	----------------------------------------- */
 
 gulp.task('copy-all', function() {
 
-	if(config.tasks.less.length > 0) {
+	if(typeof assets.tasks.copy != 'undefined' && assets.tasks.copy.length > 0) {
 		// Loop over all the tasks and run 'em
-		config.tasks.copy.forEach(function(task) {
+		assets.tasks.copy.forEach(function(task) {
 
-		  gulp.src(task.src)
-		    .pipe(gulp.dest(task.dest))
-		    .pipe(notify({ message: 'Successfully copied ' + task.name }));
+        gulp.src(task.src)
+            .pipe(gulp.dest(task.dest))
+            .pipe(gulpif(config.developmentMode, notify({ message: 'Successfully copied ' + task.name }) ));
 
 		});
 	} else {
@@ -124,14 +152,75 @@ gulp.task('copy-all', function() {
 });
 
 
-/* Publish Assets Task
+
+/* 	Debug
+	-----------------------------------------
+	Use to diagnose issues with gulp or assets
+	----------------------------------------- */
+
+gulp.task('debug', function() {
+
+	// Check for missing files in asset json
+	console.log('Searching for missing asset files');
+
+	var fs = require("fs"); // Load Nodes native filesystem tool
+
+	for (var key in assets.tasks) {
+		if (assets.tasks.hasOwnProperty(key)) {
+			var taskGroup = assets.tasks[key];
+
+			if (taskGroup.constructor === Array) {
+
+			taskGroup.forEach(function(task) {
+				if (typeof task.src != undefined) {
+
+					task.src.forEach(function(file) {
+
+    					if(file.indexOf("*") == -1) {
+    						fs.stat(file, function(err, stat) {
+    						    if(err != null) {
+    							    console.log('DANGER: ' + file + ' not found! (Task: ' + task.name + ')');
+    						    }
+    					    });
+					    } else {
+    					    console.log('WARNING: ' + file + ' is a glob and cannot be checked... (Task: ' + task.name + ')');
+					    }
+					});
+				}
+			});
+			}
+		}
+	}
+
+
+
+});
+
+
+/* 	Publish Assets
+	-----------------------------------------
+	Use to diagnose issues with gulp or assets
 	----------------------------------------- */
 
 gulp.task('publish', function () {
-    gulp.src('')
-        .pipe(shell(config.shell))
-        .pipe(browserSync.reload({stream:true}));
+    if(!config.developmentMode) {
+		console.log('Not in development mode, "publish" task disabled.');
+	} else {
+        return gulp.src('*.js', {read: false})
+            .pipe(shell(assets.tasks.shell.publish.cmd, {}))
+    }
+})
+
+
+
+
+/* Cachebust Task
+	----------------------------------------- */
+
+gulp.task('rev', function () {
+  console.log('Cachebusting. TODO: Does nothing at the moment, need to implement this.');
 });
+
 
 
 /* Task Groupings
@@ -145,12 +234,13 @@ gulp.task('default', [], function() {
 // Kitchen sink - should be used to compile for production
 gulp.task('build', [], function() {
 
-	// Force minification when running build
-	config.minifyCss = true;
-  config.uglifyJS = true;
-  config.sourceMaps = false;
+	// Force minification and disable sitemaps when running build
+	config.js.minify = true;
+	config.js.sourceMaps = false;
+	config.css.minify = true;
+	config.css.sourceMaps = false;
 
-  gulp.start('css', 'js', 'copy', 'publish');
+	gulp.start('css', 'js', 'copy', 'cachebust');
 });
 
 // Task aliases - should always exist, but can be customised
@@ -186,11 +276,15 @@ gulp.task('reload', [], function () {
 
 // Watch
 gulp.task('watch', ['browser-sync'], function () {
-	if(config.watch.length > 0) {
-		config.watch.forEach(function(watch) {
-	    gulp.watch(watch.files, watch.tasks);
-		});
+	if(!config.developmentMode) {
+		console.log('Not in development mode, "watch" task disabled.');
 	} else {
-		console.log('No watch tasks defined. Please add some to assetconfig.json');
+		if(config.developmentMode && assets.watch.length > 0) {
+			assets.watch.forEach(function(watch) {
+		        gulp.watch(watch.files, watch.tasks);
+			});
+		} else {
+			console.log('No watch tasks defined. Please add some to assetconfig.json');
+		}
 	}
 });

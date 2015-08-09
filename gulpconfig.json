@@ -1,0 +1,16 @@
+{
+	"developmentMode" : true,
+	"js": {
+		"minify": true,
+		"sourceMaps": true
+	},
+	"css": {
+		"minify": true,
+		"sourceMaps": true
+	},
+	"browsersync" : {
+		"title" : "Portfolio",
+		"proxy" : "portfolio.dev",
+		"browser": "google chrome"
+	}
+}
