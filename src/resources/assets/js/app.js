@@ -1,5 +1,5 @@
 // Fire up the app
-var app = angular.module('ng-portfolio', ['ui.router', 'ui.bootstrap', 'ngTable', 'hc.marked', 'ngTagsInput', 'ui.tree']);
+var app = angular.module('ng-portfolio', ['ui.router', 'ui.bootstrap', 'ngFileUpload', 'ngTable', 'hc.marked', 'ngTagsInput', 'ui.tree']);
 
 /*  Angular Configuration
     -------------------------------------------------------------------------------------------------
@@ -69,6 +69,21 @@ app.config(function($stateProvider, $urlRouterProvider) {
       url: "/:id/edit",
       templateUrl: "/vendor/portfolio/admin/views/project/project.edit.html",
       controller: "ProjectEditController"
+    })
+    .state('project.edit.assets', {
+      url: "/assets/:type",
+      templateUrl: "/vendor/portfolio/admin/views/assets/assets.html",
+      controller: "AssetsController"
+    })
+    .state('project.edit.assets.files', {
+      url: "/files/:folder",
+      templateUrl: "/vendor/portfolio/admin/views/assets/files.html",
+      controller: "AssetsFileController"
+    })
+    .state('assets', {
+      url: "/assets/:type/:id",
+      templateUrl: "/vendor/portfolio/admin/views/assets/assets.html",
+      controller: "AssetsController"
     })
     .state('tag', {
       url: "/tag",

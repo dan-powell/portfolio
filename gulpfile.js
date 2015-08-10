@@ -208,6 +208,7 @@ gulp.task('publish', function () {
 	} else {
         return gulp.src('*.js', {read: false})
             .pipe(shell(assets.tasks.shell.publish.cmd, {}))
+            .pipe(gulpif(config.developmentMode, notify({ message: 'Successfully published packages'}) ));
     }
 })
 

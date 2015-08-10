@@ -45,6 +45,9 @@ Route::group(['prefix' => 'api'], function()
     // Admin tag items
     Route::resource('tag', 'DanPowell\Portfolio\Http\Controllers\Api\TagController', ['except' => ['create', 'edit']]);
 
+    // Admin project assets
+    Route::resource('assets', 'DanPowell\Portfolio\Http\Controllers\Api\AssetController', ['except' => ['create', 'edit']]);
+
     // Admin project page items
     Route::resource('project.page', 'DanPowell\Portfolio\Http\Controllers\Api\ProjectPageController', ['except' => ['create', 'edit']]);
 

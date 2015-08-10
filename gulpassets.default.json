@@ -21,6 +21,7 @@
                     "./src/resources/assets/js/controllers/project.js",
                     "./src/resources/assets/js/controllers/tag.js",
                     "./src/resources/assets/js/controllers/page.js",
+                    "./src/resources/assets/js/controllers/assets.js",
                     "./src/resources/assets/js/main.js"
 				],
 				"destFolder": "./src/public/admin/js",
@@ -37,7 +38,8 @@
                     "./bower_components/marked/lib/marked.js",
                     "./bower_components/angular-marked/angular-marked.min.js",
                     "./bower_components/ng-tags-input/ng-tags-input.min.js",
-                    "./bower_components/angular-ui-tree/dist/angular-ui-tree.min.js"
+                    "./bower_components/angular-ui-tree/dist/angular-ui-tree.min.js",
+                    "./bower_components/ng-file-upload/ng-file-upload.min.js"
 				],
 				"destFolder": "./src/public/admin/js",
 				"dest": "plugins.js"
@@ -91,10 +93,18 @@
 		},
 		{
 			"files" : [
-				"./src/resources/views/**/*.php",
+				"./src/resources/views/**/*.php"
+			],
+			"tasks" : [
+				"reload"
+			]
+		},
+        {
+			"files" : [
 				"./src/public/admin/views/**/*.html"
 			],
 			"tasks" : [
+				"publish",
 				"reload"
 			]
 		}

@@ -1,0 +1,32 @@
+
+
+
+<div class="row">
+    <div class="col-sm-4">
+        <div class="well">
+
+            <h2>Folders</h2>
+
+            <ul>
+                <li ng-repeat="folder in model.folders" ng-include="'categoryTree'"></li>
+            </ul>
+
+        </div>
+    </div>
+    <div class="col-sm-8">
+
+        <h2>Files</h2>
+
+        <div ui-view></div>
+
+    </div>
+</div>
+
+
+<script type="text/ng-template" id="categoryTree">
+    <a ui-sref="project.edit.assets.files({folder: folder.path})">{{ folder.name }}</a>
+    <ul ng-if="folder.folders">
+        <li ng-repeat="folder in folder.folders" ng-include="'categoryTree'">
+        </li>
+    </ul>
+</script>

@@ -176,6 +176,27 @@
 
     </tab>
 
+
+    <tab ui-sref="project.edit.assets({id: data.id, type: 'projects'})" >
+
+        <tab-heading>Assets
+            <span ng-show="" class="text-danger glyphicon glyphicon-exclamation-sign"> </span>
+        </tab-heading>
+
+        <div class="alert alert-info" ng-show="create">Please save the project before adding pages</div>
+
+        <div ng-hide="create">
+
+            <!-- <div ng-include="'/vendor/portfolio/admin/views/assets/assets.html'" onload="init('lush')"></div> -->
+
+            <div ui-view></div>
+
+        </div>
+
+    </tab>
+
+
+
 </tabset>
 
 
@@ -185,9 +206,16 @@
 <button ng-click="save()" class="btn btn-primary">Save</button> <button ng-click="save(true)" class="btn btn-info">Apply</button>
 
 
-<pre>
-    {{ data | json }}
-</pre>
+
+<button type="button" class="btn btn-default" ng-click="isCollapsed = !isCollapsed">Debug</button>
+
+<div collapse="!isCollapsed">
+    <hr/>
+    <pre>
+        {{ data | json }}
+    </pre>
+</div>
+
 
 
 <script type="text/ng-template" id="sectionIndexItem.html">
@@ -236,8 +264,7 @@
                 </div>
 
                 <div class="col-sm-6">
-	                <style ng-bind="section.styles">
-		             </style>
+	                <style ng-bind="section.styles"></style>
 
                     <div class="well" marked="section.markup"></div>
                 </div>

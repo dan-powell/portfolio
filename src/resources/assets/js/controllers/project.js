@@ -155,6 +155,9 @@ app.controller('ProjectEditController', function($scope, $http, $stateParams, $s
     };
 
 
+    $scope.alertMe = function () {
+        //alert('Boob');
+    }
 
 
     $scope.editSection = function (create, sectionId) {
