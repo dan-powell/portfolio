@@ -57,7 +57,7 @@ class AssetController extends Controller {
         if(count($errors) > 0) {
             return response()->json(['errors' => $errors], 422);
         }
-        
+
         $put = $path . '/' . $name;
 
         if ($file = $request->file('file')) {
@@ -83,13 +83,82 @@ class AssetController extends Controller {
         }
 
     }
-    
-    
+
+
     public function update(Request $request)
     {
-    	dd('TITS!');
-    
+
+        $errors = [];
+
+        $target = $request->get('target');
+
+        if (!$target) {
+            $errors[] = 'Target file/path missing';
+        }
+
+        $destination = $request->get('destination');
+
+        if (!$destination) {
+            $errors[] = 'Destination file/path missing';
+        }
+
+
+
+    	$file = Storage::disk($this->disk)->exists($target);
+
+    	if ($file) {
+
+        	$storage = Storage::disk($this->disk)->move($target, $destination);
+
+        	return response()->json([$storage], 200);
+
+    	} else {
+
+
+
+
+    	}
+
     }
+
+
+
+    public function destroy(Request $request)
+    {
+
+        $errors = [];
+
+        $path = $request->get('path');
+
+        if (!$path) {
+            $errors[] = 'Target file/path missing';
+        }
+
+    	$files = Storage::disk($this->disk)->files($path);
+
+    	if ($files) {
+
+            Storage::disk($this->disk)->deleteDirectory($path);
+
+        	return response()->json(['folder delete'], 200);
+
+    	} else {
+
+            $storage = Storage::disk($this->disk)->delete($path);
+
+        	return response()->json(['file delete'], 200);
+
+
+    	}
+
+    }
+
+
+
+
+
+
+
 
 
     protected function getFiles($disk, $path)

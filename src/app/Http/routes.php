@@ -47,12 +47,12 @@ Route::group(['prefix' => 'api'], function()
 
     // Admin project assets
     //Route::resource('assets', 'DanPowell\Portfolio\Http\Controllers\Api\AssetController', ['except' => ['create', 'edit']]);
-    
+
     	Route::get('assets', ['as' => 'assets.index', 'uses' => 'DanPowell\Portfolio\Http\Controllers\Api\AssetController@index']);
     	Route::post('assets', ['as' => 'assets.create', 'uses' => 'DanPowell\Portfolio\Http\Controllers\Api\AssetController@store']);
     	Route::put('assets', ['as' => 'assets.update', 'uses' => 'DanPowell\Portfolio\Http\Controllers\Api\AssetController@update']);
-    	Route::delete('assets', ['as' => 'assets.delete', 'uses' => 'DanPowell\Portfolio\Http\Controllers\Api\AssetController@delete']);
-    
+    	Route::delete('assets', ['as' => 'assets.delete', 'uses' => 'DanPowell\Portfolio\Http\Controllers\Api\AssetController@destroy']);
+
 
     // Admin project page items
     Route::resource('project.page', 'DanPowell\Portfolio\Http\Controllers\Api\ProjectPageController', ['except' => ['create', 'edit']]);
