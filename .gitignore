@@ -7,3 +7,6 @@ npm-debug.log
 typescript
 
 *.map
+
+gulpassets.json
+gulpconfig.json

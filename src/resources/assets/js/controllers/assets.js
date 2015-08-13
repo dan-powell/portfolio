@@ -6,7 +6,7 @@ app.controller('AssetsController', function($scope, $http, $stateParams, $state,
     // Initialise (load) data
     $scope.init = function() {
 
-        $http.get('/api/assets?folder=' + $stateParams.type + '/' + $stateParams.id)
+        $http.get('/api/assets?path=' + $stateParams.type + '/' + $stateParams.id)
             .success(function(data) {
                 $scope.model = data;
             });
@@ -28,7 +28,7 @@ app.controller('AssetsFileController', function($scope, $http, $stateParams, $st
     $scope.init = function() {
 
 
-        $http.get('/api/assets?folder=' + unescape($stateParams.folder))
+        $http.get('/api/assets?path=' + unescape($stateParams.folder))
             .success(function(data) {
                 $scope.model = data;
             });
@@ -47,7 +47,7 @@ app.controller('AssetsFileController', function($scope, $http, $stateParams, $st
 
         Upload.upload({
             url: '/api/assets',
-            fields: {'path': unescape($stateParams.folder)},
+            fields: {'path': unescape($stateParams.folder), 'name': $scope.name},
             file: $scope.file
         }).progress(function (evt) {
             var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);

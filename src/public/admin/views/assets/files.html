@@ -2,6 +2,7 @@
 <ul>
     <li ng-repeat="file in model.files">
         <strong>{{ file.filename }}</strong>
+        <img ng-src="/portfolio/{{ file.path }}" style="max-width: 100px;"/>
     </li>
 </ul>
 
@@ -18,6 +19,8 @@
 <div class="well">
     <img ngf-src="file" ngf-default-src="'/thumb.jpg'" ngf-accept="'image/*'" style="max-width: 240px;">
     <button class="btn btn-default" ngf-select ng-model="file">Browse</button>
+    
+    <input type="text" class="form-control" ng-model="name"/>
 </div>
 
 <button class="btn btn-primary" ng-click="uploadFile()">Upload</button>

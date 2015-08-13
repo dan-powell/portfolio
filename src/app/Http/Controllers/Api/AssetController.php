@@ -57,29 +57,38 @@ class AssetController extends Controller {
         if(count($errors) > 0) {
             return response()->json(['errors' => $errors], 422);
         }
+        
+        $put = $path . '/' . $name;
 
         if ($file = $request->file('file')) {
 
-            $storage = Storage::disk($this->disk)->put($path . '/' . $name,  File::get($file));
+            $storage = Storage::disk($this->disk)->put($put, File::get($file));
 
             if($storage) {
-                return response()->json(['file' => $path . '/' . $name], 200);
+                return response()->json(['file' => $put], 200);
             } else {
                 return response()->json(['errors' => $storage], 422);
             }
 
         } else {
 
-            $storage = Storage::disk($this->disk)->makeDirectory($path . '/' . $name);
+            $storage = Storage::disk($this->disk)->makeDirectory($put);
 
             if($storage) {
-                return response()->json(['folder' => $path . '/' . $name], 200);
+                return response()->json(['folder' => $put], 200);
             } else {
                 return response()->json(['errors' => $storage], 422);
             }
 
         }
 
+    }
+    
+    
+    public function update(Request $request)
+    {
+    	dd('TITS!');
+    
     }
 
 
