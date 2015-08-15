@@ -57,8 +57,8 @@ class AssetController extends Controller {
 
         // Validate the request
         $this->validate($request, [
-            'path' => 'regex:' . $this->validation['path_regex'],
-            'file' => 'mimes:' . $this->validation['file_mime'],
+            'path' => 'required_without_all:file|regex:' . $this->validation['path_regex'],
+            'file' => 'required_without_all:path|mimes:' . $this->validation['file_mime'],
             'filename' => 'required_with_all:file|regex:' . $this->validation['file_regex'],
         ]);
 
@@ -98,35 +98,39 @@ class AssetController extends Controller {
     public function update(Request $request)
     {
 
-        $errors = [];
+        // Validate the request
+        $this->validate($request, [
+            'src_path' => 'required_without_all:src_file',
+            'src_file' => 'required_without_all:src_path',
+            'dest_path' => 'required_without_all:src_file|required_with_all:src_path|regex:' . $this->validation['path_regex'],
+            'dest_file' => 'required_with_all:src_file|regex:' . $this->validation['file_regex'],
+        ]);
 
-        $target = $request->get('target');
+        $source = $request->get('src_path') . '/' . $request->get('src_file');
 
-        if (!$target) {
-            $errors[] = 'Target file/path missing';
-        }
+        // Check if the src/target file/folder exists
+    	if (Storage::disk($this->disk)->exists($source)) {
 
-        $destination = $request->get('destination');
+            $destination = $request->get('dest_path') . '/' . $request->get('dest_file');
 
-        if (!$destination) {
-            $errors[] = 'Destination file/path missing';
-        }
+            // Check if the destination file/folder exists
+            if (Storage::disk($this->disk)->exists($destination)) {
+                return response()->json(['errors' => 'Destination file/folder already exists'], 422);
 
+            } else {
 
+                // Move the file folder & check if moved OK
+                if($storage = Storage::disk($this->disk)->move($source, $destination)) {
+                    return response()->json(['src' => $source, 'dest' => $destination], 200);
+                } else {
+                    return response()->json(['errors' => 'Asset update failed'], 422);
+                }
 
-    	$file = Storage::disk($this->disk)->exists($target);
-
-    	if ($file) {
-
-        	$storage = Storage::disk($this->disk)->move($target, $destination);
-
-        	return response()->json([$storage], 200);
+            }
 
     	} else {
-
-
-
-
+            // Asset deos not exist - return error message
+            return response()->json(['errors' => 'Source file/folder does not exist'], 422);
     	}
 
     }
@@ -136,29 +140,42 @@ class AssetController extends Controller {
     public function destroy(Request $request)
     {
 
-        $errors = [];
+        // Validate the request
+        $this->validate($request, [
+            'path' => 'required_without_all:file',
+            'file' => 'required_without_all:path'
+        ]);
 
-        $path = $request->get('path');
 
-        if (!$path) {
-            $errors[] = 'Target file/path missing';
-        }
+        $source = $request->get('path') . '/' . $request->get('file');
 
-    	$files = Storage::disk($this->disk)->files($path);
+        // Check if the src/target file/folder exists
+        if (Storage::disk($this->disk)->exists($source)) {
 
-    	if ($files) {
+            // Are we dealing with a file or a folder?
+            if($request->get('file')) {
 
-            Storage::disk($this->disk)->deleteDirectory($path);
+                // Attempt to delete the file & check if deleted OK
+                if($storage = Storage::disk($this->disk)->delete($source)) {
+                    return response()->json(['file' => $source], 200);
+                } else {
+                    return response()->json(['errors' => 'File deletion failed'], 422);
+                }
 
-        	return response()->json(['folder delete'], 200);
+            } else {
+
+                // Attempt to delete the folder & check if deleted OK
+                if(Storage::disk($this->disk)->deleteDirectory($source)) {
+                    return response()->json(['folder' => $source], 200);
+                } else {
+                    return response()->json(['errors' => 'Folder deletion failed'], 422);
+                }
+
+            }
 
     	} else {
-
-            $storage = Storage::disk($this->disk)->delete($path);
-
-        	return response()->json(['file delete'], 200);
-
-
+            // Asset deos not exist - return error message
+            return response()->json(['errors' => 'File/folder does not exist'], 422);
     	}
 
     }
@@ -166,12 +183,7 @@ class AssetController extends Controller {
 
 
 
-
-
-
-
-
-    protected function getFiles($disk, $path)
+    private function getFiles($disk, $path)
     {
 
         $files = Storage::disk($disk)->files($path);
@@ -192,7 +204,7 @@ class AssetController extends Controller {
     }
 
 
-    protected function getDirectories($disk, $path)
+    private function getDirectories($disk, $path)
     {
 
         $folders = Storage::disk($disk)->directories($path);
