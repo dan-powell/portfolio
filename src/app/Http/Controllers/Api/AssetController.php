@@ -16,6 +16,11 @@ class AssetController extends Controller {
 
     private $disk = 'portfolio';
 
+    private $validation = [
+        'file_regex' => '/^([a-zA-Z0-9\-\_\/\.\(\)\?\!])+\.+([a-zA-Z0-9])+/', // '/^([a-zA-Z0-9\-\_\/\.\(\)\?\!])+$/'
+        'path_regex' => '/^([a-zA-Z0-9\-\_\/\(\)])+$/',
+        'file_mime' => 'jpeg,bmp,png,pdf,gif,svg,css,js,ai,eps,html,zip,doc,xls,md,csv,xml,rtf,txt'
+    ];
 
     public function __construct()
     {
@@ -27,14 +32,22 @@ class AssetController extends Controller {
     public function index(Request $request)
     {
 
+        // Look in the root if a path is not defined
         if(!$path = $request->get('path')){;
             $path = "";
         }
 
-        return response()->json([
-            'files' => $this->getFiles($this->disk, $path),
-            'folders' => $this->getDirectories($this->disk, $path)
-        ], 200);
+        // Check if the asset exists
+        if(Storage::disk($this->disk)->exists($path)) {
+            // Return files and subfolders
+            return response()->json([
+                'files' => $this->getFiles($this->disk, $path),
+                'folders' => $this->getDirectories($this->disk, $path)
+            ], 200);
+        } else {
+            // Asset is missing - return error
+            return response()->json(['errors' => 'Asset not found'], 422);
+        }
 
     }
 
@@ -42,46 +55,43 @@ class AssetController extends Controller {
     public function store(Request $request)
     {
 
-        $errors = [];
+        // Validate the request
+        $this->validate($request, [
+            'path' => 'regex:' . $this->validation['path_regex'],
+            'file' => 'mimes:' . $this->validation['file_mime'],
+            'filename' => 'required_with_all:file|regex:' . $this->validation['file_regex'],
+        ]);
 
-        if (!$path = $request->get('path')) {
-            $errors[] = 'Path missing';
-        }
+        // Get the folder (if there is one)
+        $path = $request->get('path');
 
+        // Check if a file is present
+        if ($request->hasFile('file') && $file = $request->file('file')) {
 
-        if (!$name = $request->get('name')) {
-            $errors[] = 'Name missing';
-        }
+            // concat the path & filename
+            $put = $path . '/' . $request->get('filename');
 
-
-        if(count($errors) > 0) {
-            return response()->json(['errors' => $errors], 422);
-        }
-
-        $put = $path . '/' . $name;
-
-        if ($file = $request->file('file')) {
-
-            $storage = Storage::disk($this->disk)->put($put, File::get($file));
-
-            if($storage) {
-                return response()->json(['file' => $put], 200);
+            // Does a file already exist?
+            if(Storage::disk($this->disk)->exists($put)) {
+                return response()->json(['errors' => 'File already exists'], 422);
             } else {
-                return response()->json(['errors' => $storage], 422);
+                // File doesn't exist - Save it!
+                Storage::disk($this->disk)->put($put, File::get($file));
+                return response()->json(['file' => $put], 200);
             }
 
         } else {
+            // No file - Create a folder
 
-            $storage = Storage::disk($this->disk)->makeDirectory($put);
-
-            if($storage) {
-                return response()->json(['folder' => $put], 200);
+            // Check if folder exists
+            if(Storage::disk($this->disk)->exists($path)) {
+                return response()->json(['errors' => 'Folder already exists'], 422);
             } else {
-                return response()->json(['errors' => $storage], 422);
+                // Folder doesn't already exist - create it!
+                Storage::disk($this->disk)->makeDirectory($path);
+                return response()->json(['folder' => $path], 200);
             }
-
         }
-
     }
 
 
