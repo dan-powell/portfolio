@@ -121,7 +121,11 @@ class AssetController extends Controller {
 
                 // Move the file folder & check if moved OK
                 if($storage = Storage::disk($this->disk)->move($source, $destination)) {
-                    return response()->json(['src' => $source, 'dest' => $destination], 200);
+                    return response()->json([
+                        'src' => $source,
+                        'dest' => $destination,
+                        'folder' => $this->getFolderInfo($this->disk, $destination)
+                        ], 200);
                 } else {
                     return response()->json(['errors' => 'Asset update failed'], 422);
                 }
@@ -181,8 +185,6 @@ class AssetController extends Controller {
     }
 
 
-
-
     private function getFiles($disk, $path)
     {
 
@@ -195,8 +197,6 @@ class AssetController extends Controller {
 
 	    return $array;
     }
-
-
 
 
     private function getFileInfo($disk, $path)
@@ -220,19 +220,20 @@ class AssetController extends Controller {
 
         $array = [];
         foreach($folders as $folder) {
-            $array[] = $this->getFolderInfo($disk, $folder);
+            $array[] = $this->getFolderInfo($disk, $folder, $path);
         }
 
         return $array;
     }
 
 
-    private function getFolderInfo($disk, $path)
+    private function getFolderInfo($disk, $path, $parent = '/')
     {
 
-	    $array = [];
+        $array = [];
         $array['path'] = $path;
         $array['name'] =  $this->getFolderName($path);
+        $array['parent'] = rtrim($path, $this->getFolderName($path));
         $array['folders'] = $this->getDirectories($disk, $path);
 
 	    return $array;
@@ -241,6 +242,9 @@ class AssetController extends Controller {
 
     private function getFolderName($path)
     {
+
+        // Trim any trailing slashes
+        $path = rtrim($path, '/');
 
         if (strpos($path,'/') !== false) {
             return substr(strrchr($path, '/'), 1);

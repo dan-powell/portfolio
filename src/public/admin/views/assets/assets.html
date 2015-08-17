@@ -17,13 +17,51 @@
             <h2>Folders</h2>
 
 
+            <div ui-tree="ui_tree_options" id="tree-root" style="clear: both;">
 
-            <ul class="list-group">
+                <div class="controls clearfix">
+                    <button class="btn btn-primary btn-xs" ng-click="createDirectory(model.folder)"><i class="fa fa-plus"></i> Add new</button>
+                    <button href="" class="btn btn-default pull-right btn-xs" ng-click="collapseAll()"><i class="fa fa-compress"></i>Collapse</button>
+                    <button href="" class="btn btn-default pull-right btn-xs" ng-click="expandAll()"><i class="fa fa-expand"></i>Expand</button>
+                </div>
 
                 <button type="button" ng-click="changeDirectory(initial_path)" class="list-group-item">Root directory</button>
 
-                <li class="list-group-item" ng-repeat="folder in model.folder.folders" ng-include="'folderTree'"></li>
-            </ul>
+                <ol ui-tree-nodes ng-model="model.folder.folders" class="Menu">
+                    <li ng-repeat="folder in model.folder.folders" ui-tree-node ng-include="'folderItem'" data-collapsed="true"></li>
+                </ol>
+            </div>
+
+            <script type="text/ng-template" id="folderItem">
+                <div ui-tree-handle>
+                    <span class="glyphicon glyphicon-align-justify">&nbsp;</span>
+
+                    <button class="btn btn-xs" data-nodrag ng-click="toggle(this)" ng-disabled='!folder.folders.length'>
+                        <span class="glyphicon" ng-class="{'glyphicon-chevron-right': collapsed, 'glyphicon-chevron-down': !collapsed}"></span>
+                    </button>
+
+                    <div class="btn-group" dropdown data-nodrag>
+                        <button type="button" class="btn btn-default btn-sm" ng-click="changeDirectory(folder.path)">{{ folder.name }}</button>
+                        <button type="button" class="btn btn-info btn-sm" dropdown-toggle>
+                            <span class="caret"></span>
+                            <span class="sr-only">Actions</span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu" aria-labelledby="split-button">
+                            <li role="menuitem"><a ng-click="createDirectory(folder)">Add Subfolder</a></li>
+                            <li role="menuitem"><a ng-click="deleteDirectory(folder)">Delete</a></li>
+                            <li role="menuitem"><a ng-click="renameDirectory(folder)">Rename</a></li>
+                        </ul>
+                    </div>
+
+                </div>
+
+                <ol ui-tree-nodes="options" ng-model="folder.folders" ng-class="{hidden: collapsed}">
+                    <li ng-repeat="folder in folder.folders" ui-tree-node ng-include="'folderItem'"></li>
+                </ol>
+            </script>
+
+
+
 
 
         </div>
@@ -34,24 +72,44 @@
             {{ active_path }}
         </div>
 
+
+
         <h2>Files</h2>
 
-        <div class="media" ng-repeat="file in model.files">
-            <div class="media-left">
+        <div class="row" ng-repeat="file in model.files">
+            <div class="col-sm-2">
                 <img ng-show="image_types.indexOf(file.extension)+1" ng-src="/portfolio/{{ file.path }}" style="width: 100px;"/>
                 <div style="width: 100px;" ng-hide="image_types.indexOf(file.extension)+1" class="text-center">
                     <img ng-src="/img/48px/{{ file.extension}}.png" />
                 </div>
             </div>
-            <div class="media-body">
-                <h4 class="media-heading">{{ file.filename }}</h4>
+            <div class="col-sm-10">
+
+                <div dropdown class="btn-group pull-right">
+                    <button type="button" class="btn btn-info btn-sm" dropdown-toggle>
+                        <span class="caret"></span>
+                        <span class="sr-only">Actions</span>
+                    </button>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="split-button">
+                        <li role="menuitem"><a ng-click="deleteFile(file)">Delete</a></li>
+                        <li role="menuitem"><a ng-click="renameFile(file)">Rename</a></li>
+                    </ul>
+                </div>
+
+                <h4 class="media-heading pull-left">{{ file.filename }}</h4>
+
+                <div class="clearfix"></div>
 
                 <div class="input-group">
                     <div class="input-group-addon">Path</div>
-                    <input type="text" class="form-control" value="/{{ file.path }}" readonly="readonly"/>
+                    <input type="text" class="form-control" value="{{ prefix_path }}{{ file.path }}" readonly="readonly"/>
                 </div>
 
+                <hr/>
+
             </div>
+
+
         </div>
 
 
@@ -102,25 +160,3 @@
     {{ model | json }}
 </pre>
 
-
-<script type="text/ng-template" id="folderTree">
-
-    <div class="btn-group" dropdown>
-        <button type="button" class="btn btn-info" ng-click="changeDirectory(folder.path)">{{ folder.name }}</button>
-        <button type="button" class="btn btn-info" dropdown-toggle>
-            <span class="caret"></span>
-            <span class="sr-only">Actions</span>
-        </button>
-        <ul class="dropdown-menu" role="menu" aria-labelledby="split-button">
-            <li role="menuitem" ng-click="createDirectory(folder)"><a href="#">Add Subfolder</a></li>
-            <li role="menuitem" ng-click="deleteDirectory(folder)"><a href="#">Delete</a></li>
-            <li role="menuitem"><a href="#">Move/Rename</a></li>
-        </ul>
-    </div>
-
-    <ul class="list-unstyled" ng-if="folder.folders">
-        <li ng-repeat="folder in folder.folders" ng-include="'folderTree'"></li>
-    </ul>
-</script>
-
-</div>

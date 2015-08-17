@@ -21,6 +21,93 @@ app.config(function($stateProvider, $urlRouterProvider) {
 app.controller('AssetController', function($scope, $http, $stateParams, $state, notificationService, Upload) {
 
 
+    // UI-Tree Items
+    $scope.ui_tree_options = {
+
+        // Update the items properties after drag and drop
+        dragStop: function(scope) {
+            console.log('stopped dragging');
+            console.log(scope);
+
+
+            var object = {
+                src_path: scope.source.nodeScope.$modelValue.path,
+            }
+
+
+            if (scope.dest.nodesScope.$nodeScope != null){
+                object.dest_path = scope.dest.nodesScope.$nodeScope.$modelValue.path + '/' + scope.source.nodeScope.$modelValue.name;
+            } else {
+                object.dest_path = '/' + scope.source.nodeScope.$modelValue.name;
+            }
+
+
+            $http.put('/api/assets', object)
+                .success(function(data) {
+
+                    var folder = $scope.findDirectory($scope.model.folder, scope.source.nodeScope.$modelValue.path);
+
+                    folder.folders = data.folder.folders;
+                    folder.path = data.folder.path;
+                    folder.parent = data.folder.parent;
+                    folder.name = data.folder.name;
+                    //$scope.init();
+                })
+                .error(function(data) {
+                    $scope.errors = data;
+                });
+
+        },
+
+
+
+        accept: function(sourceNodeScope, destNodesScope, destIndex) {
+
+            var test = false;
+            for(i=0; i < destNodesScope.$modelValue.length; i++) {
+
+                if (sourceNodeScope.$modelValue.name == destNodesScope.$modelValue[i].name) {
+                    test = true;
+                }
+
+            }
+
+            if (test) {
+                return false;
+            } else {
+                return true;
+            }
+
+            console.log(sourceNodeScope);
+            console.log(destNodesScope);
+
+
+        }
+    };
+
+
+    $scope.getRootNodesScope = function() {
+        return angular.element(document.getElementById("tree-root")).scope();
+    };
+
+    // Show/Hide child items
+    $scope.toggle = function(scope) {
+      scope.toggle();
+    };
+
+    // Hide all child items
+    $scope.collapseAll = function() {
+        var scope = $scope.getRootNodesScope();
+        scope.collapseAll();
+    };
+
+    // Show all child items
+    $scope.expandAll = function() {
+        var scope = $scope.getRootNodesScope();
+        scope.expandAll();
+    };
+
+
     $scope.image_types = ['jpg', 'gif', 'png'];
 
     if(typeof $scope.$parent.$parent.module != 'undefined') {
@@ -39,6 +126,8 @@ app.controller('AssetController', function($scope, $http, $stateParams, $state, 
     $scope.initial_path = $scope.type + '/' + $scope.root_id
 
     $scope.active_path = $scope.initial_path;
+
+    $scope.prefix_path = window.location.origin + '/portfolio/';
 
     // Initialise an empty array to hold data
     $scope.model = [];
@@ -134,6 +223,43 @@ app.controller('AssetController', function($scope, $http, $stateParams, $state, 
     }
 
 
+
+    $scope.renameDirectory = function(path) {
+        console.log(path);
+
+        var name = prompt("New name:", path.name);
+
+        if(name) {
+
+            var object = {
+                src_path: path.path,
+                dest_path : path.parent + '/' + name
+            }
+
+            $http.put('/api/assets', object)
+                .success(function(data) {
+
+                    //path.name = name;
+                    //path.path = data.dest;
+
+                    var folder = $scope.findDirectory($scope.model.folder, path.path);
+
+                    folder.folders = data.folder.folders;
+                    folder.path = data.folder.path;
+                    folder.parent = data.folder.parent;
+                    folder.name = data.folder.name;
+
+
+                })
+                .error(function(data) {
+                    $scope.errors = data;
+                });
+
+        }
+    }
+
+
+
     $scope.deleteDirectory = function(path) {
 
         if (confirm("Are you sure?")) {
@@ -196,6 +322,8 @@ app.controller('AssetController', function($scope, $http, $stateParams, $state, 
                         file.progress = progressPercentage;
                         if (progressPercentage >= 100) {
                             file.progress_type = 'success';
+                        } else {
+                            file.progress_type = 'info';
                         }
                         console.log('progress: ' + progressPercentage + '% ' + evt.config.file.name);
                     })
@@ -217,13 +345,30 @@ app.controller('AssetController', function($scope, $http, $stateParams, $state, 
 
         })
 
-
-
-
-
-
-
     };
+
+
+    $scope.deleteFile = function(path) {
+
+        if (confirm("Are you sure?")) {
+
+            $http.delete('/api/assets?path=' + path.path)
+                .success(function(data) {
+
+                    //var folder = $scope.findDirectory($scope.model.folder, path.path);
+
+                    //folder.name = '';
+
+
+                    $scope.init(); // LAAAAAAZY!
+
+                })
+                .error(function(data) {
+                    $scope.errors = data;
+                });
+        }
+    }
+
 
 
 
