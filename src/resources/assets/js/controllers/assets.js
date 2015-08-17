@@ -31,12 +31,12 @@ app.controller('AssetController', function($scope, $http, $stateParams, $state, 
 
 
             var object = {
-                src_path: scope.source.nodeScope.$modelValue.path,
+                src_path: scope.source.nodeScope.$modelValue.path + '/' + scope.source.nodeScope.$modelValue.name
             }
 
 
             if (scope.dest.nodesScope.$nodeScope != null){
-                object.dest_path = scope.dest.nodesScope.$nodeScope.$modelValue.path + '/' + scope.source.nodeScope.$modelValue.name;
+                object.dest_path = scope.dest.nodesScope.$nodeScope.$modelValue.path + '/' + scope.dest.nodesScope.$nodeScope.$modelValue.name + '/' + scope.source.nodeScope.$modelValue.name;
             } else {
                 object.dest_path = '/' + scope.source.nodeScope.$modelValue.name;
             }
@@ -45,12 +45,11 @@ app.controller('AssetController', function($scope, $http, $stateParams, $state, 
             $http.put('/api/assets', object)
                 .success(function(data) {
 
-                    var folder = $scope.findDirectory($scope.model.folder, scope.source.nodeScope.$modelValue.path);
+                    //var folder = $scope.findFolder($scope.model.folder, scope.source.nodeScope.$modelValue.path, scope.source.nodeScope.$modelValue.name);
 
-                    folder.folders = data.folder.folders;
-                    folder.path = data.folder.path;
-                    folder.parent = data.folder.parent;
-                    folder.name = data.folder.name;
+                    scope.source.nodeScope.$modelValue.folders = data.folder.folders;
+                    scope.source.nodeScope.$modelValue.path = data.folder.path;
+                    scope.source.nodeScope.$modelValue.name = data.folder.name;
                     //$scope.init();
                 })
                 .error(function(data) {
@@ -127,7 +126,7 @@ app.controller('AssetController', function($scope, $http, $stateParams, $state, 
 
     $scope.active_path = $scope.initial_path;
 
-    $scope.prefix_path = window.location.origin + '/portfolio/';
+    $scope.prefix_path = window.location.origin + '/portfolio';
 
     // Initialise an empty array to hold data
     $scope.model = [];
@@ -172,13 +171,14 @@ app.controller('AssetController', function($scope, $http, $stateParams, $state, 
 
 
 
-    $scope.findDirectory = function(node, path) {
+/*
+    $scope.findFolder = function(node, path, name) {
 
         var i,
             currentChild,
             result;
 
-        if (node.path == path) {
+        if (node.path == path && node.name == name) {
 
             console.log('found!');
             return node;
@@ -187,7 +187,7 @@ app.controller('AssetController', function($scope, $http, $stateParams, $state, 
 
             for (i = 0; i < node.folders.length; i++) {
 
-                result = $scope.findDirectory(node.folders[i], path);
+                result = $scope.findFolder(node.folders[i], path, name);
 
                 if (result !== false) {
                     return result;
@@ -197,21 +197,19 @@ app.controller('AssetController', function($scope, $http, $stateParams, $state, 
             return false;
         }
     }
+*/
 
 
-    $scope.createDirectory = function(path) {
+    $scope.createDirectory = function(node) {
 
-        var name = prompt("Folder name:", "new_folder");
+        var name = prompt("Folder name:", "newfolder");
 
         if(name) {
 
-            $http.post('/api/assets', {path : path.path + '/' + name})
+            $http.post('/api/assets', {path : node.$nodeScope.$modelValue.path + '/' + node.$nodeScope.$modelValue.name + '/' + name})
                 .success(function(data) {
 
-                    var folder = $scope.findDirectory($scope.model.folder, path.path);
-                    folder.folders.push(data.folder);
-
-                    // $scope.init(); / LAAAAAAZY!
+                    node.$nodeScope.$modelValue.folders.push(data.folder);
 
                 })
                 .error(function(data) {
@@ -224,31 +222,27 @@ app.controller('AssetController', function($scope, $http, $stateParams, $state, 
 
 
 
-    $scope.renameDirectory = function(path) {
-        console.log(path);
+    $scope.renameDirectory = function(node) {
 
-        var name = prompt("New name:", path.name);
+        console.log(node);
 
-        if(name) {
+        var new_name = prompt("New name:", node.$nodeScope.$modelValue.name);
+
+        if(new_name) {
 
             var object = {
-                src_path: path.path,
-                dest_path : path.parent + '/' + name
+                src_path: node.$nodeScope.$modelValue.path + '/' + node.$nodeScope.$modelValue.name,
+                dest_path : node.$nodeScope.$modelValue.path + '/' + new_name
             }
 
             $http.put('/api/assets', object)
                 .success(function(data) {
 
-                    //path.name = name;
-                    //path.path = data.dest;
+                    //var folder = $scope.findFolder($scope.model.folder, node.path, node.name);
 
-                    var folder = $scope.findDirectory($scope.model.folder, path.path);
-
-                    folder.folders = data.folder.folders;
-                    folder.path = data.folder.path;
-                    folder.parent = data.folder.parent;
-                    folder.name = data.folder.name;
-
+                    node.$nodeScope.$modelValue.folders = data.folder.folders;
+                    node.$nodeScope.$modelValue.path = data.folder.path;
+                    node.$nodeScope.$modelValue.name = data.folder.name;
 
                 })
                 .error(function(data) {
@@ -260,11 +254,11 @@ app.controller('AssetController', function($scope, $http, $stateParams, $state, 
 
 
 
-    $scope.deleteDirectory = function(path) {
+    $scope.deleteDirectory = function(node) {
 
         if (confirm("Are you sure?")) {
 
-            $http.delete('/api/assets?path=' + path.path)
+            $http.delete('/api/assets?path=' + node.$nodeScope.$modelValue.path + '/' + node.$nodeScope.$modelValue.name)
                 .success(function(data) {
 
                     //var folder = $scope.findDirectory($scope.model.folder, path.path);
@@ -272,7 +266,7 @@ app.controller('AssetController', function($scope, $http, $stateParams, $state, 
                     //folder.name = '';
 
 
-                    $scope.init(); // LAAAAAAZY!
+                    node.remove()
 
                 })
                 .error(function(data) {
@@ -348,19 +342,18 @@ app.controller('AssetController', function($scope, $http, $stateParams, $state, 
     };
 
 
-    $scope.deleteFile = function(path) {
+    $scope.deleteFile = function(node) {
 
         if (confirm("Are you sure?")) {
 
-            $http.delete('/api/assets?path=' + path.path)
+            $http.delete('/api/assets?path=' + node.path + '&file=' + node.filename)
                 .success(function(data) {
 
-                    //var folder = $scope.findDirectory($scope.model.folder, path.path);
-
-                    //folder.name = '';
-
-
-                    $scope.init(); // LAAAAAAZY!
+                    for(i=0; i < $scope.model.files.length; i++) {
+                        if ($scope.model.files[i].filename == node.filename) {
+                            $scope.model.files.splice(i, 1);
+                        }
+                    }
 
                 })
                 .error(function(data) {
@@ -369,6 +362,36 @@ app.controller('AssetController', function($scope, $http, $stateParams, $state, 
         }
     }
 
+
+    $scope.renameFile = function(node) {
+
+        var new_name = prompt("New name:", node.filename);
+
+        if(new_name) {
+
+            var object = {
+                src_path : node.path,
+                src_file : node.filename,
+                dest_path : node.path,
+                dest_file : new_name,
+            }
+
+            $http.put('/api/assets', object)
+                .success(function(data) {
+
+                    console.log(data);
+
+                    node.extension = data.file.extension;
+                    node.filename = data.file.filename;
+                    node.lastmodified = data.file.lastmodified;
+
+                })
+                .error(function(data) {
+                    $scope.errors = data;
+                });
+
+        }
+    }
 
 
 

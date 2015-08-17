@@ -106,12 +106,12 @@ class AssetController extends Controller {
             'dest_file' => 'required_with_all:src_file|regex:' . $this->validation['file_regex'],
         ]);
 
-        $source = $request->get('src_path') . '/' . $request->get('src_file');
+        $source = rtrim($request->get('src_path'), '/') . '/' . $request->get('src_file');
 
         // Check if the src/target file/folder exists
     	if (Storage::disk($this->disk)->exists($source)) {
 
-            $destination = $request->get('dest_path') . '/' . $request->get('dest_file');
+            $destination = rtrim($request->get('dest_path'), '/') . '/' . $request->get('dest_file');
 
             // Check if the destination file/folder exists
             if (Storage::disk($this->disk)->exists($destination)) {
@@ -121,11 +121,19 @@ class AssetController extends Controller {
 
                 // Move the file folder & check if moved OK
                 if($storage = Storage::disk($this->disk)->move($source, $destination)) {
-                    return response()->json([
+
+                    $array = [
                         'src' => $source,
-                        'dest' => $destination,
-                        'folder' => $this->getFolderInfo($this->disk, $destination)
-                        ], 200);
+                        'dest' => $destination
+                    ];
+
+                    if ($request->get('src_file')) {
+                        $array['file'] = $this->getFileInfo($this->disk, $destination);
+                    } else {
+                        $array['folder'] = $this->getFolderInfo($this->disk, $destination);
+                    }
+
+                    return response()->json($array, 200);
                 } else {
                     return response()->json(['errors' => 'Asset update failed'], 422);
                 }
@@ -203,9 +211,9 @@ class AssetController extends Controller {
     {
 
 	    $array = [];
-	    $array['path'] = $path;
-	    $array['extension'] = substr(strrchr($path, '.'), 1);
+	    $array['path'] = rtrim($path, basename($path));
 	    $array['filename'] = basename($path);
+	    $array['extension'] = substr(strrchr($path, '.'), 1);
         $array['size'] = Storage::disk($disk)->size($path);
         $array['lastmodified'] = Storage::disk($disk)->lastModified($path);
 
@@ -227,13 +235,12 @@ class AssetController extends Controller {
     }
 
 
-    private function getFolderInfo($disk, $path, $parent = '/')
+    private function getFolderInfo($disk, $path)
     {
 
         $array = [];
-        $array['path'] = $path;
         $array['name'] =  $this->getFolderName($path);
-        $array['parent'] = rtrim($path, $this->getFolderName($path));
+        $array['path'] = rtrim(rtrim($path, $this->getFolderName($path)), '/');
         $array['folders'] = $this->getDirectories($disk, $path);
 
 	    return $array;

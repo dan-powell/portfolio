@@ -41,15 +41,15 @@
                     </button>
 
                     <div class="btn-group" dropdown data-nodrag>
-                        <button type="button" class="btn btn-default btn-sm" ng-click="changeDirectory(folder.path)">{{ folder.name }}</button>
+                        <button type="button" class="btn btn-default btn-sm" ng-click="changeDirectory(folder.path + '/' + folder.name)">{{ folder.name }}</button>
                         <button type="button" class="btn btn-info btn-sm" dropdown-toggle>
                             <span class="caret"></span>
                             <span class="sr-only">Actions</span>
                         </button>
                         <ul class="dropdown-menu" role="menu" aria-labelledby="split-button">
-                            <li role="menuitem"><a ng-click="createDirectory(folder)">Add Subfolder</a></li>
-                            <li role="menuitem"><a ng-click="deleteDirectory(folder)">Delete</a></li>
-                            <li role="menuitem"><a ng-click="renameDirectory(folder)">Rename</a></li>
+                            <li role="menuitem"><a ng-click="createDirectory(this)">New Subfolder</a></li>
+                            <li role="menuitem"><a ng-click="deleteDirectory(this)">Delete</a></li>
+                            <li role="menuitem"><a ng-click="renameDirectory(this)">Rename</a></li>
                         </ul>
                     </div>
 
@@ -69,7 +69,7 @@
     <div class="col-sm-8">
 
         <div class="well">
-            {{ active_path }}
+            <input type="text" class="form-control" ng-model="active_path" readonly="readonly"/>
         </div>
 
 
@@ -78,7 +78,7 @@
 
         <div class="row" ng-repeat="file in model.files">
             <div class="col-sm-2">
-                <img ng-show="image_types.indexOf(file.extension)+1" ng-src="/portfolio/{{ file.path }}" style="width: 100px;"/>
+                <img ng-show="image_types.indexOf(file.extension)+1" ng-src="/portfolio/{{ file.path }}/{{ file.filename }}" style="width: 100px;"/>
                 <div style="width: 100px;" ng-hide="image_types.indexOf(file.extension)+1" class="text-center">
                     <img ng-src="/img/48px/{{ file.extension}}.png" />
                 </div>
@@ -102,7 +102,7 @@
 
                 <div class="input-group">
                     <div class="input-group-addon">Path</div>
-                    <input type="text" class="form-control" value="{{ prefix_path }}{{ file.path }}" readonly="readonly"/>
+                    <input type="text" class="form-control" value="{{ prefix_path }}/{{ file.path }}{{ file.filename }}" readonly="readonly"/>
                 </div>
 
                 <hr/>
