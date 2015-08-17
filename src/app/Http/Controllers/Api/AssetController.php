@@ -42,11 +42,11 @@ class AssetController extends Controller {
             // Return files and subfolders
             return response()->json([
                 'files' => $this->getFiles($this->disk, $path),
-                'folders' => $this->getDirectories($this->disk, $path)
+                'folder' => $this->getFolderInfo($this->disk, $path)
             ], 200);
         } else {
             // Asset is missing - return error
-            return response()->json(['errors' => 'Asset not found'], 422);
+            return response()->json(['errors' => 'Asset not found'], 404);
         }
 
     }
@@ -77,7 +77,7 @@ class AssetController extends Controller {
             } else {
                 // File doesn't exist - Save it!
                 Storage::disk($this->disk)->put($put, File::get($file));
-                return response()->json(['file' => $put], 200);
+                return response()->json(['file' => $this->getFileInfo($this->disk, $put)], 200);
             }
 
         } else {
@@ -89,7 +89,7 @@ class AssetController extends Controller {
             } else {
                 // Folder doesn't already exist - create it!
                 Storage::disk($this->disk)->makeDirectory($path);
-                return response()->json(['folder' => $path], 200);
+                return response()->json(['folder' => $this->getFolderInfo($this->disk, $path)], 200);
             }
         }
     }
@@ -190,15 +190,24 @@ class AssetController extends Controller {
 
         $array = [];
         foreach($files as $file) {
-    	    $object = [];
-    	    $object['path'] = $file;
-    	    $object['extension'] = substr(strrchr($file, '.'), 1);
-    	    $object['filename'] = basename($file);
-            $object['size'] = Storage::disk($disk)->size($file);
-            $object['lastmodified'] = Storage::disk($disk)->lastModified($file);
-
-    	    $array[] = $object;
+    	    $array[] = $this->getFileInfo($disk, $file);
 	    }
+
+	    return $array;
+    }
+
+
+
+
+    private function getFileInfo($disk, $path)
+    {
+
+	    $array = [];
+	    $array['path'] = $path;
+	    $array['extension'] = substr(strrchr($path, '.'), 1);
+	    $array['filename'] = basename($path);
+        $array['size'] = Storage::disk($disk)->size($path);
+        $array['lastmodified'] = Storage::disk($disk)->lastModified($path);
 
 	    return $array;
     }
@@ -211,16 +220,34 @@ class AssetController extends Controller {
 
         $array = [];
         foreach($folders as $folder) {
-            $object = [];
-            $object['path'] = $folder;
-            $object['name'] =  substr(strrchr($folder, '/'), 1);
-            $object['folders'] = $this->getDirectories($disk, $folder);
-
-            $array[] = $object;
+            $array[] = $this->getFolderInfo($disk, $folder);
         }
 
         return $array;
     }
 
+
+    private function getFolderInfo($disk, $path)
+    {
+
+	    $array = [];
+        $array['path'] = $path;
+        $array['name'] =  $this->getFolderName($path);
+        $array['folders'] = $this->getDirectories($disk, $path);
+
+	    return $array;
+    }
+
+
+    private function getFolderName($path)
+    {
+
+        if (strpos($path,'/') !== false) {
+            return substr(strrchr($path, '/'), 1);
+        } else {
+            return $path;
+        }
+
+    }
 
 }
