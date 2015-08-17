@@ -204,12 +204,22 @@ app.controller('AssetController', function($scope, $http, $stateParams, $state, 
 
         var name = prompt("Folder name:", "newfolder");
 
+
+        if (typeof node.$nodeScope != 'undefined') {
+
+            nodeScope = node.$nodeScope.$modelValue;
+
+        } else {
+
+            nodeScope = node;
+        }
+
         if(name) {
 
-            $http.post('/api/assets', {path : node.$nodeScope.$modelValue.path + '/' + node.$nodeScope.$modelValue.name + '/' + name})
+            $http.post('/api/assets', {path : nodeScope.path + '/' + nodeScope.name + '/' + name})
                 .success(function(data) {
 
-                    node.$nodeScope.$modelValue.folders.push(data.folder);
+                    nodeScope.folders.push(data.folder);
 
                 })
                 .error(function(data) {
