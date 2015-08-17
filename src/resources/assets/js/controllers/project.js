@@ -1,7 +1,68 @@
-app.controller('ProjectController', function($scope, $filter, ngTableParams, $http, RestfulApi, notificationService) {
+/*  State Provider
+    -------------------------------------------------------------------------------------------------
+    Angular routes (states) are defined here. Each State is usually assigned a controller and a view
+*/
+app.config(function($stateProvider, $urlRouterProvider) {
+
+    // Now set up the states
+    $stateProvider
+
+        // Project base view
+        .state('project', {
+            url: "/project",
+            templateUrl: "/vendor/portfolio/admin/views/project/project.html",
+            controller: "ProjectController",
+        })
+
+        // Project index
+        .state('project.index', {
+            url: "/index",
+            templateUrl: "/vendor/portfolio/admin/views/project/project.index.html",
+            controller: "ProjectIndexController",
+            resolve:{
+                model: function($http){
+                    return $http.get('/api/project');
+                }
+            }
+        })
+
+        // Project create
+        .state('project.create', {
+            url: "/create",
+            templateUrl: "/vendor/portfolio/admin/views/project/project.edit.html",
+            controller: "ProjectCreateController"
+        })
+
+        // Project edit
+        .state('project.edit', {
+            url: "/:id/edit",
+            templateUrl: "/vendor/portfolio/admin/views/project/project.edit.html",
+            controller: "ProjectEditController",
+            resolve:{
+                model: function($http, RestfulApi, $stateParams){
+                    return $http.get(RestfulApi.getRoute('project', 'show', $stateParams.id));
+                }
+            }
+        })
+})
+
+
+
+
+app.controller('ProjectController', function($scope) {
+
+    $scope.module = {
+        name : 'projects'
+    }
+
+});
+
+
+
+app.controller('ProjectIndexController', function($scope, model, $filter, ngTableParams, $http, RestfulApi, notificationService) {
 
     // Initialise an empty array to hold data
-    $scope.data = [];
+    $scope.model = model.data;
 
     // Initialise the data table
     $scope.tableParams = new ngTableParams({
@@ -12,31 +73,20 @@ app.controller('ProjectController', function($scope, $filter, ngTableParams, $ht
         },
     }, {
         filterDelay: 10,
-        total: $scope.data.length, // length of data
+        total: $scope.model.length, // length of data
         getData: function($defer, params) {
             // use build-in angular filter
             var filteredData = params.filter() ?
-                    $filter('filter')($scope.data, params.filter()) :
-                    $scope.data;
+                    $filter('filter')($scope.model, params.filter()) :
+                    $scope.model;
             var orderedData = params.sorting() ?
                     $filter('orderBy')(filteredData, params.orderBy()) :
-                    $scope.data;
+                    $scope.model;
 
             params.total(orderedData.length); // set total for recalc pagination
             $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
         }
     });
-
-    // Initialise (load) data
-    $scope.init = function() {
-
-        $http.get(RestfulApi.getRoute('project', 'index'))
-            .success(function(data) {
-                $scope.data = data;
-                $scope.tableParams.reload();
-            });
-
-    };
 
 
     $scope.delete = function(id, title) {
@@ -54,7 +104,6 @@ app.controller('ProjectController', function($scope, $filter, ngTableParams, $ht
         }
     }
 
-    $scope.init();
 
 });
 
@@ -62,13 +111,13 @@ app.controller('ProjectController', function($scope, $filter, ngTableParams, $ht
 
 app.controller('ProjectCreateController', function($scope, $http, $stateParams, $state, RestfulApi, notificationService) {
 
-    $scope.data = {};
+    $scope.model = {};
 
     $scope.create = true;
 
     $scope.save = function(apply) {
 
-        $http.post(RestfulApi.getRoute('project', 'store'), $scope.data)
+        $http.post(RestfulApi.getRoute('project', 'store'), $scope.model)
             .success(function(data) {
                 notificationService.add("Project '" + data.title + "' added successfully", 'success');
                 $scope.errors = [];
@@ -86,12 +135,9 @@ app.controller('ProjectCreateController', function($scope, $http, $stateParams, 
 });
 
 
-app.controller('ProjectEditController', function($scope, $http, $stateParams, $state, RestfulApi, notificationService, ngTableParams, $filter, $modal) {
+app.controller('ProjectEditController', function($scope, model, $http, $stateParams, $state, RestfulApi, notificationService, ngTableParams, $filter, $modal) {
 
-    $scope.data = {
-        sections : [],
-        pages : []
-    };
+    $scope.model = model.data;
 
     $scope.tableParams = new ngTableParams({
         page: 1,            // show first page
@@ -101,34 +147,20 @@ app.controller('ProjectEditController', function($scope, $http, $stateParams, $s
         },
     }, {
         filterDelay: 10,
-        total: $scope.data.pages.length, // length of data
+        total: $scope.model.pages.length, // length of data
         getData: function($defer, params) {
             // use build-in angular filter
             var filteredData = params.filter() ?
-                    $filter('filter')($scope.data.pages, params.filter()) :
-                    $scope.data.pages;
+                    $filter('filter')($scope.model.pages, params.filter()) :
+                    $scope.model.pages;
             var orderedData = params.sorting() ?
                     $filter('orderBy')(filteredData, params.orderBy()) :
-                    $scope.data.pages;
+                    $scope.model.pages;
 
             params.total(orderedData.length); // set total for recalc pagination
             $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
         }
     });
-
-
-    $http.get(RestfulApi.getRoute('project', 'show', $stateParams.id))
-        .success(function(data) {
-            $scope.data = data;
-            $scope.slug = $scope.data.slug;
-            $scope.tableParams.reload();
-        })
-        .error(function(data, status, headers, config) {
-            $scope.errors = data;
-        });
-
-
-
 
     // UI-Tree Items
     $scope.options = {
@@ -165,7 +197,7 @@ app.controller('ProjectEditController', function($scope, $http, $stateParams, $s
 
         modalData = {
             'create' : create,
-            'projectId' : $scope.data.id,
+            'projectId' : $scope.model.id,
             'sectionId' : sectionId
         };
 
@@ -188,18 +220,18 @@ app.controller('ProjectEditController', function($scope, $http, $stateParams, $s
             console.log(section);
 
             if (create) {
-                $scope.data.sections.push(section);
+                $scope.model.sections.push(section);
             } else {
 
-                angular.forEach($scope.data.sections, function(value, key) {
+                angular.forEach($scope.model.sections, function(value, key) {
                     if (value.id == sectionId) {
                         console.log('updated section: ' + value.id)
-                        $scope.data.sections[key] = section
+                        $scope.model.sections[key] = section
                     }
                 });
 
             }
-            console.log($scope.data.sections);
+            console.log($scope.model.sections);
         });
 
     };
@@ -212,10 +244,10 @@ app.controller('ProjectEditController', function($scope, $http, $stateParams, $s
                 .success(function(data) {
 
                     // Remove the section
-                    angular.forEach($scope.data.sections, function(value, key) {
+                    angular.forEach($scope.model.sections, function(value, key) {
                         if (value.id == sectionId) {
                             console.log(key);
-                            $scope.data.sections.splice(key, 1)
+                            $scope.model.sections.splice(key, 1)
                         }
                     })
 
@@ -235,7 +267,7 @@ app.controller('ProjectEditController', function($scope, $http, $stateParams, $s
 
         modalData = {
             'create' : create,
-            'projectId' : $scope.data.id,
+            'projectId' : $scope.model.id,
             'pageId' : pageId
         };
 
@@ -258,18 +290,18 @@ app.controller('ProjectEditController', function($scope, $http, $stateParams, $s
             console.log(page);
 
             if (create) {
-                $scope.data.pages.push(page);
+                $scope.model.pages.push(page);
             } else {
 
-                angular.forEach($scope.data.pages, function(value, key) {
+                angular.forEach($scope.model.pages, function(value, key) {
                     if (value.id == pageId) {
                         console.log('updated section: ' + value.id);
-                        $scope.data.pages[key] = page;
+                        $scope.model.pages[key] = page;
                     }
                 });
 
             }
-            console.log($scope.data.pages);
+            console.log($scope.model.pages);
             $scope.tableParams.reload();
         });
 
@@ -282,10 +314,10 @@ app.controller('ProjectEditController', function($scope, $http, $stateParams, $s
                 .success(function(data) {
 
                     // Remove the section
-                    angular.forEach($scope.data.pages, function(value, key) {
+                    angular.forEach($scope.model.pages, function(value, key) {
                         if (value.id == pageId) {
                             console.log(key);
-                            $scope.data.pages.splice(key, 1)
+                            $scope.model.pages.splice(key, 1)
                         }
                     })
 
@@ -304,7 +336,7 @@ app.controller('ProjectEditController', function($scope, $http, $stateParams, $s
 
     $scope.slugWarning = function() {
         notificationService.removeByType('warning');
-        if ($scope.slug != $scope.data.slug) {
+        if ($scope.slug != $scope.model.slug) {
             notificationService.add("You have modified the project slug. Please be aware that this may break hyperlinks to this project.", 'warning');
         }
     }
@@ -313,11 +345,11 @@ app.controller('ProjectEditController', function($scope, $http, $stateParams, $s
     $scope.save = function(apply) {
         apply = typeof apply !== 'undefined' ? apply : false;
 
-        if ($scope.slug != $scope.data.slug) {
+        if ($scope.slug != $scope.model.slug) {
             if (confirm('Are you sure you wish to change the slug?')) {
                 $scope.put(apply);
             } else {
-                $scope.data.slug = $scope.slug;
+                $scope.model.slug = $scope.slug;
                 notificationService.removeByType('warning');
                 notificationService.add("Slug reset", 'info');
             }
@@ -328,11 +360,11 @@ app.controller('ProjectEditController', function($scope, $http, $stateParams, $s
     }
 
     $scope.put = function(apply) {
-        $http.put(RestfulApi.getRoute('project', 'update', $stateParams.id), $scope.data)
+        $http.put(RestfulApi.getRoute('project', 'update', $stateParams.id), $scope.model)
             .success(function(data) {
                 notificationService.add("Project '" + data.title + "' updated successfully", 'success');
                 $scope.errors = [];
-                $scope.data.updated_at_human = 'Just now';
+                $scope.model.updated_at_human = 'Just now';
                 if (!apply) {
                     $state.go( "project.index" );
                 }

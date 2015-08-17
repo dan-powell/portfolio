@@ -1,5 +1,14 @@
 
+<div ng-controller="AssetController" ng-init="init('projects')" class="form-horizontal" role="form">
 
+<style>
+    .list-unstyled {
+        padding-left: 15px;
+    }
+    .btn-group {
+        margin-bottom: 5px;
+    }
+</style>
 
 <div class="row">
     <div class="col-sm-4">
@@ -7,26 +16,111 @@
 
             <h2>Folders</h2>
 
-            <ul>
-                <li ng-repeat="folder in model.folders" ng-include="'categoryTree'"></li>
+
+
+            <ul class="list-group">
+
+                <button type="button" ng-click="changeDirectory(initial_path)" class="list-group-item">Root directory</button>
+
+                <li class="list-group-item" ng-repeat="folder in model.folder.folders" ng-include="'folderTree'"></li>
             </ul>
+
 
         </div>
     </div>
     <div class="col-sm-8">
 
+        <div class="well">
+            {{ active_path }}
+        </div>
+
         <h2>Files</h2>
 
-        <div ui-view></div>
+        <div class="media" ng-repeat="file in model.files">
+            <div class="media-left">
+                <img ng-show="image_types.indexOf(file.extension)+1" ng-src="/portfolio/{{ file.path }}" style="width: 100px;"/>
+                <div style="width: 100px;" ng-hide="image_types.indexOf(file.extension)+1" class="text-center">
+                    <img ng-src="/img/48px/{{ file.extension}}.png" />
+                </div>
+            </div>
+            <div class="media-body">
+                <h4 class="media-heading">{{ file.filename }}</h4>
+
+                <div class="input-group">
+                    <div class="input-group-addon">Path</div>
+                    <input type="text" class="form-control" value="/{{ file.path }}" readonly="readonly"/>
+                </div>
+
+            </div>
+        </div>
+
+
+        <hr/>
+
+
+        <button class="btn btn-info" ngf-select ng-model="files" ngf-change="addFile($files)" ngf-multiple="true">Add Files</button>
+        <button class="btn btn-primary pull-right" ng-click="uploadFile()">Upload</button>
+
+        <div class="panel panel-default" ng-repeat="file in files">
+
+            <div class="panel-body">
+                <div class="media">
+                    <div class="media-left">
+                        <img class="media-object" ngf-src="file" ngf-accept="'image/*'" style="width: 100px;">
+                    </div>
+                    <div class="media-body">
+
+                        <progressbar animate="true" value="file.progress" type="{{file.progress_type}}" class="progress-striped active">
+                            <b>&nbsp;{{file.progress}}%&nbsp;</b><i ng-show="file.progress_message"> {{ file.progress_message }}</i>
+                        </progressbar>
+
+                        <div class="row">
+                            <div class="col-sm-9">
+                                <div class="input-group form-group-sm">
+                                    <div class="input-group-addon">Filename</div>
+                                    <input type="text" class="form-control" ng-model="file.filename"/>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <button class="btn btn-danger btn-block btn-sm" ng-click="removeFile(file)">Remove</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <hr/>
 
     </div>
 </div>
 
 
-<script type="text/ng-template" id="categoryTree">
-    <a ui-sref="project.edit.assets.files({folder: folder.path})">{{ folder.name }}</a>
-    <ul ng-if="folder.folders">
-        <li ng-repeat="folder in folder.folders" ng-include="'categoryTree'">
-        </li>
+<pre>
+    {{ model | json }}
+</pre>
+
+
+<script type="text/ng-template" id="folderTree">
+
+    <div class="btn-group" dropdown>
+        <button type="button" class="btn btn-info" ng-click="changeDirectory(folder.path)">{{ folder.name }}</button>
+        <button type="button" class="btn btn-info" dropdown-toggle>
+            <span class="caret"></span>
+            <span class="sr-only">Actions</span>
+        </button>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="split-button">
+            <li role="menuitem" ng-click="createDirectory(folder)"><a href="#">Add Subfolder</a></li>
+            <li role="menuitem" ng-click="deleteDirectory(folder)"><a href="#">Delete</a></li>
+            <li role="menuitem"><a href="#">Move/Rename</a></li>
+        </ul>
+    </div>
+
+    <ul class="list-unstyled" ng-if="folder.folders">
+        <li ng-repeat="folder in folder.folders" ng-include="'folderTree'"></li>
     </ul>
 </script>
+
+</div>

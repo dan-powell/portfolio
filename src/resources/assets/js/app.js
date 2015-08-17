@@ -51,40 +51,9 @@ app.config(function($stateProvider, $urlRouterProvider) {
       templateUrl: "/vendor/portfolio/admin/views/dashboard.html",
       controller: "DashboardController"
     })
-    .state('project', {
-      url: "/project",
-      templateUrl: "/vendor/portfolio/admin/views/project/project.html",
-    })
-    .state('project.index', {
-      url: "/index",
-      templateUrl: "/vendor/portfolio/admin/views/project/project.index.html",
-      controller: "ProjectController"
-    })
-    .state('project.create', {
-      url: "/create",
-      templateUrl: "/vendor/portfolio/admin/views/project/project.edit.html",
-      controller: "ProjectCreateController"
-    })
-    .state('project.edit', {
-      url: "/:id/edit",
-      templateUrl: "/vendor/portfolio/admin/views/project/project.edit.html",
-      controller: "ProjectEditController"
-    })
-    .state('project.edit.assets', {
-      url: "/assets/:type",
-      templateUrl: "/vendor/portfolio/admin/views/assets/assets.html",
-      controller: "AssetsController"
-    })
-    .state('project.edit.assets.files', {
-      url: "/files/:folder",
-      templateUrl: "/vendor/portfolio/admin/views/assets/files.html",
-      controller: "AssetsFileController"
-    })
-    .state('assets', {
-      url: "/assets/:type/:id",
-      templateUrl: "/vendor/portfolio/admin/views/assets/assets.html",
-      controller: "AssetsController"
-    })
+
+
+
     .state('tag', {
       url: "/tag",
       templateUrl: "/vendor/portfolio/admin/views/tag/tag.html",

@@ -1,8 +1,8 @@
-<h3>{{ data.title }}</h3>
+<h3>{{ model.title }}</h3>
 
-<p><strong>ID:</strong> {{ data.id }}</p>
+<p><strong>ID:</strong> {{ model.id }}</p>
 
-<p><strong>Last Updated:</strong> {{ data.updated_at_human }}</p>
+<p><strong>Last Updated:</strong> {{ model.updated_at_human }}</p>
 
 <tabset class="nav nav-tabs">
     <tab class="tab-pane">
@@ -14,7 +14,7 @@
 
         <div class="form-group" ng-class="{'has-error':errors.title}">
             <label for="title" class="control-label">Title</label>
-            <input type="text" id="title" class="form-control" ng-model="data.title" placeholder="Enter project name"/>
+            <input type="text" id="title" class="form-control" ng-model="model.title" placeholder="Enter project name"/>
             <p ng-repeat="error in errors.title" class="help-block">{{ error }}</p>
         </div>
 
@@ -25,11 +25,11 @@
             <div class="row">
 
                 <div class="col-sm-6">
-                    <textarea id="markup" class="form-control" ng-model="data.markup" placeholder="Enter project content" rows="5"></textarea>
+                    <textarea id="markup" class="form-control" ng-model="model.markup" placeholder="Enter project content" rows="5"></textarea>
                 </div>
 
                 <div class="col-sm-6">
-                    <div class="well" marked="data.markup"></div>
+                    <div class="well" marked="model.markup"></div>
                 </div>
 
                 <p ng-repeat="error in errors.markup" class="help-block">{{ error }}</p>
@@ -47,19 +47,19 @@
 
         <div class="form-group" ng-class="{'has-error':errors.slug}">
             <label for="title" class="control-label">Slug</label>
-            <input type="text" id="slug" class="form-control" ng-model="data.slug" placeholder="Enter project URL" ng-change="slugWarning()"/>
+            <input type="text" id="slug" class="form-control" ng-model="model.slug" placeholder="Enter project URL" ng-change="slugWarning()"/>
             <p ng-repeat="error in errors.slug" class="help-block">{{ error }}</p>
         </div>
 
         <div class="form-group" ng-class="{'has-error':errors.seo_title}">
             <label for="seo_title" class="control-label">SEO Title</label>
-            <input type="text" id="seo_title" class="form-control" ng-model="data.seo_title" placeholder="Enter page title to appear on SERP's"/>
+            <input type="text" id="seo_title" class="form-control" ng-model="model.seo_title" placeholder="Enter page title to appear on SERP's"/>
             <p ng-repeat="error in errors.seo_title" class="help-block">{{ error }}</p>
         </div>
 
         <div class="form-group" ng-class="{'has-error':errors.seo_description}">
             <label for="seo_description" class="control-label">Seo</label>
-            <textarea id="seo_description" class="form-control" ng-model="data.seo_description" placeholder="Enter page description to appear on SERP's" rows="5"></textarea>
+            <textarea id="seo_description" class="form-control" ng-model="model.seo_description" placeholder="Enter page description to appear on SERP's" rows="5"></textarea>
             <p ng-repeat="error in errors.seo_description" class="help-block">{{ error }}</p>
         </div>
 
@@ -74,17 +74,17 @@
 
         <div class="form-group" ng-class="{'has-error':errors.styles}">
             <label for="styles" class="control-label">Styles</label>
-            <textarea id="styles" class="form-control" ng-model="data.styles" placeholder="Enter CSS" rows="5"></textarea>
+            <textarea id="styles" class="form-control" ng-model="model.styles" placeholder="Enter CSS" rows="5"></textarea>
             <p ng-repeat="error in errors.styles" class="help-block">{{ error }}</p>
         </div>
 
         <div class="form-group" ng-class="{'has-error':errors.scripts}">
             <label for="scripts" class="control-label">Scripts</label>
-            <textarea id="scripts" class="form-control" ng-model="data.scripts" placeholder="Enter Javascript" rows="5"></textarea>
+            <textarea id="scripts" class="form-control" ng-model="model.scripts" placeholder="Enter Javascript" rows="5"></textarea>
             <p ng-repeat="error in errors.scripts" class="help-block">{{ error }}</p>
         </div>
 
-        <tags-input ng-model="data.tags" display-property="title"></tags-input>
+        <tags-input ng-model="model.tags" display-property="title"></tags-input>
 
     </tab>
 
@@ -98,13 +98,13 @@
 
         <div class="form-group" ng-class="{'has-error':errors.url}">
             <label for="url" class="control-label">Redirect URL</label>
-            <input type="text" id="url" class="form-control" ng-model="data.url" placeholder="Enter the URL to redirect to"/>
+            <input type="text" id="url" class="form-control" ng-model="model.url" placeholder="Enter the URL to redirect to"/>
             <p ng-repeat="error in errors.url" class="help-block">{{ error }}</p>
         </div>
 
         <div class="checkbox" ng-class="{'has-error':errors.featured}">
             <label class="control-label">
-                <input type="checkbox" id="featured" ng-model="data.featured" ng-true-value="1" ng-false-value="0"/>
+                <input type="checkbox" id="featured" ng-model="model.featured" ng-true-value="1" ng-false-value="0"/>
                 Featured
             </label>
             <p ng-repeat="error in errors.featured" class="help-block">{{ error }}</p>
@@ -112,7 +112,7 @@
 
         <div class="form-group" ng-class="{'has-error':errors.template}">
             <label for="template" class="control-label">Template</label>
-            <input type="text" id="template" class="form-control" ng-model="data.template" placeholder="Alternative template to use"/>
+            <input type="text" id="template" class="form-control" ng-model="model.template" placeholder="Alternative template to use"/>
             <p ng-repeat="error in errors.template" class="help-block">{{ error }}</p>
         </div>
     </tab>
@@ -130,8 +130,8 @@
             <a ng-click="editSection(true)" class="btn btn-primary pull-right">Add Section</a>
 
             <div ui-tree="options" id="tree-root" class="well" style="clear: both;">
-                <ol ui-tree-nodes ng-model="data.sections" class="Menu">
-                    <li ng-repeat="item in data.sections" ui-tree-node ng-include="'sectionIndexItem.html'"></li>
+                <ol ui-tree-nodes ng-model="model.sections" class="Menu">
+                    <li ng-repeat="item in model.sections" ui-tree-node ng-include="'sectionIndexItem.html'"></li>
                 </ol>
             </div>
 
@@ -177,7 +177,7 @@
     </tab>
 
 
-    <tab ui-sref="project.edit.assets({id: data.id, type: 'projects'})" >
+    <tab>
 
         <tab-heading>Assets
             <span ng-show="" class="text-danger glyphicon glyphicon-exclamation-sign"> </span>
@@ -187,9 +187,7 @@
 
         <div ng-hide="create">
 
-            <!-- <div ng-include="'/vendor/portfolio/admin/views/assets/assets.html'" onload="init('lush')"></div> -->
-
-            <div ui-view></div>
+            <div ng-include="'/vendor/portfolio/admin/views/assets/assets.html'" ></div>
 
         </div>
 
@@ -212,7 +210,7 @@
 <div collapse="!isCollapsed">
     <hr/>
     <pre>
-        {{ data | json }}
+        {{ model | json }}
     </pre>
 </div>
 
