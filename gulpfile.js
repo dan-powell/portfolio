@@ -132,6 +132,41 @@ gulp.task('js-all', function() {
 });
 
 
+
+
+/* 	JS Tasks
+	----------------------------------------- */
+
+gulp.task('js-plugins', function() {
+
+	if(typeof assets.tasks.js_plugins != 'undefined' && assets.tasks.js_plugins.length > 0) {
+
+		// Loop over all the tasks and run 'em
+		assets.tasks.js_plugins.forEach(function(task) {
+
+		  gulp.src(task.src)
+			    .pipe(concat(task.dest))
+                .pipe(gulpif(config.developmentMode, plumber({errorHandler: notify.onError(task.name + " Error: <%= error.message %> | Extract: <%= error.extract %>")}) ))
+                .pipe(gulpif(config.developmentMode, gulpif(config.js.sourceMaps, sourcemaps.init()) ))
+                .pipe(uglify({
+                    compress: config.js.minify,
+                    mangle: false
+                }))
+                .pipe(gulpif(config.developmentMode, gulpif(config.js.sourceMaps, sourcemaps.write('.')) ))
+                .pipe(gulp.dest(task.destFolder))
+                .pipe(gulpif(config.developmentMode, filter('**/*.js') ))
+                .pipe(gulpif(config.developmentMode, shell(assets.tasks.shell.publish.cmd, {}) ))
+                .pipe(gulpif(config.developmentMode, notify({ message: task.name + ' Successful' }) ))
+                .pipe(gulpif(config.developmentMode, browserSync.reload({stream:true}) ));
+
+		});
+	} else {
+		console.log('No JS tasks defined. Please add some to assetconfig.json');
+	}
+});
+
+
+
 /* 	Copy
 	----------------------------------------- */
 
