@@ -12,10 +12,10 @@
 
 <div class="row">
     <div class="col-sm-4">
+
+        <h2>Folders <button class="btn btn-default btn-xs" ng-click="init('projects')"><i class="glyphicon glyphicon-refresh"></i></button></h2>
+
         <div class="well">
-
-            <h2>Folders</h2>
-
 
             <div ui-tree="ui_tree_options" id="tree-root" style="clear: both;">
 
@@ -68,47 +68,52 @@
     </div>
     <div class="col-sm-8">
 
+        <h2>Files <button class="btn btn-default btn-xs" ng-click="changeDirectory(active_path)"><i class="glyphicon glyphicon-refresh"></i></button></h2>
+
         <div class="well">
-            <input type="text" class="form-control" ng-model="active_path" readonly="readonly"/>
-        </div>
-
-
-
-        <h2>Files</h2>
-
-        <div class="row" ng-repeat="file in model.files">
-            <div class="col-sm-2">
-                <img ng-show="image_types.indexOf(file.extension)+1" ng-src="/portfolio/{{ file.path }}/{{ file.filename }}" style="width: 100px;"/>
-                <div style="width: 100px;" ng-hide="image_types.indexOf(file.extension)+1" class="text-center">
-                    <img ng-src="/img/48px/{{ file.extension}}.png" />
-                </div>
+            <div class="input-group">
+                <div class="input-group-addon">Current Folder</div>
+                <input type="text" class="form-control" ng-model="active_path" readonly="readonly"/>
             </div>
-            <div class="col-sm-10">
 
-                <div dropdown class="btn-group pull-right">
-                    <button type="button" class="btn btn-info btn-sm" dropdown-toggle>
-                        <span class="caret"></span>
-                        <span class="sr-only">Actions</span>
-                    </button>
-                    <ul class="dropdown-menu" role="menu" aria-labelledby="split-button">
-                        <li role="menuitem"><a ng-click="deleteFile(file)">Delete</a></li>
-                        <li role="menuitem"><a ng-click="renameFile(file)">Rename</a></li>
-                    </ul>
-                </div>
 
-                <h4 class="media-heading pull-left">{{ file.filename }}</h4>
-
-                <div class="clearfix"></div>
-
-                <div class="input-group">
-                    <div class="input-group-addon">Path</div>
-                    <input type="text" class="form-control" value="{{ prefix_path }}/{{ file.path }}{{ file.filename }}" readonly="readonly"/>
-                </div>
+            <div class="row" ng-repeat="file in model.files">
 
                 <hr/>
 
-            </div>
+                <div class="col-sm-4">
+                    <a ng-href="/portfolio/{{ file.path }}/{{ file.filename }}" target="_blank">
+                        <img ng-show="image_types.indexOf(file.extension)+1" ng-src="/portfolio/{{ file.path }}/{{ file.filename }}" style="width: 100%;"/>
+                        <div style="width: 100%;" ng-hide="image_types.indexOf(file.extension)+1" class="text-center">
+                            <img ng-src="/img/48px/{{ file.extension}}.png" />
+                        </div>
+                    </a>
+                </div>
+                <div class="col-sm-8">
 
+                    <div dropdown class="btn-group pull-right">
+                        <button type="button" class="btn btn-info btn-sm" dropdown-toggle>
+                            <span class="caret"></span>
+                            <span class="sr-only">Actions</span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu" aria-labelledby="split-button">
+                            <li role="menuitem"><a ng-click="deleteFile(file)">Delete</a></li>
+                            <li role="menuitem"><a ng-click="renameFile(file)">Rename</a></li>
+                        </ul>
+                    </div>
+
+                    <h4 class="media-heading pull-left">{{ file.filename }}</h4>
+
+                    <div class="clearfix"></div>
+
+                    <div class="input-group">
+                        <div class="input-group-addon">Path</div>
+                        <input type="text" class="form-control" value="{{ prefix_path }}/{{ file.path }}{{ file.filename }}" readonly="readonly"/>
+                    </div>
+
+                </div>
+
+            </div>
 
         </div>
 
@@ -154,9 +159,3 @@
 
     </div>
 </div>
-
-
-<pre>
-    {{ model | json }}
-</pre>
-
