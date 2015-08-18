@@ -50,7 +50,8 @@ app.controller('AssetController', function($scope, $http, $stateParams, $state, 
                     scope.source.nodeScope.$modelValue.folders = data.folder.folders;
                     scope.source.nodeScope.$modelValue.path = data.folder.path;
                     scope.source.nodeScope.$modelValue.name = data.folder.name;
-                    //$scope.init();
+
+                    $scope.checkActiveDirectory(object.src_path, object.dest_path);
                 })
                 .error(function(data) {
                     $scope.errors = data;
@@ -206,11 +207,8 @@ app.controller('AssetController', function($scope, $http, $stateParams, $state, 
 
 
         if (typeof node.$nodeScope != 'undefined') {
-
             nodeScope = node.$nodeScope.$modelValue;
-
         } else {
-
             nodeScope = node;
         }
 
@@ -254,6 +252,8 @@ app.controller('AssetController', function($scope, $http, $stateParams, $state, 
                     node.$nodeScope.$modelValue.path = data.folder.path;
                     node.$nodeScope.$modelValue.name = data.folder.name;
 
+                    $scope.checkActiveDirectory(object.src_path, object.dest_path);
+
                 })
                 .error(function(data) {
                     $scope.errors = data;
@@ -271,12 +271,9 @@ app.controller('AssetController', function($scope, $http, $stateParams, $state, 
             $http.delete('/api/assets?path=' + node.$nodeScope.$modelValue.path + '/' + node.$nodeScope.$modelValue.name)
                 .success(function(data) {
 
-                    //var folder = $scope.findDirectory($scope.model.folder, path.path);
+                    node.remove();
 
-                    //folder.name = '';
-
-
-                    node.remove()
+                    $scope.checkActiveDirectory(node.$nodeScope.$modelValue.path + '/' + node.$nodeScope.$modelValue.name, '/');
 
                 })
                 .error(function(data) {
@@ -286,6 +283,17 @@ app.controller('AssetController', function($scope, $http, $stateParams, $state, 
     }
 
 
+
+
+    $scope.checkActiveDirectory = function(oldpath, newpath) {
+
+        //var path = node.path + '/' + node.name;
+
+        if (oldpath == $scope.active_path) {
+            $scope.changeDirectory(newpath);
+        }
+
+    }
 
 
 
