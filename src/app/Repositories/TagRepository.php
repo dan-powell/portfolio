@@ -13,6 +13,8 @@ use DanPowell\Portfolio\Models\Page;
 use DanPowell\Portfolio\Models\Tag;
 */
 
+use DanPowell\Portfolio\Models\Tag;
+
 //use DanPowell\Portfolio\Models\Section;
 
 /**
@@ -20,6 +22,27 @@ use DanPowell\Portfolio\Models\Tag;
  */
 class TagRepository extends RestfulRepository
 {
+
+
+
+	/**
+     * Search Projects
+     *
+     * @returns Illuminate response (JSON list of projects)
+     */
+	public function search($request)
+	{
+		
+		$term = '%' . $request->get('query') . '%';
+
+        $collection = Tag::orderBy('updated_at', 'DESC')->where('title', 'LIKE', $term)->get();
+
+    	return response()->json($collection);
+
+    	
+	}
+
+
 
 
     /**

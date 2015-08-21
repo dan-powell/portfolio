@@ -84,7 +84,9 @@
             <p ng-repeat="error in errors.scripts" class="help-block">{{ error }}</p>
         </div>
 
-        <tags-input ng-model="model.tags" display-property="title"></tags-input>
+        <tags-input ng-model="model.tags" display-property="title">
+        	<auto-complete source="loadTags($query)" min-length="1"></auto-complete>
+        </tags-input>
 
     </tab>
 

@@ -38,6 +38,17 @@ class TagController extends Controller {
 	{
     	return $this->tagRepository->index(new Tag);
 	}
+	
+	
+	/**
+     * Search Projects
+     *
+     * @returns Illuminate response (JSON list of projects)
+     */
+	public function search(Request $request)
+	{		
+    	return $this->tagRepository->search($request);
+	}
 
 
 	/**

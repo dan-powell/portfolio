@@ -131,6 +131,10 @@ app.controller('ProjectCreateController', function($scope, $http, $stateParams, 
                 $scope.errors = data;
             });
     }
+    
+    $scope.loadTags = function(query) {
+        return $http.get('/api/tag/search?query=' + query);
+    };
 
 });
 
@@ -138,6 +142,7 @@ app.controller('ProjectCreateController', function($scope, $http, $stateParams, 
 app.controller('ProjectEditController', function($scope, model, $http, $stateParams, $state, RestfulApi, notificationService, ngTableParams, $filter, $modal) {
 
     $scope.model = model.data;
+    $scope.slug = model.data.slug;
 
     $scope.tableParams = new ngTableParams({
         page: 1,            // show first page
@@ -190,7 +195,10 @@ app.controller('ProjectEditController', function($scope, model, $http, $statePar
     $scope.alertMe = function () {
         //alert('Boob');
     }
-
+    
+    $scope.loadTags = function(query) {
+        return $http.get('/api/tag/search?query=' + query);
+    };
 
     $scope.editSection = function (create, sectionId) {
         sectionId = typeof sectionId !== 'undefined' ? sectionId : false;
