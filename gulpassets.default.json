@@ -15,14 +15,22 @@
 			{
 				"name" : "Main JS",
 				"src": [
-					"./src/resources/assets/js/app.js",
+    				"./src/resources/assets/js/main.js",
+
+    				"./src/resources/assets/js/app.js",
+
+    				"./src/resources/assets/js/services/http.js",
+    				"./src/resources/assets/js/services/notification.js",
+
+					"./src/resources/assets/js/directives/clickSpinner.js",
+
                     "./src/resources/assets/js/controllers/notification.js",
                     "./src/resources/assets/js/controllers/dashboard.js",
                     "./src/resources/assets/js/controllers/project.js",
                     "./src/resources/assets/js/controllers/tag.js",
                     "./src/resources/assets/js/controllers/page.js",
-                    "./src/resources/assets/js/controllers/assets.js",
-                    "./src/resources/assets/js/main.js"
+                    "./src/resources/assets/js/controllers/assets.js"
+
 				],
 				"destFolder": "./src/public/admin/js",
 				"dest": "main.js"

@@ -10,8 +10,8 @@ app.controller('NotificationController', function($scope, notificationService, $
     }, true);
 
 
-    $scope.closeNotification = function(index) {
-        notificationService.removeByIndex(index);
+    $scope.remove = function(element) {
+        notificationService.removeByElement(element);
     };
 
 

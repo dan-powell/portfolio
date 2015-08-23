@@ -172,8 +172,8 @@ app.controller('ProjectEditController', function($scope, model, $http, $statePar
 
         // Update the items properties after drag and drop
         dragStop: function(scope) {
-            console.log('stopped dragging');
-            console.log(scope);
+
+            debug('stopped dragging', 'ui', scope);
 
             // Update rank of all sibling elements
             for(i=0; i < scope.dest.nodesScope.$modelValue.length; i++ ) {
@@ -192,10 +192,6 @@ app.controller('ProjectEditController', function($scope, model, $http, $statePar
     };
 
 
-    $scope.alertMe = function () {
-        //alert('Boob');
-    }
-
     $scope.loadTags = function(query) {
         return $http.get('/api/tag/search?query=' + query);
     };
@@ -208,8 +204,6 @@ app.controller('ProjectEditController', function($scope, model, $http, $statePar
             'projectId' : $scope.model.id,
             'sectionId' : sectionId
         };
-
-        console.log(modalData);
 
         var modalInstance = $modal.open({
             animation: true,
@@ -224,8 +218,8 @@ app.controller('ProjectEditController', function($scope, model, $http, $statePar
         });
 
         modalInstance.result.then(function (section) {
-            console.log('modal closed');
-            console.log(section);
+
+            debug('modal closed', 'ui', section);
 
             if (create) {
                 $scope.model.sections.push(section);
@@ -233,13 +227,13 @@ app.controller('ProjectEditController', function($scope, model, $http, $statePar
 
                 angular.forEach($scope.model.sections, function(value, key) {
                     if (value.id == sectionId) {
-                        console.log('updated section: ' + value.id)
+                        debug('updated section: ' + value.id)
                         $scope.model.sections[key] = section
                     }
                 });
 
             }
-            console.log($scope.model.sections);
+
         });
 
     };
@@ -254,7 +248,6 @@ app.controller('ProjectEditController', function($scope, model, $http, $statePar
                     // Remove the section
                     angular.forEach($scope.model.sections, function(value, key) {
                         if (value.id == sectionId) {
-                            console.log(key);
                             $scope.model.sections.splice(key, 1)
                         }
                     })
@@ -279,8 +272,6 @@ app.controller('ProjectEditController', function($scope, model, $http, $statePar
             'pageId' : pageId
         };
 
-        console.log(modalData);
-
         var modalInstance = $modal.open({
             animation: true,
             templateUrl: 'pageEdit.html',
@@ -294,8 +285,6 @@ app.controller('ProjectEditController', function($scope, model, $http, $statePar
         });
 
         modalInstance.result.then(function (page) {
-            console.log('modal closed');
-            console.log(page);
 
             if (create) {
                 $scope.model.pages.push(page);
@@ -303,13 +292,13 @@ app.controller('ProjectEditController', function($scope, model, $http, $statePar
 
                 angular.forEach($scope.model.pages, function(value, key) {
                     if (value.id == pageId) {
-                        console.log('updated section: ' + value.id);
+                        debug('updated section: ' + value.id);
                         $scope.model.pages[key] = page;
                     }
                 });
 
             }
-            console.log($scope.model.pages);
+
             $scope.tableParams.reload();
         });
 
@@ -324,7 +313,6 @@ app.controller('ProjectEditController', function($scope, model, $http, $statePar
                     // Remove the section
                     angular.forEach($scope.model.pages, function(value, key) {
                         if (value.id == pageId) {
-                            console.log(key);
                             $scope.model.pages.splice(key, 1)
                         }
                     })
@@ -359,8 +347,7 @@ app.controller('ProjectEditController', function($scope, model, $http, $statePar
                 return $scope.put(apply);
             } else {
                 $scope.model.slug = $scope.slug;
-                notificationService.removeByType('warning');
-                notificationService.add("Slug reset", 'info');
+                notificationService.add('Slug reset', 'info');
             }
         } else {
             return $scope.put(apply);
@@ -405,11 +392,11 @@ app.controller('editSectionController', function ($scope, $http, $modalInstance,
 
     $scope.save = function() {
 
-        console.log(modalData.create);
+        debug('Saving section', 'controller', modalData.create);
 
         if (modalData.create){
 
-            console.log('creating');
+            debug('Creating new section', 'controller');
 
             $http.post(RestfulApi.getRoute('projectSection', 'store', modalData.projectId), $scope.section)
                 .success(function(data) {
@@ -423,7 +410,7 @@ app.controller('editSectionController', function ($scope, $http, $modalInstance,
 
         } else {
 
-            console.log('editing');
+            debug('Updating existing section', 'controller');
 
             $http.put(RestfulApi.getRoute('section', 'update', $scope.section.id), $scope.section)
                 .success(function(data) {
@@ -462,11 +449,11 @@ app.controller('editPageController', function ($scope, $http, $modalInstance, Re
 
     $scope.save = function() {
 
-        console.log(modalData.create);
+        debug('Saving page', 'controller', modalData);
 
         if (modalData.create){
 
-            console.log('creating');
+            debug('Creating new page', 'controller');
 
             $http.post(RestfulApi.getRoute('projectPage', 'store', modalData.projectId), $scope.page)
                 .success(function(data) {
@@ -480,7 +467,7 @@ app.controller('editPageController', function ($scope, $http, $modalInstance, Re
 
         } else {
 
-            console.log('editing');
+            debug('Updating existing page', 'controller');
 
             $http.put(RestfulApi.getRoute('page', 'update', $scope.page.id), $scope.page)
                 .success(function(data) {

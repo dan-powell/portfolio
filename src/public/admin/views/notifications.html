@@ -1,0 +1,10 @@
+<div ng-controller="NotificationController">
+    <div class="alert alert-{{notification.type}}" role="alert" ng-repeat="notification in notifications">
+
+        {{notification.message}}
+
+        <button type="button" class="close" aria-label="Close" ng-click="remove(notification)">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+</div>

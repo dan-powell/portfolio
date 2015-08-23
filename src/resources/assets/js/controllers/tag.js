@@ -1,4 +1,42 @@
-app.controller('TagController', function($scope, $filter, ngTableParams, $http, notificationService) {
+/*  States
+    -------------------------------------------------------------------------------------------------
+    Angular routes (states) are defined here. Each State is usually assigned a controller and a view
+*/
+
+app.config(function($stateProvider, $urlRouterProvider) {
+
+    // Now set up the states
+    $stateProvider
+        .state('tag', {
+          url: "/tag",
+          templateUrl: "/vendor/portfolio/admin/views/tag/tag.html",
+        })
+        .state('tag.index', {
+          url: "/index",
+          templateUrl: "/vendor/portfolio/admin/views/tag/tag.index.html",
+          controller: "TagIndexController"
+        })
+        .state('tag.create', {
+          url: "/create",
+          templateUrl: "/vendor/portfolio/admin/views/tag/tag.edit.html",
+          controller: "TagCreateController"
+        })
+        .state('tag.edit', {
+          url: "/:id/edit",
+          templateUrl: "/vendor/portfolio/admin/views/tag/tag.edit.html",
+          controller: "TagEditController"
+        })
+
+})
+
+
+/*  State Controllers
+    -------------------------------------------------------------------------------------------------
+    Angular routes (states) are defined here. Each State is usually assigned a controller and a view
+*/
+
+
+app.controller('TagIndexController', function($scope, $filter, ngTableParams, $http, notificationService) {
 
     // Initialise an empty array to hold data
     $scope.data = [];

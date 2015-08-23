@@ -52,27 +52,6 @@ app.config(function($stateProvider, $urlRouterProvider) {
       controller: "DashboardController"
     })
 
-
-
-    .state('tag', {
-      url: "/tag",
-      templateUrl: "/vendor/portfolio/admin/views/tag/tag.html",
-    })
-    .state('tag.index', {
-      url: "/index",
-      templateUrl: "/vendor/portfolio/admin/views/tag/tag.index.html",
-      controller: "TagController"
-    })
-    .state('tag.create', {
-      url: "/create",
-      templateUrl: "/vendor/portfolio/admin/views/tag/tag.edit.html",
-      controller: "TagCreateController"
-    })
-    .state('tag.edit', {
-      url: "/:id/edit",
-      templateUrl: "/vendor/portfolio/admin/views/tag/tag.edit.html",
-      controller: "TagEditController"
-    })
     .state('page', {
       url: "/page",
       templateUrl: "/vendor/portfolio/admin/views/page/page.html",
@@ -104,13 +83,7 @@ app.run(function($rootScope){
     $rootScope
         .$on('$stateChangeStart',
             function(event, toState, toParams, fromState, fromParams){
-
-                //if( toState.name.indexOf(".") == -1 || toState.name.indexOf("index") > -1 ) {
-
-                    angular.element( document.querySelectorAll(".state-transition") ).addClass("-loading");
-
-                //}
-
+                angular.element( document.querySelectorAll(".state-transition") ).addClass("-loading");
         });
 
     $rootScope
@@ -185,196 +158,10 @@ app.factory('RestfulApi', function () {
 });
 
 
-/*  HTTP Intercepter
-    -------------------------------------------------------------------------------------------------
-    Intercepts all AJAX request and responses. Used to perform a few checks on each request.
-*/
-app.factory('HttpInterceptor', function($q, notificationService) {
-
-    // Wot to do incase API fails to respond with 200
-    var checkResponseCode = function(data, status) {
-        switch(status) {
-            // Failed validation
-            case 422:
-
-                // Clear all existing notifications
-                notificationService.clear();
-
-                // Concatenate all the validation error messages
-                var msg = [];
-                angular.forEach(data, function(value, key) {
-                    msg = msg.concat(value);
-                });
-
-                // Add the notification
-                notificationService.add("Validation failed, please correct the following issues:", 'danger', msg);
-                break;
-
-            // Unauthenticated
-            case 401:
-                notificationService.add('You have been logged out', 'warning');
-                break;
-            case 500:
-                notificationService.add('API error', 'danger');
-                break;
-            default:
-                console.log("Some other problem!");
-                console.log(data);
-        }
-    }
-
-
-  return {
-    // optional method
-    'request': function(config) {
-      // do something on success
-      //console.log('request');
-      //console.log(config);
-      return config;
-    },
-
-    // optional method
-   'requestError': function(rejection) {
-      // do something on error
-      return $q.reject(rejection);
-    },
-
-    // optional method
-    'response': function(response) {
-      // do something on success
-      //console.log('Response');
-      //console.log(response);
-      notificationService.removeByType('danger');
-      return response;
-    },
-
-    // optional method
-   'responseError': function(rejection) {
-      // do something on error
-      checkResponseCode(rejection.data, rejection.status);
-      console.log(rejection);
-      return $q.reject(rejection);
-    }
-  };
-});
-
-
-/*  Notification Service
-    -------------------------------------------------------------------------------------------------
-    Manages pop-up alert info & danger messages that are displayed on page
-*/
-app.service('notificationService', function ($timeout) {
-
-    var notifications = [];
-
-    // Retrieve all messages
-    this.get = function() {
-        return notifications;
-    };
-
-    // Remove new notification
-    this.add = function(message, type, messages) {
-
-        // Only allow one success message at a time
-        if (type == 'success') {
-            this.removeByType('success');
-        }
-
-        var notification = {
-            type : type,
-            message : message,
-            messages : messages,
-            //action : action
-        };
-
-        notifications.push(notification);
-
-        console.log('added ' + type + ' message');
-
-        if (type != 'danger') {
-            // Set the alert to be removed after a delay
-            $timeout(function(){
-                notifications.splice(notifications.indexOf(notification), 1);
-            }, 6000); // maybe '}, 3000, false);' to avoid calling apply
-        }
-
-    };
-
-    // Remove notification by array index
-    this.removeByIndex = function(index) {
-        console.log('removing one message: ' + index);
-        notifications.splice(index, 1);
-    }
-
-    // Remove all notifications of type
-    this.removeByType = function(type) {
-        console.log('clearing ' + type + ' messages');
-        for (i=0; i < notifications.length; i++) {
-            if (notifications[i].type == type) {
-                notifications.splice(i, 1);
-            }
-        }
-    }
-
-    // Clear all notifications
-    this.clear = function() {
-        console.log('clearing all messages');
-        notifications = [];
-    }
-
-});
 
 
 
 
-app.directive('clickSpinner', ['$q', function ($q) {
-    var spinnerId = 1;
 
-    var directive = {
-      restrict: 'A',
-      link: link,
-      transclude: true,
-      scope: {
-        clickHandler: '&clickSpinner'
-      },
-      template: '<span style="position: relative"><span ng-transclude></span></span>'
-    };
 
-    var opts = {
-      width: 3,
-      length: 3,
-      lines: 9,
-      radius: 4,
-      color: '#fff'
-    };
 
-    return directive;
-
-    function link(scope, element, attr) {
-      var spinner = new Spinner(opts);
-      var spinnerTarget = element.children();
-      var textElement = spinnerTarget.children();
-
-      function handler() {
-        var p = $q.when(scope.clickHandler());
-
-        attr.$set('disabled', true);
-        textElement.css('visibility', 'hidden');
-        spinner.spin(spinnerTarget[0]);
-
-        p['finally'](function() {
-          attr.$set('disabled', false);
-          textElement.css('visibility', 'visible');
-          spinner.stop();
-        });
-
-      }
-
-      element.on('click', handler);
-
-      scope.$on('$destroy', function() {
-        element.off('click', handler);
-      });
-    }
-
-  }]);
