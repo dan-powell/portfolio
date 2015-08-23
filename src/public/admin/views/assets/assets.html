@@ -83,9 +83,9 @@
 
                 <div class="col-sm-4">
                     <a ng-href="/portfolio/{{ file.path }}/{{ file.filename }}" target="_blank">
-                        <img ng-show="image_types.indexOf(file.extension)+1" ng-src="/portfolio/{{ file.path }}/{{ file.filename }}" style="width: 100%;"/>
+                        <img ng-show="image_types.indexOf(file.extension)+1" ng-src="/portfolio_assets/{{ file.path }}/{{ file.filename }}" style="width: 100%;"/>
                         <div style="width: 100%;" ng-hide="image_types.indexOf(file.extension)+1" class="text-center">
-                            <img ng-src="/img/48px/{{ file.extension}}.png" />
+                            <img ng-src="/vendor/portfolio/admin/img/file_icons/48px/{{ file.extension}}.png" />
                         </div>
                     </a>
                 </div>
