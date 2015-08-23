@@ -99,6 +99,31 @@ app.config(function($stateProvider, $urlRouterProvider) {
 
 
 
+app.run(function($rootScope){
+
+    $rootScope
+        .$on('$stateChangeStart',
+            function(event, toState, toParams, fromState, fromParams){
+
+                //if( toState.name.indexOf(".") == -1 || toState.name.indexOf("index") > -1 ) {
+
+                    angular.element( document.querySelectorAll(".state-transition") ).addClass("-loading");
+
+                //}
+
+        });
+
+    $rootScope
+        .$on('$stateChangeSuccess',
+            function(event, toState, toParams, fromState, fromParams){
+                angular.element( document.querySelectorAll(".state-transition") ).removeClass("-loading");
+        });
+
+});
+
+
+
+
 /*  Restful Api (Deprecated)
     -------------------------------------------------------------------------------------------------
     Some helpful functions for AJAX requests

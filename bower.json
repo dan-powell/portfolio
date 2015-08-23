@@ -27,6 +27,7 @@
     "angular-marked": "~0.0.12",
     "ng-tags-input": "~2.3.0",
     "angular-ui-tree": "=2.5.0",
-    "ng-file-upload": "~6.0.4"
+    "ng-file-upload": "~6.0.4",
+    "spin.js": "~2.3.2"
   }
 }

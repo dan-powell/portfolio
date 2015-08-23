@@ -43,10 +43,16 @@
 
           </div>
         </nav>
-
-        <div ui-view></div>
-
     </div>
+
+    <div class="state-transition loading" id="state-transition-spinner"></div>
+
+    <div class="state-transition view">
+        <div class="container">
+            <div ui-view id="ui-view"></div>
+        </div>
+    </div>
+
 
 </body>
 </html>
