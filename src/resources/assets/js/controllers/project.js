@@ -131,7 +131,7 @@ app.controller('ProjectCreateController', function($scope, $http, $stateParams, 
                 $scope.errors = data;
             });
     }
-    
+
     $scope.loadTags = function(query) {
         return $http.get('/api/tag/search?query=' + query);
     };
@@ -195,7 +195,7 @@ app.controller('ProjectEditController', function($scope, model, $http, $statePar
     $scope.alertMe = function () {
         //alert('Boob');
     }
-    
+
     $scope.loadTags = function(query) {
         return $http.get('/api/tag/search?query=' + query);
     };
@@ -351,24 +351,25 @@ app.controller('ProjectEditController', function($scope, model, $http, $statePar
 
 
     $scope.save = function(apply) {
+
         apply = typeof apply !== 'undefined' ? apply : false;
 
         if ($scope.slug != $scope.model.slug) {
             if (confirm('Are you sure you wish to change the slug?')) {
-                $scope.put(apply);
+                return $scope.put(apply);
             } else {
                 $scope.model.slug = $scope.slug;
                 notificationService.removeByType('warning');
                 notificationService.add("Slug reset", 'info');
             }
         } else {
-            $scope.put(apply);
+            return $scope.put(apply);
         }
 
     }
 
     $scope.put = function(apply) {
-        $http.put(RestfulApi.getRoute('project', 'update', $stateParams.id), $scope.model)
+        return $http.put(RestfulApi.getRoute('project', 'update', $stateParams.id), $scope.model)
             .success(function(data) {
                 notificationService.add("Project '" + data.title + "' updated successfully", 'success');
                 $scope.errors = [];
