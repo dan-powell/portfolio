@@ -108,7 +108,7 @@
 
                     <div class="input-group">
                         <div class="input-group-addon">Path</div>
-                        <input type="text" class="form-control" value="{{ prefix_path }}/{{ file.path }}{{ file.filename }}" readonly="readonly"/>
+                        <input type="text" class="form-control" value="{{ prefix_path }}/{{ file.path }}{{ file.filename }}" readonly="readonly" onClick="this.setSelectionRange(0, this.value.length)"/>
                     </div>
 
                 </div>

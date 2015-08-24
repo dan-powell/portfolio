@@ -127,7 +127,7 @@ app.controller('AssetController', function($scope, $http, $stateParams, $state, 
 
     $scope.active_path = $scope.initial_path;
 
-    $scope.prefix_path = window.location.origin + '/portfolio';
+    $scope.prefix_path = window.location.origin + '/portfolio_assets';
 
     // Initialise an empty array to hold data
     $scope.model = [];
