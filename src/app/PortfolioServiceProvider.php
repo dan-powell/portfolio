@@ -56,12 +56,17 @@ class PortfolioServiceProvider extends \Illuminate\Support\ServiceProvider
         // Publish Config
         $this->publishes([
             __DIR__.'/../config/portfolio.php' => config_path('portfolio.php'),
-        ], 'config');
+        ], 'configs');
 
         // Publish Migrations
         $this->publishes([
             __DIR__.'/../database/migrations' => $this->app->databasePath().'/migrations',
         ], 'migrations');
+
+        // Publish Tests
+        $this->publishes([
+            __DIR__.'/../tests' => base_path('tests'),
+        ], 'tests');
 
     }
 
