@@ -44,6 +44,31 @@
             @else
             	<p>No Projects found</p>
             @endif
+
+
+            <h2>Tags</h2>
+            @if(isset($tags) && count($tags) > 0)
+                <div class="well">
+                    <h2>All Tags</h2>
+                    <ul>
+                	    @foreach($tags as $key => $tag)
+                            <li>
+                                {{ $tag->title }}
+                                @if(isset($tag->projects) && count($tag->projects) > 0)
+                                    <ul>
+                                        @foreach($tag->projects as $project)
+                                            <li>{{ $project->title }}</li>
+                                        @endforeach
+                                    </ul>
+                                @endif
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+            @else
+            	<p>No Tags found</p>
+            @endif
+
         </div>
 
         <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
