@@ -9,6 +9,11 @@ use DanPowell\Portfolio\Http\Controllers\ProjectController;
 class ProjectControllerTest extends TestCase
 {
 
+    public function __construct()
+    {
+        $this->controller = new ProjectController();
+    }
+
 
     /**
      * A basic functional test example.
@@ -18,39 +23,35 @@ class ProjectControllerTest extends TestCase
     public function testArseFunctionShouldReturnButts()
     {
 
-        $controller = new ProjectController();
-
-        $result = $controller->arse();
+        $result = $this->controller->arse();
 
         $this->assertEquals('butts', $result);
 
     }
 
-
-    /**
-     * A basic functional test example.
-     *
-     * @return void
-     */
-    public function testIndexShouldDisplay()
-    {
-        $this->visit('portfolio')
-            ->see('Portfolio Index')
-            ->assertViewHas('projects');
-            ->assertViewHas('tags');
-    }
-
-
-    /**
-     * A basic functional test example.
-     *
-     * @return void
-     */
     public function testIndexShouldReturnView()
     {
-        $controller = new ProjectController();
-        $result = $controller->index();
+
+        $result = $this->controller->index();
         $this->assertInstanceOf('Illuminate\View\View', $result);
+    }
+
+    public function testIndexShouldDisplayTitle()
+    {
+        $this->visit('portfolio')
+            ->see('Portfolio Index');
+    }
+
+    public function testIndexShouldHaveProjectsCollection()
+    {
+        $this->visit('portfolio')
+            ->assertViewHas('projects');
+    }
+
+    public function testIndexShouldHaveTagsCollection()
+    {
+        $this->visit('portfolio')
+            ->assertViewHas('tags');
     }
 
 }
