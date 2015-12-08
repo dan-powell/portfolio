@@ -29,7 +29,7 @@ class ProjectController extends Controller {
     	$projects = $this->getAllProjects('tags', 'created_at');
 
     	// Add tags to projects as string
-    	$projects = $this->addAllTagsToProjects($projects);
+    	$projects = $this->addAllTagstoCollection($projects);
 
     	// Get all tags
     	$tags = $this->getAllTags('projects', 'created_at');
@@ -71,22 +71,22 @@ class ProjectController extends Controller {
     }
 
     // Get all project tags as string
-    private function collectProjectTagsAsString($project)
+    private function collateTagsAsString($item)
     {
     	$tags = '';
-        foreach($project->tags as $tag){
+        foreach($item->tags as $tag){
     	    $tags .= '-' . str_slug($tag->title) . ' ';
         }
         return $tags;
     }
 
     // Loop through all of the projects and concatenate the tags together as a single string - keeps the template clean
-    private function addAllTagsToProjects($projects)
+    private function addAllTagstoCollection($items)
 	{
-        foreach($projects as $project) {
-            $project->allTags = $this->collectProjectTagsAsString($project);
+        foreach($items as $item) {
+            $item->allTags = $this->collateTagsAsString($item);
     	}
-        return $projects;
+        return $items;
 	}
 
     // Get all tags & filter so only those related to project are returned

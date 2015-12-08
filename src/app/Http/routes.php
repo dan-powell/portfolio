@@ -11,18 +11,18 @@
 |
 */
 
-Route::get('/portfolio', array('as' => 'projects.index', 'uses' => 'DanPowell\Portfolio\Http\Controllers\ProjectController@index'));
+Route::get(config('portfolio.routes.public.index'), array('as' => 'projects.index', 'uses' => 'DanPowell\Portfolio\Http\Controllers\ProjectController@index'));
 
-Route::get('/portfolio/{slug}', ['as' => 'projects.show', 'uses' => 'DanPowell\Portfolio\Http\Controllers\ProjectController@show']);
+Route::get(config('portfolio.routes.public.show'), ['as' => 'projects.show', 'uses' => 'DanPowell\Portfolio\Http\Controllers\ProjectController@show']);
 
-Route::get('/portfolio/{slug}/{pageSlug}', ['as' => 'projects.page', 'uses' => 'DanPowell\Portfolio\Http\Controllers\ProjectController@page']);
+Route::get(config('portfolio.routes.public.showPage'), ['as' => 'projects.page', 'uses' => 'DanPowell\Portfolio\Http\Controllers\ProjectController@page']);
 
 
 // Admin area
-Route::group(['prefix' => 'admin', 'middleware' => ['auth']], function()
+Route::group(['prefix' => config('portfolio.routes.admin.prefix'), 'middleware' => ['auth']], function()
 {
 
-    Route::get('/', ['as' => 'admin', function() {
+    Route::get(config('portfolio.routes.admin.home'), ['as' => 'admin', function() {
         return view('portfolio::admin.base');
     }]);
 
@@ -45,7 +45,7 @@ Route::group(['prefix' => 'api'], function()
     // Admin tag items
     Route::get('tag/search', ['as' => 'tag.search', 'uses' => 'DanPowell\Portfolio\Http\Controllers\Api\TagController@search']);
     Route::resource('tag', 'DanPowell\Portfolio\Http\Controllers\Api\TagController', ['except' => ['create', 'edit']]);
-    
+
 
     // Admin project assets
     //Route::resource('assets', 'DanPowell\Portfolio\Http\Controllers\Api\AssetController', ['except' => ['create', 'edit']]);

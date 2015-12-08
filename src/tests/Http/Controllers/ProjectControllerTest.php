@@ -31,15 +31,15 @@ class ProjectControllerTest extends TestCase
 
     public function testIndexShouldReturnView()
     {
-
         $result = $this->controller->index();
         $this->assertInstanceOf('Illuminate\View\View', $result);
     }
 
-    public function testIndexShouldDisplayTitle()
+    public function testIndexView()
     {
-        $this->visit('portfolio')
-            ->see('Portfolio Index');
+        $this->visit('portfolio');
+
+        $this->assertResponseOk();
     }
 
     public function testIndexShouldHaveProjectsCollection()
@@ -52,6 +52,15 @@ class ProjectControllerTest extends TestCase
     {
         $this->visit('portfolio')
             ->assertViewHas('tags');
+    }
+
+    public function testProjectsShouldHaveTagsString()
+    {
+        $response = $this->call('GET', 'portfolio');
+
+        $projects = $response->original['projects'];
+
+        $this->assertInternalType('string', $projects[0]->allTags);
     }
 
 }
