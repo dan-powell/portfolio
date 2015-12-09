@@ -8,14 +8,15 @@ use DanPowell\Portfolio\Models\Project;
 use DanPowell\Portfolio\Models\Page;
 use DanPowell\Portfolio\Models\Tag;
 
+use DanPowell\Portfolio\Repositories\ProjectRepository;
 
-class ProjectController extends Controller {
+class ProjectController extends Controller
+{
 
-
-	public function arse()
-	{
-    	return 'butts';
-	}
+    public function __construct(ProjectRepository $projectRepository)
+    {
+        $this->projectRepository = $projectRepository;
+    }
 
     /**
     *   Return a view listing all of the projects
@@ -26,16 +27,16 @@ class ProjectController extends Controller {
 	{
 
     	// Get all the projects
-    	$projects = $this->getAllProjects('tags', 'created_at');
+    	$projects = $this->projectRepository->getAllProjects('tags', 'created_at');
 
     	// Add tags to projects as string
-    	$projects = $this->addAllTagstoCollection($projects);
+    	$projects = $this->projectRepository->addAllTagstoCollection($projects);
 
     	// Get all tags
-    	$tags = $this->getAllTags('projects', 'created_at');
+    	$tags = $this->projectRepository->getAllTags('projects', 'created_at');
 
     	// Filter only by those with relationship to a project
-    	$tags = $this->filterProjectTagsWithRelationship($tags, 'projects');
+    	$tags = $this->projectRepository->filterProjectTagsWithRelationship($tags, 'projects');
 
         // Return view along with projects and filtered tags
 		return view('portfolio::index')->with([
@@ -43,67 +44,6 @@ class ProjectController extends Controller {
 		    'tags' =>  $tags
         ]);
 	}
-
-    // Get all Projects
-    private function getAllProjects($with = [], $order = null, $by = 'DESC')
-	{
-        // Get all the projects
-        $projects = Project::with($with);
-
-    	if ($order) {
-    	    $projects->orderBy($order, $by);
-    	}
-
-    	return $projects->get();
-    }
-
-    // Get all Tags
-    private function getAllTags($with = [], $order = null, $by = 'DESC')
-	{
-        // Get all the tags
-        $tags = Tag::with($with);
-
-        if ($order) {
-            $tags->orderBy($order, $by);
-        }
-
-        return $tags->get();
-    }
-
-    // Get all project tags as string
-    private function collateTagsAsString($item)
-    {
-    	$tags = '';
-        foreach($item->tags as $tag){
-    	    $tags .= '-' . str_slug($tag->title) . ' ';
-        }
-        return $tags;
-    }
-
-    // Loop through all of the projects and concatenate the tags together as a single string - keeps the template clean
-    private function addAllTagstoCollection($items)
-	{
-        foreach($items as $item) {
-            $item->allTags = $this->collateTagsAsString($item);
-    	}
-        return $items;
-	}
-
-    // Get all tags & filter so only those related to project are returned
-    private function filterProjectTagsWithRelationship($tags, $related = null)
-    {
-
-    	// We only need tags that have a relationship with a project
-        // Use Eloquent's filter method, allowing only tags with relationships to Projects are be returned
-        $tags = $tags->filter(function($tag) use ($related)
-        {
-            if(isset($tag->$related) && count($tag->$related) > 0) {
-        	    return $tag;
-        	}
-        });
-
-        return $tags;
-    }
 
 
 	/**
