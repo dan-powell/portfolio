@@ -1,4 +1,4 @@
-<?php namespace DanPowell\Portfolio\Repositories;
+<?php namespace DanPowell\Portfolio\Repositories\Api;
 
 
 use Illuminate\Http\Request;

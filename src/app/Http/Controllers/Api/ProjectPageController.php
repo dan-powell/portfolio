@@ -3,7 +3,7 @@
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-use DanPowell\Portfolio\Repositories\PageRepository;
+use DanPowell\Portfolio\Repositories\Api\PageRepository;
 
 // Load up the models
 use DanPowell\Portfolio\Models\Page;

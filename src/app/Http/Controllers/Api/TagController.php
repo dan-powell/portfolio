@@ -3,7 +3,7 @@
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-use DanPowell\Portfolio\Repositories\TagRepository;
+use DanPowell\Portfolio\Repositories\Api\TagRepository;
 
 // Load up the models
 use DanPowell\Portfolio\Models\Tag;
@@ -38,15 +38,15 @@ class TagController extends Controller {
 	{
     	return $this->tagRepository->index(new Tag);
 	}
-	
-	
+
+
 	/**
      * Search Projects
      *
      * @returns Illuminate response (JSON list of projects)
      */
 	public function search(Request $request)
-	{		
+	{
     	return $this->tagRepository->search($request);
 	}
 
