@@ -17,33 +17,32 @@ class ProjectRepository
 {
 
 
+    // Get all Things
+    public function getAllThings($model, $with = [], $order = null, $by = 'DESC')
+	{
+        // Get all the things
+        $collection = $model::with($with);
+
+        if ($order) {
+            $collection->orderBy($order, $by);
+        }
+
+    	return $collection->get();
+    }
+
 
     // Get all Projects
     public function getAllProjects($with = [], $order = null, $by = 'DESC')
 	{
-        // Get all the projects
-        $projects = Project::with($with);
-
-    	if ($order) {
-    	    $projects->orderBy($order, $by);
-    	}
-
-    	return $projects->get();
+    	return $this->getAllThings(new Project, $with, $order, $by);
     }
+
 
     // Get all Tags
     public function getAllTags($with = [], $order = null, $by = 'DESC')
 	{
-        // Get all the tags
-        $tags = Tag::with($with);
-
-        if ($order) {
-            $tags->orderBy($order, $by);
-        }
-
-        return $tags->get();
+    	return $this->getAllThings(new Tag, $with, $order, $by);
     }
-
 
 
     // Loop through all of the projects and concatenate the tags together as a single string - keeps the template clean
@@ -54,6 +53,7 @@ class ProjectRepository
     	}
         return $items;
 	}
+
 
     // Get all tags & filter so only those related to project are returned
     public function filterProjectTagsWithRelationship($tags, $related = null)
