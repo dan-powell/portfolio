@@ -13,7 +13,7 @@ use DanPowell\Portfolio\Models\Tag;
 /**
  * A handy repo for doing common RESTful based things like indexing, saving etc.
  */
-class RestfulRepository
+abstract class RestfulRepository
 {
 
     // Some common message strings

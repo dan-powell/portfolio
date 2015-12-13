@@ -10,22 +10,21 @@ class ProjectControllerTest extends TestCase
 {
 
     private $controller;
-    private $projectRepository;
+    private $repository;
 
     public function setUp()
     {
 
-        $this->projectRepository = $this->getMock(
-            'DanPowell\Portfolio\Repositories\ProjectRepository',
+        $this->repository = $this->getMock(
+            'DanPowell\Portfolio\Repositories\ModelRepository',
             array(
-                'getAllProjects',
+                'getAll',
                 'addAllTagstoCollection',
-                'getAllTags',
-                'filterProjectTagsWithRelationship'
+                'filterOnlyWithRelationship'
             )
         );
 
-        $this->controller = new ProjectController($this->projectRepository);
+        $this->controller = new ProjectController($this->repository);
 
         parent::setUp();
     }
@@ -39,17 +38,14 @@ class ProjectControllerTest extends TestCase
 
     public function testIndexMethods()
     {
-        $this->projectRepository->expects($this->once())
-            ->method('getAllProjects');
+        $this->repository->expects($this->exactly(2))
+            ->method('getAll');
 
-        $this->projectRepository->expects($this->once())
-            ->method('getAllTags');
-
-        $this->projectRepository->expects($this->once())
+        $this->repository->expects($this->once())
             ->method('addAllTagstoCollection');
 
-        $this->projectRepository->expects($this->once())
-            ->method('filterProjectTagsWithRelationship');
+        $this->repository->expects($this->once())
+            ->method('filterOnlyWithRelationship');
 
         $this->controller->index();
     }

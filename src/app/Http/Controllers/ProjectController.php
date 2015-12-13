@@ -8,14 +8,14 @@ use DanPowell\Portfolio\Models\Project;
 use DanPowell\Portfolio\Models\Page;
 use DanPowell\Portfolio\Models\Tag;
 
-use DanPowell\Portfolio\Repositories\ProjectRepository;
+use DanPowell\Portfolio\Repositories\ModelRepository;
 
 class ProjectController extends Controller
 {
 
-    public function __construct(ProjectRepository $projectRepository)
+    public function __construct(ModelRepository $modelRepository)
     {
-        $this->projectRepository = $projectRepository;
+        $this->modelRepository = $modelRepository;
     }
 
     /**
@@ -27,16 +27,16 @@ class ProjectController extends Controller
 	{
 
     	// Get all the projects
-    	$projects = $this->projectRepository->getAllProjects('tags', 'created_at');
+    	$projects = $this->modelRepository->getAll(new Project, 'tags');
 
     	// Add tags to projects as string
-    	$projects = $this->projectRepository->addAllTagstoCollection($projects);
+    	$projects = $this->modelRepository->addAllTagstoCollection($projects);
 
     	// Get all tags
-    	$tags = $this->projectRepository->getAllTags('projects', 'created_at');
+    	$tags = $this->modelRepository->getAll(new Tag, 'projects', 'created_at');
 
     	// Filter only by those with relationship to a project
-    	$tags = $this->projectRepository->filterProjectTagsWithRelationship($tags, 'projects');
+    	$tags = $this->modelRepository->filterOnlyWithRelationship($tags, 'projects');
 
         // Return view along with projects and filtered tags
 		return view('portfolio::index')->with([
