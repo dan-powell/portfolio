@@ -50,31 +50,4 @@ class ProjectControllerTest extends TestCase
         $this->controller->index();
     }
 
-    public function testIndexRouteResponse()
-    {
-        $this->visit(config('portfolio.routes.public.index'));
-
-        $this->assertResponseOk();
-    }
-
-    public function testIndexData()
-    {
-        $this->visit(config('portfolio.routes.public.index'))
-            ->assertViewHasAll(['projects', 'tags']);
-    }
-
-    public function testProjectsShouldHaveTagsString()
-    {
-        $response = $this->call('GET', config('portfolio.routes.public.index'));
-
-        $projects = $response->original['projects'];
-
-        $this->assertInternalType('string', $projects[0]->allTags);
-    }
-
-
-
-
-
-
 }
