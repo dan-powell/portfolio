@@ -9,6 +9,8 @@ use DanPowell\Portfolio\Http\Controllers\ProjectController;
 class ProjectControllerTest extends TestCase
 {
 
+    use DatabaseMigrations;
+
     private $controller;
     private $repository;
 

@@ -11,12 +11,15 @@ use DanPowell\Portfolio\Models\Project;
 class ModelRepositoryTest extends TestCase
 {
 
+    use DatabaseMigrations;
+
     private $repository;
 
     public function setUp()
     {
-        $this->repository = new ModelRepository();
         parent::setUp();
+
+        $this->repository = new ModelRepository();
     }
 
 
@@ -32,6 +35,8 @@ class ModelRepositoryTest extends TestCase
 
     public function testMethodGetAllReturnsCollection()
     {
+        factory(DanPowell\Portfolio\Models\Project::class)->create();
+
         $result = $this->repository->getAll(new Project);
         $this->assertInstanceOf('Illuminate\Database\Eloquent\Collection', $result);
     }
@@ -50,6 +55,8 @@ class ModelRepositoryTest extends TestCase
 
     public function testMethodAddAllTagstoCollection()
     {
+        factory(DanPowell\Portfolio\Models\Project::class)->create();
+
         $collection = $this->repository->getAll(new Project);
         $result = $this->repository->addAllTagstoCollection($collection);
 

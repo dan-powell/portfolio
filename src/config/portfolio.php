@@ -8,8 +8,8 @@ return [
         // Publicly Accessible Pages
         'public' => [
             'index' => 'portfolio',
-            'show' => 'portfolio/{slug}',
-            'showPage' => '/portfolio/{slug}/{pageSlug}',
+            'show' => 'portfolio',
+            'showPage' => 'portfolio',
         ],
 
         // Admin area

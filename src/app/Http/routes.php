@@ -13,9 +13,9 @@
 
 Route::get(config('portfolio.routes.public.index'), array('as' => 'projects.index', 'uses' => 'DanPowell\Portfolio\Http\Controllers\ProjectController@index'));
 
-Route::get(config('portfolio.routes.public.show'), ['as' => 'projects.show', 'uses' => 'DanPowell\Portfolio\Http\Controllers\ProjectController@show']);
+Route::get(config('portfolio.routes.public.show') . '/{slug}', ['as' => 'projects.show', 'uses' => 'DanPowell\Portfolio\Http\Controllers\ProjectController@show']);
 
-Route::get(config('portfolio.routes.public.showPage'), ['as' => 'projects.page', 'uses' => 'DanPowell\Portfolio\Http\Controllers\ProjectController@page']);
+Route::get(config('portfolio.routes.public.showPage') . '/{slug}/{pageSlug}', ['as' => 'projects.page', 'uses' => 'DanPowell\Portfolio\Http\Controllers\ProjectController@page']);
 
 
 // Admin area

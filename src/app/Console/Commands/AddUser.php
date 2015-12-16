@@ -31,22 +31,26 @@ class AddUser extends Command {
     public function fire()
     {
 
-        $user  = array(
+        $newuser  = array(
 	        'email' => $this->argument('username'),
             'name' => $this->argument('username'),
 	        'password' => Hash::make($this->argument('password'))
         );
 
         if ($this->argument('overwrite') == false) {
-            DB::table('users')->insert($user);
+            DB::table('users')->insert($newuser);
+            $this->line('User "' . $this->argument('username') . '" added');
         } else {
-            DB::table('users')
-                ->where('id', $this->argument('overwrite'))
-                ->update($user);
-        }
 
-        $this->line($this->argument('overwrite') ? 'User ID: ' . $this->argument('overwrite') . ' overwritten' : '');
-        $this->line('Added new user: Username/Email = '. $this->argument('username') .' Password = ' . $this->argument('password'));
+            $builder = DB::table('users')->where('id', '=', $this->argument('overwrite'));
+
+            if ($builder->get()) {
+                $builder->update($newuser);
+                $this->line('User ID: ' . $this->argument('overwrite') . ' overwritten');
+            } else {
+                $this->line('User ID: ' . $this->argument('overwrite') . ' not found');
+            }
+        }
     }
 
     /**

@@ -13,13 +13,8 @@ class PortfolioServiceProvider extends \Illuminate\Support\ServiceProvider
      */
     public function register()
     {
+
         $this->app->register('DanPowell\Portfolio\Providers\ViewComposerServiceProvider');
-
-        // Include package routes
-        include __DIR__.'/Http/routes.php';
-
-        // Tell Laravel where to load the views from
-        $this->loadViewsFrom(__DIR__.'/../resources/views', 'portfolio');
 
         // Create new instances of each command when called
         $this->app->bindShared('command.portfolio.seed', function ($app) {
@@ -28,6 +23,21 @@ class PortfolioServiceProvider extends \Illuminate\Support\ServiceProvider
         $this->app->bindShared('command.portfolio.adduser', function ($app) {
             return new AddUser();
         });
+
+
+        // Merge configs
+        $this->mergeConfigFrom(
+            __DIR__.'/../config/portfolio.php', 'portfolio'
+        );
+
+        // Include package routes
+        if (!$this->app->routesAreCached()) {
+            include __DIR__.'/Http/routes.php';
+        }
+
+        // Tell Laravel where to load the views from
+        $this->loadViewsFrom(__DIR__.'/../resources/views', 'portfolio');
+
 
     }
 
@@ -69,7 +79,5 @@ class PortfolioServiceProvider extends \Illuminate\Support\ServiceProvider
         ], 'tests');
 
     }
-
-
 
 }
