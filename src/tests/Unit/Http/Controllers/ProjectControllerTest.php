@@ -38,6 +38,7 @@ class ProjectControllerTest extends TestCase
         $this->assertInstanceOf('Illuminate\View\View', $result);
     }
 
+
     public function testIndexMethods()
     {
         $this->repository->expects($this->exactly(2))

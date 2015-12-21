@@ -24,7 +24,6 @@ class PortfolioServiceProvider extends \Illuminate\Support\ServiceProvider
             return new AddUser();
         });
 
-
         // Merge configs
         $this->mergeConfigFrom(
             __DIR__.'/../config/portfolio.php', 'portfolio'
@@ -37,7 +36,6 @@ class PortfolioServiceProvider extends \Illuminate\Support\ServiceProvider
 
         // Tell Laravel where to load the views from
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'portfolio');
-
 
     }
 
@@ -72,6 +70,11 @@ class PortfolioServiceProvider extends \Illuminate\Support\ServiceProvider
         $this->publishes([
             __DIR__.'/../database/migrations' => $this->app->databasePath().'/migrations',
         ], 'migrations');
+
+        // Publish Factories
+        $this->publishes([
+            __DIR__.'/../database/factories' => $this->app->databasePath().'/factories',
+        ], 'factories');
 
         // Publish Tests
         $this->publishes([
