@@ -30,11 +30,11 @@ Route::group(['prefix' => config('portfolio.routes.admin.prefix'), 'middleware' 
 
 
 // RESTful API
-Route::group(['prefix' => 'api'], function()
+Route::group(['prefix' => config('portfolio.routes.api.prefix')], function()
 {
 
     // Admin project items
-    Route::resource('project', 'DanPowell\Portfolio\Http\Controllers\Api\ProjectController', ['except' => ['create', 'edit']]);
+    Route::resource(config('portfolio.routes.api.project'), 'DanPowell\Portfolio\Http\Controllers\Api\ProjectController', ['except' => ['create', 'edit']]);
 
     // Admin project section items
     Route::resource('project.section', 'DanPowell\Portfolio\Http\Controllers\Api\ProjectSectionController', ['except' => ['create', 'edit']]);

@@ -93,4 +93,18 @@ class ProjectsTest extends TestCase
         $this->assertResponseOk();
     }
 
+
+    // Test that Admin route returns
+    public function testResponseAdminRedirect()
+    {
+        // Setup
+
+        // Actions
+        $this->call('GET', route('admin'));
+
+        // Assertions
+        $this->assertResponseStatus('302');
+        $this->assertRedirectedTo('auth/login');
+    }
+
 }

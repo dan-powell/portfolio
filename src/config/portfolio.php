@@ -21,6 +21,7 @@ return [
         // API Routes
         // !! These values should not be changed. If they must be changed, the administration area javascript will need to be re-built !!
         'api' => [
+            'prefix' => 'api/',
             'project' => 'project',
         ]
     ]
