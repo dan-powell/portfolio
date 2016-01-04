@@ -43,8 +43,8 @@ Route::group(['prefix' => config('portfolio.routes.api.prefix')], function()
     Route::resource('section', 'DanPowell\Portfolio\Http\Controllers\Api\SectionController', ['except' => ['create', 'edit']]);
 
     // Admin tag items
-    Route::get('tag/search', ['as' => 'tag.search', 'uses' => 'DanPowell\Portfolio\Http\Controllers\Api\TagController@search']);
-    Route::resource('tag', 'DanPowell\Portfolio\Http\Controllers\Api\TagController', ['except' => ['create', 'edit']]);
+    Route::get(config('portfolio.routes.api.tagSearch'), ['as' => 'tag.search', 'uses' => 'DanPowell\Portfolio\Http\Controllers\Api\TagController@search']);
+    Route::resource(config('portfolio.routes.api.tag'), 'DanPowell\Portfolio\Http\Controllers\Api\TagController', ['except' => ['create', 'edit']]);
 
 
     // Admin project assets
@@ -60,7 +60,7 @@ Route::group(['prefix' => config('portfolio.routes.api.prefix')], function()
     Route::resource('project.page', 'DanPowell\Portfolio\Http\Controllers\Api\ProjectPageController', ['except' => ['create', 'edit']]);
 
     // Admin page items
-    Route::resource('page', 'DanPowell\Portfolio\Http\Controllers\Api\PageController', ['except' => ['create', 'edit']]);
+    Route::resource(config('portfolio.routes.api.page'), 'DanPowell\Portfolio\Http\Controllers\Api\PageController', ['except' => ['create', 'post', 'edit']]);
 
     // Admin project section items
     Route::resource('page.section', 'DanPowell\Portfolio\Http\Controllers\Api\PageSectionController', ['except' => ['create', 'edit']]);

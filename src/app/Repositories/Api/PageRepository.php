@@ -70,19 +70,22 @@ class PageRepository extends RestfulRepository
 
                 // Save sections
                 $sectionsToUpdate = [];
-                foreach ($request->sections as $section) {
 
-                    $newSection = Section::find($section['id']);
+                if ($request->sections){
+                    foreach ($request->sections as $section) {
 
-                    // if no existing model is found, create a new section
-                    if(!$newSection) {
-                        $newSection = new Section;
+                        $newSection = Section::find($section['id']);
+
+                        // if no existing model is found, create a new section
+                        if(!$newSection) {
+                            $newSection = new Section;
+                        }
+                        $newSection->fill($section);
+
+                        array_push($sectionsToUpdate, $newSection);
                     }
-                    $newSection->fill($section);
-
-                    array_push($sectionsToUpdate, $newSection);
+                    $collection->sections()->saveMany($sectionsToUpdate);
                 }
-                $collection->sections()->saveMany($sectionsToUpdate);
 
                 // Success - Return item ID as JSON
                 return response()->json($collection, 200);
