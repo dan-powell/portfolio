@@ -33,6 +33,23 @@ class ApiTagsTest extends TestCase
     }
 
 
+    public function testResponseGetTag()
+    {
+        // Setup
+        $model = factory(DanPowell\Portfolio\Models\Tag::class)->create();
+
+        // Actions
+        $this->get(route('api.tag.show', $model->id));
+
+        // Assertions
+        $this->assertResponseOk();
+        $this->seeJson([
+            'id' => $model->id,
+            'title' => $model->title,
+        ]);
+    }
+
+
     public function testResponsePostTag()
     {
         // Setup
@@ -85,5 +102,28 @@ class ApiTagsTest extends TestCase
         $this->assertResponseOk();
         $this->notSeeInDatabase('tags', ['id' => $model->id]);
     }
+
+
+
+    // Search tags
+
+    public function testResponseSearchTags()
+    {
+        // Setup
+        $model = factory(DanPowell\Portfolio\Models\Tag::class, 10)->create();
+        $randomTag = $model->random();
+        $user = factory(App\User::class)->create();
+
+        // Actions
+        $this->actingAs($user);
+        var_dump($this->get(route('api.tag.search') . '?query=' . $randomTag->title));
+
+        // Assertions
+        $this->assertResponseOk();
+        $this->seeJson([
+            'title' => $randomTag->title,
+        ]);
+    }
+
 
 }

@@ -30,7 +30,7 @@ class TagController extends Controller {
 
 
     /**
-     * Index Projects
+     * Index Tags
      *
      * @returns Illuminate response (JSON list of projects)
      */
@@ -41,7 +41,7 @@ class TagController extends Controller {
 
 
 	/**
-     * Search Projects
+     * Search Tags
      *
      * @returns Illuminate response (JSON list of projects)
      */
@@ -52,7 +52,7 @@ class TagController extends Controller {
 
 
 	/**
-     * Show Project
+     * Show Tag
      *
      * Find & return project by ID
      *
@@ -65,7 +65,7 @@ class TagController extends Controller {
 
 
     /**
-     * Store Project
+     * Store Tag
      *
      * Create new project entry
      *
@@ -78,7 +78,7 @@ class TagController extends Controller {
 
 
     /**
-     * Update Project
+     * Update Tag
      *
      * @returns Illuminate response (JSON & HTTP code)
      */
@@ -89,7 +89,7 @@ class TagController extends Controller {
 
 
     /**
-     * Destroy Project
+     * Destroy Tag
      *
      * Return Illuminate response (JSON & HTTP code)
      */

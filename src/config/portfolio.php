@@ -23,6 +23,7 @@ return [
         'api' => [
             'prefix' => 'api/',
             'project' => 'project',
+            'section' => 'section',
             'tag' => 'tag',
             'tagSearch' => 'tag/search',
             'page' => 'page'
