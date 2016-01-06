@@ -22,7 +22,7 @@ class ApiProjectsTest extends TestCase
         $project = factory(DanPowell\Portfolio\Models\Project::class)->create();
 
         // Actions
-        $this->get(route('api.project.index'));
+        $this->get(route('api.project.index'), ['X-Requested-With' => 'XMLHttpRequest']);
 
         // Assertions
         $this->assertResponseOk();
@@ -39,7 +39,7 @@ class ApiProjectsTest extends TestCase
         $model = factory(DanPowell\Portfolio\Models\Project::class)->create();
 
         // Actions
-        $this->get(route('api.project.show', $model->id));
+        $this->get(route('api.project.show', $model->id), ['X-Requested-With' => 'XMLHttpRequest']);
 
         // Assertions
         $this->assertResponseOk();
@@ -58,7 +58,7 @@ class ApiProjectsTest extends TestCase
 
         // Actions
         $this->actingAs($user);
-        $this->post(route('api.project.store'), $project->toArray());
+        $this->post(route('api.project.store'), $project->toArray(), ['X-Requested-With' => 'XMLHttpRequest']);
 
         // Assertions
         $this->assertResponseOk();
@@ -77,7 +77,7 @@ class ApiProjectsTest extends TestCase
 
         // Actions
         $this->actingAs($user);
-        $this->put(route('api.project.update', $project->id), $newProject->toArray());
+        $this->put(route('api.project.update', $project->id), $newProject->toArray(), ['X-Requested-With' => 'XMLHttpRequest']);
 
         // Assertions
         $this->assertResponseOk();
@@ -96,13 +96,39 @@ class ApiProjectsTest extends TestCase
 
         // Actions
         $this->actingAs($user);
-        $this->delete(route('api.project.destroy', $project->id));
+        $this->delete(route('api.project.destroy', $project->id), ['X-Requested-With' => 'XMLHttpRequest']);
 
         // Assertions
         $this->assertResponseOk();
         $this->notSeeInDatabase('projects', ['id' => $project->id]);
     }
 
+
+    // Test auth
+    public function testResponseNoAuthProject()
+    {
+        // Setup
+        $persistentModel = factory(DanPowell\Portfolio\Models\Project::class)->create();
+        $model = factory(DanPowell\Portfolio\Models\Project::class)->make();
+
+        // Actions
+        $this->post(route('api.project.store'), $model->toArray(), ['X-Requested-With' => 'XMLHttpRequest']);
+
+        // Assertions
+        $this->assertResponseStatus('401');
+
+        // Actions
+        $this->put(route('api.project.update', $persistentModel->id), $model->toArray(), ['X-Requested-With' => 'XMLHttpRequest']);
+
+        // Assertions
+        $this->assertResponseStatus('401');
+
+        // Actions
+        $this->delete(route('api.project.destroy', $persistentModel->id), [], ['X-Requested-With' => 'XMLHttpRequest']);
+
+        // Assertions
+        $this->assertResponseStatus('401');
+    }
 
 
     // Project Sections
@@ -115,7 +141,7 @@ class ApiProjectsTest extends TestCase
         $project->sections()->save($section);
 
         // Actions
-        $this->get(route('api.project.section.index', $project->id));
+        $this->get(route('api.project.section.index', $project->id), ['X-Requested-With' => 'XMLHttpRequest']);
 
         // Assertions
         $this->assertResponseOk();
@@ -133,7 +159,7 @@ class ApiProjectsTest extends TestCase
         $project->sections()->save($section);
 
         // Actions
-        $this->get(route('api.project.section.show', $project->id, $section->id));
+        $this->get(route('api.project.section.show', $project->id, $section->id), ['X-Requested-With' => 'XMLHttpRequest']);
 
         // Assertions
         $this->assertResponseOk();
@@ -152,7 +178,7 @@ class ApiProjectsTest extends TestCase
 
         // Actions
         $this->actingAs($user);
-        $this->post(route('api.project.section.store', $project->id), $section->toArray());
+        $this->post(route('api.project.section.store', $project->id), $section->toArray(), ['X-Requested-With' => 'XMLHttpRequest']);
 
         // Assertions
         $this->assertResponseOk();
@@ -172,7 +198,7 @@ class ApiProjectsTest extends TestCase
         $project->pages()->save($page);
 
         // Actions
-        $this->get(route('api.project.page.index', $project->id));
+        $this->get(route('api.project.page.index', $project->id), ['X-Requested-With' => 'XMLHttpRequest']);
 
         // Assertions
         $this->assertResponseOk();
@@ -190,7 +216,7 @@ class ApiProjectsTest extends TestCase
         $project->pages()->save($page);
 
         // Actions
-        $this->get(route('api.project.page.show', $project->id, $page->id));
+        $this->get(route('api.project.page.show', $project->id, $page->id), ['X-Requested-With' => 'XMLHttpRequest']);
 
         // Assertions
         $this->assertResponseOk();
@@ -209,7 +235,7 @@ class ApiProjectsTest extends TestCase
 
         // Actions
         $this->actingAs($user);
-        $this->post(route('api.project.page.store', $project->id), $page->toArray());
+        $this->post(route('api.project.page.store', $project->id), $page->toArray(), ['X-Requested-With' => 'XMLHttpRequest']);
 
         // Assertions
         $this->assertResponseOk();
