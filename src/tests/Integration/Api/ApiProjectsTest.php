@@ -116,15 +116,19 @@ class ApiProjectsTest extends TestCase
 
         // Assertions
         $this->assertResponseStatus('401');
+        $this->missingFromDatabase('projects', ['title' => $model->title, 'markup' => $model->markup]); // Make sure data has not been posted
 
         // Actions
         $this->put(route('api.project.update', $persistentModel->id), $model->toArray(), ['X-Requested-With' => 'XMLHttpRequest']);
+        $this->seeInDatabase('projects', ['title' => $persistentModel->title, 'markup' => $persistentModel->markup]); // Make sure data has not been updated
+        $this->missingFromDatabase('projects', ['title' => $model->title, 'markup' => $model->markup]); // Make sure data has not been posted
 
         // Assertions
         $this->assertResponseStatus('401');
 
         // Actions
         $this->delete(route('api.project.destroy', $persistentModel->id), [], ['X-Requested-With' => 'XMLHttpRequest']);
+        $this->seeInDatabase('projects', ['title' => $persistentModel->title, 'markup' => $persistentModel->markup]); // Make sure data has not been deleted
 
         // Assertions
         $this->assertResponseStatus('401');
