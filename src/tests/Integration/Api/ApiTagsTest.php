@@ -22,7 +22,7 @@ class ApiTagsTest extends TestCase
         $model = factory(DanPowell\Portfolio\Models\Tag::class)->create();
 
         // Actions
-        $this->get(route('api.tag.index'));
+        $this->get(route('api.tag.index'), ['X-Requested-With' => 'XMLHttpRequest']);
 
         // Assertions
         $this->assertResponseOk();
@@ -39,7 +39,7 @@ class ApiTagsTest extends TestCase
         $model = factory(DanPowell\Portfolio\Models\Tag::class)->create();
 
         // Actions
-        $this->get(route('api.tag.show', $model->id));
+        $this->get(route('api.tag.show', $model->id), ['X-Requested-With' => 'XMLHttpRequest']);
 
         // Assertions
         $this->assertResponseOk();
@@ -58,7 +58,7 @@ class ApiTagsTest extends TestCase
 
         // Actions
         $this->actingAs($user);
-        $this->post(route('api.tag.store'), $model->toArray());
+        $this->post(route('api.tag.store'), $model->toArray(), ['X-Requested-With' => 'XMLHttpRequest']);
 
         // Assertions
         $this->assertResponseOk();
@@ -77,7 +77,7 @@ class ApiTagsTest extends TestCase
 
         // Actions
         $this->actingAs($user);
-        $this->put(route('api.tag.update', $model->id), $newModel->toArray());
+        $this->put(route('api.tag.update', $model->id), $newModel->toArray(), ['X-Requested-With' => 'XMLHttpRequest']);
 
         // Assertions
         $this->assertResponseOk();
@@ -96,12 +96,44 @@ class ApiTagsTest extends TestCase
 
         // Actions
         $this->actingAs($user);
-        $this->delete(route('api.tag.destroy', $model->id));
+        $this->delete(route('api.tag.destroy', $model->id), [], ['X-Requested-With' => 'XMLHttpRequest']);
 
         // Assertions
         $this->assertResponseOk();
         $this->notSeeInDatabase('tags', ['id' => $model->id]);
     }
+
+
+    // Test auth
+    public function testResponseNoAuthTag()
+    {
+        // Setup
+        $persistentModel = factory(DanPowell\Portfolio\Models\Tag::class)->create();
+        $model = factory(DanPowell\Portfolio\Models\Tag::class)->make();
+
+        // Actions
+        $this->post(route('api.tag.store'), $model->toArray(), ['X-Requested-With' => 'XMLHttpRequest']);
+
+        // Assertions
+        $this->assertResponseStatus('401');
+        $this->missingFromDatabase('tags', ['title' => $model->title]); // Make sure data has not been posted
+
+        // Actions
+        $this->put(route('api.tag.update', $persistentModel->id), $model->toArray(), ['X-Requested-With' => 'XMLHttpRequest']);
+        $this->seeInDatabase('tags', ['title' => $persistentModel->title]); // Make sure data has not been updated
+        $this->missingFromDatabase('tags', ['title' => $model->title]); // Make sure data has not been posted
+
+        // Assertions
+        $this->assertResponseStatus('401');
+
+        // Actions
+        $this->delete(route('api.tag.destroy', $persistentModel->id), [], ['X-Requested-With' => 'XMLHttpRequest']);
+        $this->seeInDatabase('tags', ['title' => $persistentModel->title]); // Make sure data has not been deleted
+
+        // Assertions
+        $this->assertResponseStatus('401');
+    }
+
 
 
 
@@ -116,7 +148,7 @@ class ApiTagsTest extends TestCase
 
         // Actions
         $this->actingAs($user);
-        var_dump($this->get(route('api.tag.search') . '?query=' . $randomTag->title));
+        $this->get(route('api.tag.search') . '?query=' . $randomTag->title, ['X-Requested-With' => 'XMLHttpRequest']);
 
         // Assertions
         $this->assertResponseOk();

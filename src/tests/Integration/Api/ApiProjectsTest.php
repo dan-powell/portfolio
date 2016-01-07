@@ -192,6 +192,21 @@ class ApiProjectsTest extends TestCase
     }
 
 
+    // Test auth
+    public function testResponseNoAuthProjectSections()
+    {
+        // Setup
+        $model = factory(DanPowell\Portfolio\Models\Section::class)->make();
+
+        // Actions
+        $this->post(route('api.project.section.store'), $model->toArray(), ['X-Requested-With' => 'XMLHttpRequest']);
+
+        // Assertions
+        $this->assertResponseStatus('401');
+        $this->missingFromDatabase('sections', ['markup' => $model->markup]); // Make sure data has not been posted
+    }
+
+
     // Project Pages
 
     public function testResponseGetProjectPages()
@@ -247,5 +262,20 @@ class ApiProjectsTest extends TestCase
             'title' => $page->title,
         ]);
     }
+
+    // Test auth
+    public function testResponseNoAuthProjectPage()
+    {
+        // Setup
+        $model = factory(DanPowell\Portfolio\Models\Page::class)->make();
+
+        // Actions
+        $this->post(route('api.project.page.store'), $model->toArray(), ['X-Requested-With' => 'XMLHttpRequest']);
+
+        // Assertions
+        $this->assertResponseStatus('401');
+        $this->missingFromDatabase('pages', ['markup' => $model->markup, 'title' => $model->title]); // Make sure data has not been posted
+    }
+
 
 }
